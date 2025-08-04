@@ -1,11 +1,9 @@
 <!-- Header completo -->
 <div class="flex justify-content-between align-items-center px-4 py-2  w-full">
-
   <!-- Logo -->
   <div class="text-pink-600 font-bold text-xl">
     Fiaox <span class="text-900">Market</span>
   </div>
-
   <!-- Card para links centrado -->
   <div class="shadow-2 border-round-md bg-white px-4 py-2 flex align-items-center">
     <div class="flex gap-4 text-sm text-800">
@@ -16,11 +14,164 @@
       <a class="cursor-pointer">Contáctanos</a>
     </div>
   </div>
-
   <!-- Botones -->
   <div class="flex gap-2">
     <p-button label="Registrarse" styleClass="p-button-sm p-button-danger" [raised]="true"></p-button>
     <p-button label="Ingresar" styleClass="p-button-sm p-button-outlined p-button-warning"></p-button>
   </div>
-
 </div>
+
+
+<!-- Cuerpo -->
+<div class="flex justify-content-center mt-5">
+  <div class="surface-0 border-round-2xl shadow-3 p-6 text-center w-full md:w-10 lg:w-8"
+       style="background: url('../../assets/fondo_ciudad.jpg') center/cover no-repeat;">
+    <h2 class="text-4xl text-0 font-bold mb-3">Bienvenido a FIAOX</h2>
+    <p class="text-0 text-lg font-medium mb-2">
+      Flexibilizamos las compras en CUBA con PAGOS EN CUOTAS
+    </p>
+    <p class="text-0 text-sm mb-4">
+      Compra el producto que necesitas pagando solo el 50% al inicio. Recibe el producto y paga el resto en dos cómodas cuotas.
+    </p>
+    <div class="flex justify-content-center gap-3">
+      <p-button label="Registrar cliente" styleClass="p-button-sm button-white" [raised]="true"></p-button>
+      <p-button label="Registrar empresa" styleClass="p-button-outlined p-button-white p-button-sm"></p-button>
+    </div>
+  </div>
+</div>
+
+<h3 class="text-center text-2xl font-bold mt-6">¿Quiénes pueden usarlo?</h3>
+
+<div class="flex justify-content-center flex-wrap gap-4 mt-4">
+  <p-card class="w-20rem text-center">
+    <div class="text-orange-500 text-4xl mb-2">
+      <i class="pi pi-briefcase"></i>
+    </div>
+    <h4 class="mb-1">Empresas registradas</h4>
+    <p class="text-sm">
+      Publican productos, eligen a quién venderle y reciben pagos en dos etapas (mitad inicial + saldo restante).
+    </p>
+  </p-card>
+
+  <p-card class="w-20rem text-center">
+    <div class="text-orange-500 text-4xl mb-2">
+      <i class="pi pi-user"></i>
+    </div>
+    <h4 class="mb-1">Clientes FIAOX</h4>
+    <p class="text-sm">
+      Puedes solicitar productos de tiendas registradas, pagar en cuotas y construir tu reputación.
+    </p>
+  </p-card>
+</div>
+
+<h3 class="text-center text-2xl font-bold mt-6 mb-4">¿Cómo funciona?</h3>
+
+<div class="grid text-sm text-800 justify-content-center">
+  <div class="col-12 md:col-6 lg:col-3 flex align-items-center gap-2">
+    <i class="pi pi-shopping-cart text-orange-500 text-xl"></i>
+    <span>1. El cliente elige uno o varios productos</span>
+  </div>
+  <div class="col-12 md:col-6 lg:col-3 flex align-items-center gap-2">
+    <i class="pi pi-check-circle text-orange-500 text-xl"></i>
+    <span>2. La tienda aprueba la solicitud y entrega el producto</span>
+  </div>
+  <div class="col-12 md:col-6 lg:col-3 flex align-items-center gap-2">
+    <i class="pi pi-wallet text-orange-500 text-xl"></i>
+    <span>3. Paga el 50% del valor total</span>
+  </div>
+  <div class="col-12 md:col-6 lg:col-3 flex align-items-center gap-2">
+    <i class="pi pi-book text-orange-500 text-xl"></i>
+    <span>4. Todo queda registrado en su historial FIAOX</span>
+  </div>
+</div>
+
+<h3 class="text-center text-2xl font-bold mt-6">Características</h3>
+
+<div class="grid mt-4 justify-content-center">
+  <p-card class="col-12 md:col-5 m-2 border-left-3 border-yellow-500">
+    <h4 class="mb-1">Característica 4</h4>
+    <p class="text-sm">Ninguno</p>
+  </p-card>
+  <p-card class="col-12 md:col-5 m-2 border-left-3 border-red-500">
+    <h4 class="mb-1">Caracteristicasss 3</h4>
+    <p class="text-sm">Ninguno</p>
+  </p-card>
+  <p-card class="col-12 md:col-5 m-2 border-left-3 border-blue-500">
+    <h4 class="mb-1">Créditos Flexibles</h4>
+    <p class="text-sm">Accede a créditos personalizados según tus necesidades</p>
+  </p-card>
+  <p-card class="col-12 md:col-5 m-2 border-left-3 border-green-500">
+    <h4 class="mb-1">Protección de Información</h4>
+    <p class="text-sm">Tu Información protegida con lo más altos estándares.</p>
+  </p-card>
+</div>
+
+<h3 class="text-center text-2xl font-bold mt-6">Testimonios</h3>
+
+<p-carousel [value]="testimonios" [numVisible]="3" [circular]="true" [autoplayInterval]="3000">
+  <ng-template let-item pTemplate="item">
+    <p-card>
+      <p class="italic">"{{ item.mensaje }}"</p>
+      <div class="mt-2 font-medium">{{ item.nombre }}</div>
+    </p-card>
+  </ng-template>
+</p-carousel>
+
+<h3 class="text-center text-2xl font-bold mt-6 mb-4">Preguntas Frecuentes</h3>
+
+<p-accordion [multiple]="true" class="w-full md:w-8 mx-auto">
+  <p-accordionTab header="¿Cómo puedo acceder a un crédito?">
+    <p>
+      Solo necesitas registrarte, completar tu perfil y podrás simular tu crédito personalizado.
+    </p>
+  </p-accordionTab>
+  <p-accordionTab header="¿Otra pregunta?">
+    <p>
+      Puedes contactarnos directamente y con gusto te ayudamos con cualquier duda.
+    </p>
+  </p-accordionTab>
+</p-accordion>
+
+<h3 class="text-center text-2xl font-bold mt-6">Empresas que usan FIAOX</h3>
+
+<p-carousel [value]="empresas" [numVisible]="4" [circular]="true" [autoplayInterval]="3000">
+  <ng-template let-empresa pTemplate="item">
+    <p-card class="text-center">
+      <img [src]="empresa.logo" alt="Logo" class="mb-2" width="100" height="100" />
+      <p>{{ empresa.nombre }}</p>
+    </p-card>
+  </ng-template>
+</p-carousel>
+
+<footer class="py-6 px-4 mt-6 text-white" style="background-color: #0b132b !important;">
+  <div class="grid">
+    <div class="col-12 md:col-4">
+      <h3 class="text-3xl font-bold text-pink-500">FiaoX</h3>
+      <p>Una solución innovadora para el mercado cubano...</p>
+      <div class="flex gap-3 mt-3">
+        <i class="pi pi-facebook text-xl"></i>
+        <i class="pi pi-twitter text-xl"></i>
+        <i class="pi pi-instagram text-xl"></i>
+        <i class="pi pi-linkedin text-xl"></i>
+      </div>
+    </div>
+    <div class="col-12 md:col-4">
+      <h4 class="font-bold">Contáctanosssss</h4>
+      <p>supportfiaox.com</p>
+      <p>15551234567</p>
+      <p class="mt-2">Atención al usuario: <i class="pi pi-envelope"></i></p>
+      <p>Departamento comercial: <i class="pi pi-whatsapp"></i></p>
+    </div>
+    <div class="col-12 md:col-4">
+      <h4 class="font-bold">Términos y Condiciones</h4>
+      <ul class="list-none p-0">
+        <li><a class="text-white">Para Compradores</a></li>
+        <li><a class="text-white">Para Vendedores</a></li>
+        <li><a class="text-white">Registrarme Para Vender</a></li>
+        <li><a class="text-white">Contactar al Marketplace</a></li>
+        <li><a class="text-white">Ingreso Vendedores</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="text-center mt-4 text-sm">© 2025 Fiaox. Todos los derechos reservados</div>
+</footer>
