@@ -12,7 +12,7 @@ import { AccordionModule } from 'primeng/accordion';
   styleUrl: './landing.component.css'
 })
 export class LandingComponent {
-
+  showMobileMenu = false;
   empresas = [
     {
       nombre: 'Alexis Gamer',

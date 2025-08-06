@@ -1,39 +1,65 @@
-<!-- Header completo -->
-<div class="flex justify-content-between align-items-center px-4 py-2  w-full">
-  <!-- Logo -->
-  <div class="text-pink-600 font-bold text-xl">
-    Fiaox <span class="text-900">Market</span>
-  </div>
-  <!-- Card para links centrado -->
-  <div class="shadow-2 border-round-md bg-white px-4 py-2 flex align-items-center">
-    <div class="flex gap-4 text-sm text-800">
-      <a class="cursor-pointer">Funcionalidad</a>
-      <a class="cursor-pointer">Características</a>
-      <a class="cursor-pointer">Testimonios</a>
-      <a class="cursor-pointer">Preguntas Frecuentes</a>
-      <a class="cursor-pointer">Contáctanos</a>
+<header class="w-full px-4 py-2 bg-white shadow-2">
+  <!-- Contenedor principal -->
+  <div class="flex justify-content-between align-items-center">
+    <!-- Logo -->
+    <div class="text-pink-600 font-bold text-xl">
+      Fiaox <span class="text-900">Market</span>
+    </div>
+
+    <!-- Botón hamburguesa para mobile -->
+    <button
+      class="md:hidden p-button p-button-text p-0"
+      (click)="showMobileMenu = !showMobileMenu">
+      <i class="pi pi-bars text-2xl text-900"></i>
+    </button>
+
+    <!-- Menú desktop -->
+    <div class="hidden md:flex align-items-center gap-5">
+      <div class="flex gap-4 text-sm text-800">
+        <a class="cursor-pointer">Funcionalidad</a>
+        <a class="cursor-pointer">Características</a>
+        <a class="cursor-pointer">Testimonios</a>
+        <a class="cursor-pointer">Preguntas Frecuentes</a>
+        <a class="cursor-pointer">Contáctanos</a>
+      </div>
+
+      <div class="flex gap-2 ml-4">
+        <p-button label="Registrarse" styleClass="p-button-sm p-button-danger" [raised]="true"></p-button>
+        <p-button label="Ingresar" styleClass="p-button-sm p-button-outlined p-button-warning"></p-button>
+      </div>
     </div>
   </div>
-  <!-- Botones -->
-  <div class="flex gap-2">
-    <p-button label="Registrarse" styleClass="p-button-sm p-button-danger" [raised]="true"></p-button>
-    <p-button label="Ingresar" styleClass="p-button-sm p-button-outlined p-button-warning"></p-button>
+
+  <!-- Menú colapsable móvil -->
+  <div *ngIf="showMobileMenu" class="md:hidden mt-3">
+    <div class="flex flex-column gap-2 text-sm text-800">
+      <a class="cursor-pointer p-2 hover:bg-gray-100 border-round">Funcionalidad</a>
+      <a class="cursor-pointer p-2 hover:bg-gray-100 border-round">Características</a>
+      <a class="cursor-pointer p-2 hover:bg-gray-100 border-round">Testimonios</a>
+      <a class="cursor-pointer p-2 hover:bg-gray-100 border-round">Preguntas Frecuentes</a>
+      <a class="cursor-pointer p-2 hover:bg-gray-100 border-round">Contáctanos</a>
+    </div>
+
+    <div class="flex flex-column gap-2 mt-3">
+      <p-button label="Registrarse" styleClass="p-button-sm p-button-danger w-full" [raised]="true"></p-button>
+      <p-button label="Ingresar" styleClass="p-button-sm p-button-outlined p-button-warning w-full"></p-button>
+    </div>
   </div>
-</div>
+</header>
 
 
 <!-- Cuerpo -->
-<div class="flex justify-content-center mt-5">
-  <div class="surface-0 border-round-2xl shadow-3 p-6 text-center w-full md:w-10 lg:w-8"
+<div class="flex justify-content-center mt-5 px-3">
+  <div class="surface-0 border-round-2xl shadow-3 p-4 text-center w-full md:w-10 lg:w-8"
        style="background: url('../../assets/fondo_ciudad.jpg') center/cover no-repeat;">
-    <h2 class="text-4xl text-0 font-bold mb-3">Bienvenido a FIAOX</h2>
-    <p class="text-0 text-lg font-medium mb-2">
+    <h2 class="text-2xl md:text-4xl text-0 font-bold mb-3">Bienvenido a FIAOX</h2>
+    <p class="text-0 text-md md:text-lg font-medium mb-2">
       Flexibilizamos las compras en CUBA con PAGOS EN CUOTAS
     </p>
     <p class="text-0 text-sm mb-4">
       Compra el producto que necesitas pagando solo el 50% al inicio. Recibe el producto y paga el resto en dos cómodas cuotas.
     </p>
-    <div class="flex justify-content-center gap-3">
+    <div class="flex flex-column md:flex-row justify-content-center gap-3">
       <p-button label="Registrar cliente" styleClass="p-button-sm button-white" [raised]="true"></p-button>
       <p-button label="Registrar empresa" styleClass="p-button-outlined p-button-white p-button-sm"></p-button>
     </div>
@@ -42,8 +68,8 @@
 
 <h3 class="text-center text-2xl font-bold mt-6">¿Quiénes pueden usarlo?</h3>
 
-<div class="flex justify-content-center flex-wrap gap-4 mt-4">
-  <p-card class="w-20rem text-center">
+<div class="flex justify-content-center flex-wrap gap-4 mt-4 px-3">
+  <p-card class="w-full md:w-20rem text-center">
     <div class="text-orange-500 text-4xl mb-2">
       <i class="pi pi-briefcase"></i>
     </div>
@@ -53,7 +79,7 @@
     </p>
   </p-card>
 
-  <p-card class="w-20rem text-center">
+  <p-card class="w-full md:w-20rem text-center">
     <div class="text-orange-500 text-4xl mb-2">
       <i class="pi pi-user"></i>
     </div>
@@ -66,20 +92,20 @@
 
 <h3 class="text-center text-2xl font-bold mt-6 mb-4">¿Cómo funciona?</h3>
 
-<div class="grid text-sm text-800 justify-content-center">
-  <div class="col-12 md:col-6 lg:col-3 flex align-items-center gap-2">
+<div class="grid text-sm text-800 justify-content-center px-3">
+  <div class="col-12 md:col-6 lg:col-3 flex align-items-center gap-2 mb-3">
     <i class="pi pi-shopping-cart text-orange-500 text-xl"></i>
     <span>1. El cliente elige uno o varios productos</span>
   </div>
-  <div class="col-12 md:col-6 lg:col-3 flex align-items-center gap-2">
+  <div class="col-12 md:col-6 lg:col-3 flex align-items-center gap-2 mb-3">
     <i class="pi pi-check-circle text-orange-500 text-xl"></i>
     <span>2. La tienda aprueba la solicitud y entrega el producto</span>
   </div>
-  <div class="col-12 md:col-6 lg:col-3 flex align-items-center gap-2">
+  <div class="col-12 md:col-6 lg:col-3 flex align-items-center gap-2 mb-3">
     <i class="pi pi-wallet text-orange-500 text-xl"></i>
     <span>3. Paga el 50% del valor total</span>
   </div>
-  <div class="col-12 md:col-6 lg:col-3 flex align-items-center gap-2">
+  <div class="col-12 md:col-6 lg:col-3 flex align-items-center gap-2 mb-3">
     <i class="pi pi-book text-orange-500 text-xl"></i>
     <span>4. Todo queda registrado en su historial FIAOX</span>
   </div>
@@ -87,7 +113,7 @@
 
 <h3 class="text-center text-2xl font-bold mt-6">Características</h3>
 
-<div class="grid mt-4 justify-content-center">
+<div class="grid mt-4 justify-content-center px-3">
   <p-card class="col-12 md:col-5 m-2 border-left-3 border-yellow-500">
     <h4 class="mb-1">Característica 4</h4>
     <p class="text-sm">Ninguno</p>
@@ -108,18 +134,30 @@
 
 <h3 class="text-center text-2xl font-bold mt-6">Testimonios</h3>
 
-<p-carousel [value]="testimonios" [numVisible]="3" [circular]="true" [autoplayInterval]="3000">
+<p-carousel
+  [value]="testimonios"
+  [numVisible]="3"
+  [numScroll]="1"
+  [responsiveOptions]="[
+    { breakpoint: '1024px', numVisible: 2, numScroll: 1 },
+    { breakpoint: '768px', numVisible: 1, numScroll: 1 }
+  ]"
+  [circular]="true"
+  [autoplayInterval]="3000">
+
   <ng-template let-item pTemplate="item">
     <p-card>
       <p class="italic">"{{ item.mensaje }}"</p>
       <div class="mt-2 font-medium">{{ item.nombre }}</div>
     </p-card>
   </ng-template>
+
 </p-carousel>
+
 
 <h3 class="text-center text-2xl font-bold mt-6 mb-4">Preguntas Frecuentes</h3>
 
-<p-accordion [multiple]="true" class="w-full md:w-8 mx-auto">
+<p-accordion [multiple]="true" class="w-full md:w-8 mx-auto px-2">
   <p-accordionTab header="¿Cómo puedo acceder a un crédito?">
     <p>
       Solo necesitas registrarte, completar tu perfil y podrás simular tu crédito personalizado.
@@ -134,7 +172,17 @@
 
 <h3 class="text-center text-2xl font-bold mt-6">Empresas que usan FIAOX</h3>
 
-<p-carousel [value]="empresas" [numVisible]="4" [circular]="true" [autoplayInterval]="3000">
+<p-carousel
+  [value]="empresas"
+  [numVisible]="4"
+  [numScroll]="1"
+  [responsiveOptions]="[
+    { breakpoint: '1024px', numVisible: 3, numScroll: 1 },
+    { breakpoint: '768px', numVisible: 2, numScroll: 1 },
+    { breakpoint: '560px', numVisible: 1, numScroll: 1 }
+  ]"
+  [circular]="true"
+  [autoplayInterval]="3000">
   <ng-template let-empresa pTemplate="item">
     <p-card class="text-center">
       <img [src]="empresa.logo" alt="Logo" class="mb-2" width="100" height="100" />
@@ -155,14 +203,14 @@
         <i class="pi pi-linkedin text-xl"></i>
       </div>
     </div>
-    <div class="col-12 md:col-4">
+    <div class="col-12 md:col-4 mt-4 md:mt-0">
       <h4 class="font-bold">Contáctanosssss</h4>
       <p>supportfiaox.com</p>
       <p>15551234567</p>
       <p class="mt-2">Atención al usuario: <i class="pi pi-envelope"></i></p>
       <p>Departamento comercial: <i class="pi pi-whatsapp"></i></p>
     </div>
-    <div class="col-12 md:col-4">
+    <div class="col-12 md:col-4 mt-4 md:mt-0">
       <h4 class="font-bold">Términos y Condiciones</h4>
       <ul class="list-none p-0">
         <li><a class="text-white">Para Compradores</a></li>
