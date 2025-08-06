@@ -1,0 +1,99 @@
+<div class="flex flex-col md:flex-row h-screen w-full">
+  <!-- Lado izquierdo: Login -->
+  <div class="flex flex-column justify-content-center align-items-center p-6 md:px-10 w-full md:w-6 bg-white h-full">
+    <h2 class="text-3xl text-orange-500 font-bold mb-2">Iniciar Sesión</h2>
+    <p class="text-gray-600 mb-4 text-center">Bienvenido de nuevo</p>
+
+    <form [formGroup]="loginForm" class="w-full" style="max-width: 350px">
+      <!-- Email -->
+      <div class="field mb-3">
+        <span class="p-input-icon-left w-full">
+          <i class="pi pi-envelope"></i>
+          <input
+            pInputText
+            type="email"
+            placeholder="Ingresa tu correo electrónico"
+            formControlName="email"
+            class="w-full"
+          />
+        </span>
+      </div>
+
+      <!-- Contraseña -->
+      <div class="field mb-3">
+        <p-password
+          id="password1"
+          type="password"
+          class="w-full"
+          [feedback]="false"
+          placeholder="Password"
+          styleClass="p-password p-component p-inputwrapper p-input-icon-right"
+          [style]="{'width':'100%'}"
+          [inputStyle]="{'width':'100%'}"
+          [toggleMask]="true">
+        </p-password>
+      </div>
+
+      <!-- Botón iniciar sesión -->
+      <div class="field mb-2">
+        <p-button
+          label="Iniciar Sesión"
+          styleClass="w-full p-button-warning"
+          type="submit"
+          [disabled]="loginForm.invalid"
+        ></p-button>
+      </div>
+
+      <!-- ¿Olvidaste tu contraseña? -->
+      <div class="text-right mb-3">
+        <a class="text-sm text-orange-500 hover:underline cursor-pointer"
+          >¿Olvidaste tu contraseña?</a>
+      </div>
+
+      <!-- Volver al inicio -->
+      <div class="field mb-3">
+        <p-button
+          label="← Volver al inicio"
+          styleClass="w-full p-button-outlined p-button-secondary"
+          [routerLink]="'/'"
+          type="button"
+        ></p-button>
+      </div>
+
+      <!-- Registro -->
+      <p class="text-center text-sm mt-2">
+        ¿Aún no tienes una cuenta?
+        <a
+          [routerLink]="'/register'"
+          class="text-orange-500 font-semibold hover:underline"
+          >Regístrate ahora</a
+        >
+        y empieza a usar FiaoX hoy mismo.
+      </p>
+    </form>
+  </div>
+
+  <!-- Lado derecho: Ilustración -->
+  <div
+    class="hidden md:flex flex-column justify-content-center align-items-center p-6 md:px-10 w-full md:w-6 bg-orange-50 text-center h-full"
+  >
+    <img
+      src="../../../assets/landing.png"
+      alt="Ilustración"
+      class="mb-4"
+      style="max-width: 220px"
+    />
+    <h3 class="text-xl font-bold text-gray-900 mb-2">
+      ¡Únete y potencia tu negocio!
+    </h3>
+    <p class="text-sm text-gray-700 mb-4">
+      Conéctate con clientes o proveedores de forma rápida y segura.
+    </p>
+    <h4 class="text-orange-500 font-semibold text-base mb-1">
+      ¡Bienvenido a FiaoX!
+    </h4>
+    <p class="text-sm text-gray-600">
+      Ingresa y descubre nuevas oportunidades para tu negocio o tus compras.
+    </p>
+  </div>
+</div>

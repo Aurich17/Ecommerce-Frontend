@@ -3,11 +3,12 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { CarouselModule } from 'primeng/carousel';
 import { AccordionModule } from 'primeng/accordion';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [ButtonModule,CardModule,CarouselModule,AccordionModule],
+  imports: [ButtonModule,CardModule,CarouselModule,AccordionModule,RouterModule],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 })

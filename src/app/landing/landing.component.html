@@ -24,8 +24,8 @@
       </div>
 
       <div class="flex gap-2 ml-4">
-        <p-button label="Registrarse" styleClass="p-button-sm p-button-danger" [raised]="true"></p-button>
-        <p-button label="Ingresar" styleClass="p-button-sm p-button-outlined p-button-warning"></p-button>
+        <p-button label="Registrarse" styleClass="p-button-sm p-button-danger" [raised]="true" [routerLink]="'/register'"></p-button>
+        <p-button label="Ingresar" styleClass="p-button-sm p-button-outlined p-button-warning" [routerLink]="'/login'"></p-button>
       </div>
     </div>
   </div>
@@ -41,8 +41,8 @@
     </div>
 
     <div class="flex flex-column gap-2 mt-3">
-      <p-button label="Registrarse" styleClass="p-button-sm p-button-danger w-full" [raised]="true"></p-button>
-      <p-button label="Ingresar" styleClass="p-button-sm p-button-outlined p-button-warning w-full"></p-button>
+      <p-button label="Registrarse" styleClass="p-button-sm p-button-danger w-full" [raised]="true" [routerLink]="'/register'"></p-button>
+      <p-button label="Ingresar" styleClass="p-button-sm p-button-outlined p-button-warning w-full" [routerLink]="'/login'"></p-button>
     </div>
   </div>
 </header>
