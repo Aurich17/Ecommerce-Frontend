@@ -1,0 +1,250 @@
+<!-- register-cliente.component.html -->
+<div class="flex justify-content-center px-4">
+  <div
+    class="surface-0 border-round shadow-2 py-4 px-6 w-full md:w-10/12 lg:w-8/12"
+    style="max-width:85vw;"
+  >
+
+    <!-- Título general -->
+    <div class="text-center mb-6">
+      <h2 class="text-2xl font-bold text-orange-500 mb-1">FiaoX</h2>
+      <p class="text-sm text-gray-600">Registro de Cliente</p>
+    </div>
+
+    <!-- Barra de pasos -->
+    <p-steps [model]="items" [activeIndex]="activeIndex" readOnly="true" class="mb-6"></p-steps>
+
+    <div [ngSwitch]="activeIndex">
+
+      <!-- Paso 1: Información personal -->
+      <form
+        *ngSwitchCase="0"
+        [formGroup]="personalForm"
+        class="p-fluid p-formgrid p-grid gap-2 p-4"
+      >
+        <!-- Nombres / Apellidos -->
+        <div class="p-field p-col-12 p-md-6">
+          <label for="nombres">Nombres *</label>
+          <input
+            id="nombres"
+            pInputText
+            formControlName="nombres"
+            placeholder="Ej. Juan Carlos"
+          />
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <label for="apellidos">Apellidos *</label>
+          <input
+            id="apellidos"
+            pInputText
+            formControlName="apellidos"
+            placeholder="Ej. Pérez Gómez"
+          />
+        </div>
+
+        <!-- Teléfono -->
+        <div class="p-field p-col-12">
+          <label for="telefono">Teléfono *</label>
+          <input
+            id="telefono"
+            pInputText
+            formControlName="telefono"
+            placeholder="+1 234 567 890"
+          />
+        </div>
+
+        <!-- Dirección -->
+        <div class="p-field p-col-12">
+          <label for="direccion">Dirección</label>
+          <input
+            id="direccion"
+            pInputText
+            formControlName="direccion"
+            placeholder="Ej. Av. Siempre Viva 742"
+          />
+        </div>
+
+        <!-- Fecha de Nacimiento -->
+        <div class="p-field p-col-12 p-md-4">
+          <label for="fechaNacimiento">Fecha de Nacimiento</label>
+          <p-calendar
+            id="fechaNacimiento"
+            formControlName="fechaNacimiento"
+            dateFormat="yy-mm-dd"
+          ></p-calendar>
+        </div>
+
+        <!-- País / Provincia / Ciudad -->
+        <div class="p-field p-col-12 p-md-4">
+          <label for="pais">País</label>
+          <p-dropdown
+            id="pais"
+            [options]="paises"
+            formControlName="pais"
+            placeholder="Seleccione un país"
+          ></p-dropdown>
+        </div>
+        <div class="p-field p-col-12 p-md-4">
+          <label for="provincia">Provincia / Estado</label>
+          <p-dropdown
+            id="provincia"
+            [options]="provincias"
+            formControlName="provincia"
+            placeholder="Seleccione una provincia"
+          ></p-dropdown>
+        </div>
+
+        <!-- Ocupación / Género -->
+        <div class="p-field p-col-12 p-md-6">
+          <label for="ocupacion">Ocupación</label>
+          <p-dropdown
+            id="ocupacion"
+            [options]="ocupaciones"
+            formControlName="ocupacion"
+            placeholder="Seleccione una ocupación"
+          ></p-dropdown>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <label for="genero">Género</label>
+          <p-dropdown
+            id="genero"
+            [options]="generos"
+            formControlName="genero"
+            placeholder="Seleccione su género"
+          ></p-dropdown>
+        </div>
+
+        <!-- Botones -->
+        <div class="p-field p-col-12 flex justify-content-between mt-4">
+          <button
+            pButton
+            label="Atrás"
+            class="p-button-outlined p-button-sm w-5"
+            (click)="prev()"
+            [disabled]="activeIndex === 0"
+          ></button>
+          <button
+            pButton
+            label="Siguiente"
+            class="p-button-warning p-button-sm w-5"
+            (click)="next()"
+          ></button>
+        </div>
+      </form>
+
+      <!-- Paso 2: Documentos -->
+      <div *ngSwitchCase="1">
+        <h3 class="text-lg font-semibold text-gray-800 mb-3">Documentos</h3>
+        <form [formGroup]="docsForm" class="p-fluid p-formgrid p-grid gap-2 p-4">
+          <div class="p-field p-col-12">
+            <label>Foto del rostro (selfie) *</label>
+            <p-fileUpload
+              mode="basic"
+              name="selfie"
+              accept="image/*"
+              maxFileSize="1000000"
+              chooseLabel="Seleccionar selfie"
+              customUpload="true"
+              (onSelect)="onSelfieSelect($event)"
+            ></p-fileUpload>
+          </div>
+          <div class="p-field p-col-12">
+            <label>Foto reverso del DNI *</label>
+            <p-fileUpload
+              mode="basic"
+              name="dniReverso"
+              accept="image/*"
+              maxFileSize="1000000"
+              chooseLabel="Seleccionar reverso"
+              customUpload="true"
+              (onSelect)="onDniReversoSelect($event)"
+            ></p-fileUpload>
+          </div>
+          <div class="p-field p-col-12 flex justify-content-between mt-4">
+            <button pButton label="Atrás" class="p-button-outlined p-button-sm" (click)="prev()"></button>
+            <button pButton label="Siguiente" class="p-button-warning p-button-sm" (click)="next()"></button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Paso 3: Credenciales -->
+      <form
+        *ngSwitchCase="2"
+        [formGroup]="credentialsForm"
+        class="p-fluid p-formgrid p-grid gap-2 p-4"
+      >
+        <div class="p-field p-col-12">
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-envelope"></i>
+            <input
+              pInputText
+              placeholder="Correo Electrónico"
+              formControlName="email"
+              class="w-full"
+            />
+          </span>
+        </div>
+        <div class="p-field p-col-12">
+          <p-password
+            formControlName="password"
+            [feedback]="false"
+            placeholder="Contraseña"
+            toggleMask="true"
+            inputClass="w-full"
+          >
+            <ng-template pTemplate="lefticon">
+              <i class="pi pi-lock"></i>
+            </ng-template>
+          </p-password>
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <label>Nombre Contacto Alternativo</label>
+          <input pInputText formControlName="contactoNombre" class="w-full" />
+        </div>
+        <div class="p-field p-col-12 p-md-6">
+          <label>Teléfono Contacto Alternativo</label>
+          <input pInputText formControlName="contactoTelefono" class="w-full" />
+        </div>
+        <div class="p-field p-col-12 flex justify-content-between mt-4">
+          <button pButton label="Atrás" class="p-button-outlined p-button-sm" (click)="prev()"></button>
+          <button pButton label="Siguiente" class="p-button-warning p-button-sm" (click)="next()"></button>
+        </div>
+      </form>
+
+      <!-- Paso 4: Confirmación -->
+      <div *ngSwitchCase="3" class="p-4">
+        <h3 class="text-lg font-semibold text-gray-800 mb-2">Confirmación</h3>
+        <p class="mb-4">Revisa cuidadosamente la información ingresada.</p>
+        <div class="p-fluid p-formgrid p-grid gap-2">
+          <div class="p-col-12 p-md-6">
+            <p><strong>Nombres:</strong> {{ personalForm.value.nombres }}</p>
+            <p><strong>Teléfono:</strong> {{ personalForm.value.telefono }}</p>
+            <p>
+              <strong>Fecha de Nacimiento:</strong>
+              {{ personalForm.value.fechaNacimiento | date }}
+            </p>
+            <p><strong>Correo Electrónico:</strong> {{ credentialsForm.value.email }}</p>
+            <p>
+              <strong>Teléfono de Contacto Alternativo:</strong>
+              {{ credentialsForm.value.contactoTelefono }}
+            </p>
+          </div>
+          <div class="p-col-12 p-md-6">
+            <p><strong>Apellidos:</strong> {{ personalForm.value.apellidos }}</p>
+            <p><strong>Dirección:</strong> {{ personalForm.value.direccion }}</p>
+            <p><strong>Ocupación:</strong> {{ personalForm.value.ocupacion }}</p>
+            <p>
+              <strong>Contacto Alternativo:</strong>
+              {{ credentialsForm.value.contactoNombre }}
+            </p>
+          </div>
+        </div>
+        <div class="flex justify-content-between mt-6">
+          <button pButton label="Atrás" class="p-button-outlined p-button-sm" (click)="prev()"></button>
+          <button pButton label="Finalizar Registro" class="p-button-warning p-button-sm" (click)="finish()"></button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
