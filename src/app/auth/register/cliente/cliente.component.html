@@ -1,9 +1,7 @@
 <!-- register-cliente.component.html -->
+<p-toast />
 <div class="flex justify-content-center align-content-center px-4">
-  <div
-    class="surface-0 border-round shadow-2 py-4 px-6 w-full md:w-10/12 lg:w-8/12"
-    style="max-width:85vw;"
-  >
+  <div class="surface-0 border-round shadow-2 py-4 px-6 w-full md:w-10/12 lg:w-8/12" style="max-width:85vw;">
 
     <!-- Título general -->
     <div class="text-center mb-6">
@@ -17,185 +15,138 @@
     <div [ngSwitch]="activeIndex">
 
       <!-- Paso 1: Información personal -->
-<form [formGroup]="personalForm" class="p-fluid p-formgrid p-grid gap-3 p-4">
-  <!-- SECCION NOMBRES Y APELLIDOS  -->
-   <div class="formgrid grid">
-    <div class="field col-12 md:col-6">
-      <label for="nombres">Nombres</label>
-      <input id="nombres" pInputText formControlName="nombres" />
-    </div>
-    <div class="field col-12 md:col-6">
-      <label for="apellidos">Apellidos</label>
-      <input id="apellidos" pInputText formControlName="apellidos" />
-    </div>
-    <div class="field col-12 md:col-6">
-      <label for="telefono">Telefono</label>
-       <input
-         #phoneInput
-         id="telefono"
-         type="tel"
-         dir="ltr"
-         [class.p-inputtext]="true"
-         formControlName="telefono"
-         placeholder="234 567 890"
-       />
-     </div>
-     <div class="field col-12 md:col-6">
-       <label for="fechaNacimiento">Fecha de Nacimiento</label>
-       <p-calendar
-         inputId="fechaNacimiento"
-         formControlName="fechaNacimiento"
-         [showIcon]="true"
-         dateFormat="yy-mm-dd">
-       </p-calendar>
-     </div>
-     <!-- DIRECCION -->
-     <div class="field col-12">
-        <label for="direccion">Dirección</label>
-        <input id="direccion" pInputText formControlName="direccion" />
-     </div>
+      <form [formGroup]="personalForm" class="p-fluid p-formgrid p-grid gap-3 p-4" *ngSwitchCase="0">
+        <!-- SECCION NOMBRES Y APELLIDOS  -->
+        <div class="formgrid grid">
+          <div class="field col-12 md:col-6">
+            <label class="font-bold" for="nombres">Nombres</label>
+            <input id="nombres" pInputText formControlName="nombres" />
+          </div>
+          <div class="field col-12 md:col-6">
+            <label class="font-bold" for="apellidos">Apellidos</label>
+            <input id="apellidos" pInputText formControlName="apellidos" />
+          </div>
+          <div class="field col-12 md:col-6">
+            <label class="font-bold" for="telefono">Telefono</label>
+            <input #phoneInput id="telefono" type="tel" dir="ltr" [class.p-inputtext]="true" formControlName="telefono"
+              placeholder="234 567 890" />
+          </div>
+          <div class="field col-12 md:col-6">
+            <label class="font-bold" for="fechaNacimiento">Fecha de Nacimiento</label>
+            <p-calendar inputId="fechaNacimiento" formControlName="fechaNacimiento" [showIcon]="true"
+              dateFormat="yy-mm-dd">
+            </p-calendar>
+          </div>
+          <!-- DIRECCION -->
+          <div class="field col-12">
+            <label class="font-bold" for="direccion">Dirección</label>
+            <input id="direccion" pInputText formControlName="direccion" />
+          </div>
 
-     <!-- PAIS -->
-      <div class="field col-12 md:col-4">
-        <label for="pais">País</label>
-        <p-dropdown
-          inputId="pais"
-          [options]="listPaises"
-          optionLabel="nombre"
-          optionValue="id"
-          formControlName="pais"
-          [filter]="true"
-          [showClear]="true"
-          appendTo="body">
-        </p-dropdown>
-     </div>
+          <!-- PAIS -->
+          <div class="field col-12 md:col-4">
+            <label class="font-bold" for="pais">País</label>
+            <p-dropdown inputId="pais" [options]="listPaises" optionLabel="nombre" optionValue="id"
+              formControlName="pais" [filter]="true" [showClear]="true" appendTo="body">
+            </p-dropdown>
+          </div>
 
-     <!-- PROVINCIA -->
-     <div class="field col-12 md:col-4">
-        <label for="provincia">Provincia / Estado</label>
-        <p-dropdown
-          inputId="provincia"
-          [options]="filteredProvincias"
-          optionLabel="nombre"
-          optionValue="id"
-          formControlName="provincia"
-          [filter]="true"
-          [showClear]="true"
-          appendTo="body">
-        </p-dropdown>
-     </div>
-      <!-- CIUDAD -->
-      <div class="field col-12 md:col-4">
-        <label for="ciudad">Ciudad / Municipio</label>
-        <p-dropdown
-          inputId="ciudad"
-          [options]="filteredCiudades"
-          optionLabel="nombre"
-          optionValue="id"
-          formControlName="ciudad"
-          [filter]="true"
-          [showClear]="true"
-          appendTo="body">
-        </p-dropdown>
-      </div>
+          <!-- PROVINCIA -->
+          <div class="field col-12 md:col-4">
+            <label class="font-bold" for="provincia">Provincia / Estado</label>
+            <p-dropdown inputId="provincia" [options]="filteredProvincias" optionLabel="nombre" optionValue="id"
+              formControlName="provincia" [filter]="true" [showClear]="true" appendTo="body">
+            </p-dropdown>
+          </div>
+          <!-- CIUDAD -->
+          <div class="field col-12 md:col-4">
+            <label class="font-bold" for="ciudad">Ciudad / Municipio</label>
+            <p-dropdown inputId="ciudad" [options]="filteredCiudades" optionLabel="nombre" optionValue="id"
+              formControlName="ciudad" [filter]="true" [showClear]="true" appendTo="body">
+            </p-dropdown>
+          </div>
 
-      <!-- OCUPACION -->
-      <div class="field col-12 md:col-6">
-        <label for="ocupacion">Ocupación</label>
-        <p-dropdown
-        inputId="ocupacion"
-        [options]="listOcupaciones"
-        optionLabel="descripcion"
-        optionValue="id"
-        formControlName="ocupacion"
-        [filter]="true"
-        [showClear]="true"
-        appendTo="body">
-        </p-dropdown>
-      </div>
+          <!-- OCUPACION -->
+          <div class="field col-12 md:col-6">
+            <label class="font-bold" for="ocupacion">Ocupación</label>
+            <p-dropdown inputId="ocupacion" [options]="listOcupaciones" optionLabel="descripcion" optionValue="id"
+              formControlName="ocupacion" [filter]="true" [showClear]="true" appendTo="body">
+            </p-dropdown>
+          </div>
 
-      <!-- GENERO -->
-      <div class="field col-12 md:col-6">
-        <label for="genero">Género</label>
-        <p-dropdown
-        inputId="genero"
-        [options]="listGeneros"
-        optionLabel="descripcion"
-        optionValue="id"
-        formControlName="genero"
-        [showClear]="true"
-        appendTo="body">
-      </p-dropdown>
-      </div>
-  </div>
-  <!-- Botones -->
-  <div class="p-col-12 flex justify-content-between mt-3">
-    <button pButton label="Atrás" class="p-button-outlined p-button-sm" (click)="prev()" [disabled]="activeIndex === 0"></button>
-    <button pButton label="Siguiente" class="p-button-warning p-button-sm" (click)="next()"></button>
-  </div>
-</form>
+          <!-- GENERO -->
+          <div class="field col-12 md:col-6">
+            <label class="font-bold" for="genero">Género</label>
+            <p-dropdown inputId="genero" [options]="listGeneros" optionLabel="descripcion" optionValue="id"
+              formControlName="genero" [showClear]="true" appendTo="body">
+            </p-dropdown>
+          </div>
+        </div>
+        <!-- Botones -->
+        <div class="p-col-12 flex justify-content-between mt-3 gap-4">
+          <button pButton label="Atrás" [outlined]="true" severity="secondary" (click)="prev()"
+            [disabled]="activeIndex === 0"></button>
+          <button pButton label="Siguiente" class="p-button-warning p-button-sm" (click)="next()"></button>
+        </div>
+      </form>
 
 
       <!-- Paso 2: Documentos -->
       <div *ngSwitchCase="1">
-        <h3 class="text-lg font-semibold text-gray-800 mb-3">Documentos</h3>
+        <!-- <h3 class="text-lg font-semibold text-gray-800 mb-3">Documentos</h3> -->
         <form [formGroup]="docsForm" class="p-fluid p-formgrid p-grid gap-2 p-4">
-          <div class="p-field p-col-12">
-            <label>Foto del rostro (selfie) *</label>
-            <p-fileUpload
-              mode="basic"
-              name="selfie"
-              accept="image/*"
-              maxFileSize="1000000"
-              chooseLabel="Seleccionar selfie"
-              customUpload="true"
-              (onSelect)="onSelfieSelect($event)"
-            ></p-fileUpload>
+          <div class="flex flex-column gap-4">
+            <div class="p-field p-col-12">
+              <p-panel>
+                <ng-template pTemplate="header" style="display: none;">
+                </ng-template>
+                <div class="font-bold pb-3">Foto del rostro (selfie)</div>
+
+                <div class="pb-2">
+                  <p-fileUpload mode="basic" name="selfie" accept="image/*" maxFileSize="1000000"
+                    styleClass="border-dotted w-full surface-800" chooseLabel="Seleccionar selfie" customUpload="true"
+                    (onSelect)="onSelfieSelect($event)"></p-fileUpload>
+                </div>
+
+                <div class="text-sm">Solo se aceptan imágenes</div>
+              </p-panel>
+            </div>
+            <div class="p-field p-col-12">
+              <p-panel>
+                <ng-template pTemplate="header" style="display: none;">
+                </ng-template>
+                <div class="font-bold pb-3">Foto reverso del DNI</div>
+                <div class="pb-2">
+                  <p-fileUpload mode="basic" name="dniReverso" accept="image/*" maxFileSize="1000000"
+                    chooseLabel="Seleccionar reverso" customUpload="true" styleClass="border-dotted w-full surface-800"
+                    (onSelect)="onDniReversoSelect($event)"></p-fileUpload>
+                </div>
+                <div class="text-sm">Solo se aceptan imágenes</div>
+              </p-panel>
+            </div>
           </div>
-          <div class="p-field p-col-12">
-            <label>Foto reverso del DNI *</label>
-            <p-fileUpload
-              mode="basic"
-              name="dniReverso"
-              accept="image/*"
-              maxFileSize="1000000"
-              chooseLabel="Seleccionar reverso"
-              customUpload="true"
-              (onSelect)="onDniReversoSelect($event)"
-            ></p-fileUpload>
-          </div>
-          <div class="p-field p-col-12 flex justify-content-between mt-4">
-            <button pButton label="Atrás" class="p-button-outlined p-button-sm" (click)="prev()"></button>
+
+          <div class="p-field p-col-12 flex justify-content-between mt-4 gap-4">
+            <button pButton label="Atrás" [outlined]="true" severity="secondary" (click)="prev()"></button>
             <button pButton label="Siguiente" class="p-button-warning p-button-sm" (click)="next()"></button>
           </div>
         </form>
       </div>
 
       <!-- Paso 3: Credenciales -->
-      <form
-        *ngSwitchCase="2"
-        [formGroup]="credentialsForm"
-        class="p-fluid p-formgrid p-grid gap-2 p-4"
-      >
+      <form *ngSwitchCase="2" [formGroup]="credentialsForm" class="p-fluid p-formgrid p-grid gap-2 p-4">
+        <div>Credenciales de Acceso</div>
         <div class="p-field p-col-12">
+          <label class="font-bold" for="nombres">Correo Electrónico</label>
           <span class="p-input-icon-left w-full">
             <i class="pi pi-envelope"></i>
-            <input
-              pInputText
-              placeholder="Correo Electrónico"
-              formControlName="email"
-              class="w-full"
-            />
+            <input pInputText formControlName="email" class="w-full" />
           </span>
         </div>
         <div class="p-field p-col-12">
-          <p-password
-            formControlName="password"
-            [feedback]="false"
-            placeholder="Contraseña"
-            toggleMask="true"
-            inputClass="w-full"
-          >
+          <label class="font-bold" for="nombres">Contraseña</label>
+          <p-password formControlName="password" [feedback]="false" toggleMask="true"
+            inputClass="w-full">
             <ng-template pTemplate="lefticon">
               <i class="pi pi-lock"></i>
             </ng-template>

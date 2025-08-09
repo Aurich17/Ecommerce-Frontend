@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
@@ -15,6 +15,9 @@ import { ApiService } from '../../../../services/api.services';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import intlTelInput from 'intl-tel-input';
+import { ToastModule } from 'primeng/toast';
+import { PanelModule } from 'primeng/panel';
+
 type IntlTelOptions = NonNullable<Parameters<typeof intlTelInput>[1]>;
 
 
@@ -32,9 +35,12 @@ type IntlTelOptions = NonNullable<Parameters<typeof intlTelInput>[1]>;
     FileUploadModule,
     PasswordModule,
     ButtonModule,
+    ToastModule,
+    PanelModule
   ],
   templateUrl: './cliente.component.html',
   styleUrl: './cliente.component.css',
+  providers: [MessageService]
 })
 export class ClienteComponent implements AfterViewInit, OnDestroy{
   @ViewChild('phoneInput', { static: true }) phoneInput!: ElementRef<HTMLInputElement>;
@@ -83,7 +89,7 @@ export class ClienteComponent implements AfterViewInit, OnDestroy{
     contactoTelefono: new FormControl('')
   });
   // Constructor======================================================================================
-  constructor(private apiService: ApiService, private router: Router){}
+  constructor(private apiService: ApiService, private router: Router, private messageService: MessageService){}
   ngOnDestroy(): void {
     throw new Error('Method not implemented.');
   }
@@ -164,9 +170,24 @@ export class ClienteComponent implements AfterViewInit, OnDestroy{
   // any[] = [{ label: 'Seleccione un país', value: null }];
 
   next() {
-    if (this.activeIndex === 0 && this.personalForm.invalid) return;
-    if (this.activeIndex === 1 && this.docsForm.invalid) return;
-    if (this.activeIndex === 2 && this.credentialsForm.invalid) return;
+    if (this.activeIndex === 0 && this.personalForm.invalid){
+      this.personalForm.markAllAsTouched(); 
+      this.messageService.clear();
+      this.messageService.add({ severity: 'warn', summary: 'Campos Obligatorios', detail: 'Falta llenar campos.' });
+      return;
+    } 
+    if (this.activeIndex === 1 && this.docsForm.invalid){ 
+      this.docsForm.markAllAsTouched(); 
+      this.messageService.clear();
+      this.messageService.add({ severity: 'warn', summary: 'Documentos Obligatorios', detail: 'No se hn adjuntado todos los documentos necesarios.' });
+      return;
+    }
+    if (this.activeIndex === 2 && this.credentialsForm.invalid){ 
+      this.credentialsForm.markAllAsTouched(); 
+      this.messageService.clear();
+      this.messageService.add({ severity: 'warn', summary: 'Credenciales Obligtorias', detail: 'Falta llenar campos.' });
+      return;
+    }
     this.activeIndex++;
   }
 
