@@ -1,0 +1,41 @@
+<p-accordion [activeIndex]="0">
+    <p-accordionTab header="Contenido Principal">
+        <form [formGroup]="encabezadoform" class="block p-fluid p-formgrid p-grid gap-2 p-4">
+            <div class="field">
+                <label class="text-base font-bold" for="titulo">Título principal</label>
+                <input type="text" pInputText class="w-full text-sm" formControlName="titulo" id="titulo" placeholder="Bienvenido a FIAOX">
+            </div>
+
+            <div class="field">
+                <label class="text-base font-bold" for="subtitulo">Subtítulo</label>
+                <input type="text" pInputText class="w-full text-sm" formControlName="subtitulo" id="subtitulo"
+                    placeholder="Flexibilizamos las compras en CUBA con PAGOS EN CUOTAS">
+            </div>
+
+            <div class="field">
+                <label class="text-base font-bold" for="parafrasis">Paráfrasis del encabezado</label>
+                <input type="text" pInputText class="w-full text-sm" formControlName="parafrasis" id="parafrasis"
+                    placeholder="Compra el producto que necesitas pagando solo el 50% al inicio. Recibe el producto y paga el resto en dos cómodas cuotas">
+            </div>
+
+            <div class="field">
+                <label class="text-base font-bold" for="tituloMP">Título del Marketplace</label>
+                <input type="text" pInputText class="w-full text-sm" formControlName="tituloMP" id="tituloMP" placeholder="Descubre lo mejor del mercado">
+            </div>
+
+            <div class="field">
+                <label class="text-base font-bold" for="subtituloMP">Subtítulo del Marketplace</label>
+                <input type="text" pInputText class="w-full text-sm" formControlName="subtituloMP" id="subtituloMP"
+                    placeholder="Compra productos directamente de empresas verificadas en un solo lugar">
+            </div>
+
+            <div class="field">
+                <label class="text-base font-bold" for="nota">Nota: ¿Cómo funciona?</label>
+                <input type="text" pInputText class="w-full text-sm" formControlName="nota" id="nota"
+                    placeholder="Las tiendas reciben una parte inicial y luego FIAOX recuerda el pago...">
+            </div>
+
+            <p-button  styleClass="w-full" label="Guardar Cambios" (onClick)="guardarCambios()"/>
+        </form>
+    </p-accordionTab>
+</p-accordion>
