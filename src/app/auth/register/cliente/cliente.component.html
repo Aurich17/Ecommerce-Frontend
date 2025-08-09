@@ -17,120 +17,124 @@
     <div [ngSwitch]="activeIndex">
 
       <!-- Paso 1: Información personal -->
-      <form
-        *ngSwitchCase="0"
-        [formGroup]="personalForm"
-        class="p-fluid p-formgrid p-grid gap-2 p-4"
-      >
-        <!-- Nombres / Apellidos -->
-        <div class="p-field p-col-12 p-md-6">
-          <label for="nombres">Nombres *</label>
-          <input
-            id="nombres"
-            pInputText
-            formControlName="nombres"
-            placeholder="Ej. Juan Carlos"
-          />
-        </div>
-        <div class="p-field p-col-12 p-md-6">
-          <label for="apellidos">Apellidos *</label>
-          <input
-            id="apellidos"
-            pInputText
-            formControlName="apellidos"
-            placeholder="Ej. Pérez Gómez"
-          />
-        </div>
+<form [formGroup]="personalForm" class="p-fluid p-formgrid p-grid gap-3 p-4">
+  <!-- SECCION NOMBRES Y APELLIDOS  -->
+   <div class="formgrid grid">
+    <div class="field col-12 md:col-6">
+      <label for="nombres">Nombres</label>
+      <input id="nombres" pInputText formControlName="nombres" />
+    </div>
+    <div class="field col-12 md:col-6">
+      <label for="apellidos">Apellidos</label>
+      <input id="apellidos" pInputText formControlName="apellidos" />
+    </div>
+    <div class="field col-12 md:col-6">
+      <label for="telefono">Telefono</label>
+       <input
+         #phoneInput
+         id="telefono"
+         type="tel"
+         dir="ltr"
+         [class.p-inputtext]="true"
+         formControlName="telefono"
+         placeholder="234 567 890"
+       />
+     </div>
+     <div class="field col-12 md:col-6">
+       <label for="fechaNacimiento">Fecha de Nacimiento</label>
+       <p-calendar
+         inputId="fechaNacimiento"
+         formControlName="fechaNacimiento"
+         [showIcon]="true"
+         dateFormat="yy-mm-dd">
+       </p-calendar>
+     </div>
+     <!-- DIRECCION -->
+     <div class="field col-12">
+        <label for="direccion">Dirección</label>
+        <input id="direccion" pInputText formControlName="direccion" />
+     </div>
 
-        <!-- Teléfono -->
-        <div class="p-field p-col-12">
-          <label for="telefono">Teléfono *</label>
-          <input
-            id="telefono"
-            pInputText
-            formControlName="telefono"
-            placeholder="+1 234 567 890"
-          />
-        </div>
+     <!-- PAIS -->
+      <div class="field col-12 md:col-4">
+        <label for="pais">País</label>
+        <p-dropdown
+          inputId="pais"
+          [options]="listPaises"
+          optionLabel="nombre"
+          optionValue="id"
+          formControlName="pais"
+          [filter]="true"
+          [showClear]="true"
+          appendTo="body">
+        </p-dropdown>
+     </div>
 
-        <!-- Dirección -->
-        <div class="p-field p-col-12">
-          <label for="direccion">Dirección</label>
-          <input
-            id="direccion"
-            pInputText
-            formControlName="direccion"
-            placeholder="Ej. Av. Siempre Viva 742"
-          />
-        </div>
+     <!-- PROVINCIA -->
+     <div class="field col-12 md:col-4">
+        <label for="provincia">Provincia / Estado</label>
+        <p-dropdown
+          inputId="provincia"
+          [options]="filteredProvincias"
+          optionLabel="nombre"
+          optionValue="id"
+          formControlName="provincia"
+          [filter]="true"
+          [showClear]="true"
+          appendTo="body">
+        </p-dropdown>
+     </div>
+      <!-- CIUDAD -->
+      <div class="field col-12 md:col-4">
+        <label for="ciudad">Ciudad / Municipio</label>
+        <p-dropdown
+          inputId="ciudad"
+          [options]="filteredCiudades"
+          optionLabel="nombre"
+          optionValue="id"
+          formControlName="ciudad"
+          [filter]="true"
+          [showClear]="true"
+          appendTo="body">
+        </p-dropdown>
+      </div>
 
-        <!-- Fecha de Nacimiento -->
-        <div class="p-field p-col-12 p-md-4">
-          <label for="fechaNacimiento">Fecha de Nacimiento</label>
-          <p-calendar
-            id="fechaNacimiento"
-            formControlName="fechaNacimiento"
-            dateFormat="yy-mm-dd"
-          ></p-calendar>
-        </div>
+      <!-- OCUPACION -->
+      <div class="field col-12 md:col-6">
+        <label for="ocupacion">Ocupación</label>
+        <p-dropdown
+        inputId="ocupacion"
+        [options]="listOcupaciones"
+        optionLabel="descripcion"
+        optionValue="id"
+        formControlName="ocupacion"
+        [filter]="true"
+        [showClear]="true"
+        appendTo="body">
+        </p-dropdown>
+      </div>
 
-        <!-- País / Provincia / Ciudad -->
-        <div class="p-field p-col-12 p-md-4">
-          <label for="pais">País</label>
-          <p-dropdown
-            id="pais"
-            [options]="paises"
-            formControlName="pais"
-            placeholder="Seleccione un país"
-          ></p-dropdown>
-        </div>
-        <div class="p-field p-col-12 p-md-4">
-          <label for="provincia">Provincia / Estado</label>
-          <p-dropdown
-            id="provincia"
-            [options]="provincias"
-            formControlName="provincia"
-            placeholder="Seleccione una provincia"
-          ></p-dropdown>
-        </div>
+      <!-- GENERO -->
+      <div class="field col-12 md:col-6">
+        <label for="genero">Género</label>
+        <p-dropdown
+        inputId="genero"
+        [options]="listGeneros"
+        optionLabel="descripcion"
+        optionValue="id"
+        formControlName="genero"
+        [showClear]="true"
+        appendTo="body">
+      </p-dropdown>
+      </div>
+  </div>
+  <!-- Botones -->
+  <div class="p-col-12 flex justify-content-between mt-3">
+    <button pButton label="Atrás" class="p-button-outlined p-button-sm" (click)="prev()" [disabled]="activeIndex === 0"></button>
+    <button pButton label="Siguiente" class="p-button-warning p-button-sm" (click)="next()"></button>
+  </div>
+</form>
 
-        <!-- Ocupación / Género -->
-        <div class="p-field p-col-12 p-md-6">
-          <label for="ocupacion">Ocupación</label>
-          <p-dropdown
-            id="ocupacion"
-            [options]="ocupaciones"
-            formControlName="ocupacion"
-            placeholder="Seleccione una ocupación"
-          ></p-dropdown>
-        </div>
-        <div class="p-field p-col-12 p-md-6">
-          <label for="genero">Género</label>
-          <p-dropdown
-            id="genero"
-            [options]="generos"
-            formControlName="genero"
-            placeholder="Seleccione su género"
-          ></p-dropdown>
-        </div>
-
-        <!-- Botones -->
-        <div class="p-field p-col-12 flex justify-content-between mt-4">
-          <button
-            pButton
-            label="Atrás"
-            class="p-button-outlined p-button-sm w-5"
-            (click)="prev()"
-            [disabled]="activeIndex === 0"
-          ></button>
-          <button
-            pButton
-            label="Siguiente"
-            class="p-button-warning p-button-sm w-5"
-            (click)="next()"
-          ></button>
-        </div>
-      </form>
 
       <!-- Paso 2: Documentos -->
       <div *ngSwitchCase="1">

@@ -33,7 +33,12 @@
         </div>
       </div>
 
-      <p-button label="CONTINUAR" styleClass="w-full p-button-warning mb-3" [disabled]="!selectedType"></p-button>
+      <p-button
+        label="CONTINUAR"
+        styleClass="w-full p-button-warning mb-3"
+        [disabled]="!selectedType"
+        (onClick)="continuar()"
+      ></p-button>
 
       <p-button label="← Volver al inicio" styleClass="w-full p-button-outlined p-button-secondary mb-3" [routerLink]="'/'"></p-button>
 

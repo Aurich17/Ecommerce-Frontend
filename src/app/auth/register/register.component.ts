@@ -27,7 +27,7 @@ export class RegisterComponent {
     if (this.selectedType === 'cliente') {
       this.router.navigate(['/register/cliente']);
     } else if (this.selectedType === 'tienda') {
-      this.router.navigate(['/register/tienda']);
+      this.router.navigate(['/register/empresa']);
     }
   }
 }

@@ -22,7 +22,12 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/intl-tel-input/build/js",
+                "output": "/assets/intl-tel-input/"
+              }
             ],
             "styles": [
               "src/styles.css"
