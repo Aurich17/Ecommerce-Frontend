@@ -24,17 +24,13 @@
         <p-password
           id="password1"
           type="password"
+          class="w-full"
           [feedback]="false"
-          placeholder="Ingresa tu contraseña"
-          styleClass="p-input-icon-left p-input-icon-right"
-          [style]="{'width': '100%'}"
-          [inputStyle]="{'width': '100%'}"
+          placeholder="Password"
+          styleClass="p-password p-component p-inputwrapper p-input-icon-right"
+          [style]="{'width':'100%'}"
+          [inputStyle]="{'width':'100%'}"
           [toggleMask]="true">
-
-          <ng-template pTemplate="lefticon">
-            <i class="pi pi-lock"></i>
-          </ng-template>
-
         </p-password>
       </div>
 
