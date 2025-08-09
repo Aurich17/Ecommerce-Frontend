@@ -34,7 +34,7 @@ type IntlTelOptions = NonNullable<Parameters<typeof intlTelInput>[1]>;
     ButtonModule,
   ],
   templateUrl: './cliente.component.html',
-  styleUrl: './cliente.component.css'
+  styleUrl: './cliente.component.css',
 })
 export class ClienteComponent implements AfterViewInit, OnDestroy{
   @ViewChild('phoneInput', { static: true }) phoneInput!: ElementRef<HTMLInputElement>;
