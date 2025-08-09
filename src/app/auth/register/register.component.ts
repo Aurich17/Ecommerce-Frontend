@@ -4,6 +4,7 @@ import { ButtonModule } from 'primeng/button';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // ✅ IMPORTANTE
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-register',

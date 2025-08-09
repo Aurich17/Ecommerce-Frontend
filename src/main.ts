@@ -3,6 +3,7 @@ import { appConfig } from './app/app.config';
 import { AppComponent } from './app/app.component';
 import { provideHttpClient } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { RouterModule } from '@angular/router';
 
 bootstrapApplication(AppComponent, {
   ...appConfig,
