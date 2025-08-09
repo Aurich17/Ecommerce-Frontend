@@ -3,9 +3,13 @@
 @import "primeng/resources/primeng.css";
 @import 'primeflex/primeflex.css';
 @import "primeicons/primeicons.css";
+@import "intl-tel-input/build/css/intlTelInput.css";
 
 html, body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
 }
+
+.iti { width: 100%; }
+.iti input { width: 100%; }

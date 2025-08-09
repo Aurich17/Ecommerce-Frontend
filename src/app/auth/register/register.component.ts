@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -8,5 +9,15 @@ import { Component } from '@angular/core';
   styleUrl: './register.component.css'
 })
 export class RegisterComponent {
+  selectedType: string = '';
 
+  constructor(private router: Router) {}
+
+  continuar() {
+    if (this.selectedType === 'cliente') {
+      this.router.navigate(['/register/cliente']);
+    } else if (this.selectedType === 'tienda') {
+      this.router.navigate(['/register/empresa']);
+    }
+  }
 }
