@@ -3,36 +3,32 @@
         <form [formGroup]="encabezadoform" class="block p-fluid p-formgrid p-grid gap-2 p-4">
             <div class="field">
                 <label class="text-base font-bold" for="titulo">Título principal</label>
-                <input type="text" pInputText class="w-full text-sm" formControlName="titulo" id="titulo" placeholder="Bienvenido a FIAOX">
+                <input type="text" pInputText class="w-full text-sm" formControlName="titulo" id="titulo">
             </div>
 
             <div class="field">
                 <label class="text-base font-bold" for="subtitulo">Subtítulo</label>
-                <input type="text" pInputText class="w-full text-sm" formControlName="subtitulo" id="subtitulo"
-                    placeholder="Flexibilizamos las compras en CUBA con PAGOS EN CUOTAS">
+                <input type="text" pInputText class="w-full text-sm" formControlName="subtitulo" id="subtitulo">
             </div>
 
             <div class="field">
                 <label class="text-base font-bold" for="parafrasis">Paráfrasis del encabezado</label>
-                <input type="text" pInputText class="w-full text-sm" formControlName="parafrasis" id="parafrasis"
-                    placeholder="Compra el producto que necesitas pagando solo el 50% al inicio. Recibe el producto y paga el resto en dos cómodas cuotas">
+                <input type="text" pInputText class="w-full text-sm" formControlName="parafrasis" id="parafrasis">
             </div>
 
             <div class="field">
                 <label class="text-base font-bold" for="tituloMP">Título del Marketplace</label>
-                <input type="text" pInputText class="w-full text-sm" formControlName="tituloMP" id="tituloMP" placeholder="Descubre lo mejor del mercado">
+                <input type="text" pInputText class="w-full text-sm" formControlName="tituloMP" id="tituloMP">
             </div>
 
             <div class="field">
                 <label class="text-base font-bold" for="subtituloMP">Subtítulo del Marketplace</label>
-                <input type="text" pInputText class="w-full text-sm" formControlName="subtituloMP" id="subtituloMP"
-                    placeholder="Compra productos directamente de empresas verificadas en un solo lugar">
+                <input type="text" pInputText class="w-full text-sm" formControlName="subtituloMP" id="subtituloMP">
             </div>
 
             <div class="field">
                 <label class="text-base font-bold" for="nota">Nota: ¿Cómo funciona?</label>
-                <input type="text" pInputText class="w-full text-sm" formControlName="nota" id="nota"
-                    placeholder="Las tiendas reciben una parte inicial y luego FIAOX recuerda el pago...">
+                <input type="text" pInputText class="w-full text-sm" formControlName="nota" id="nota">
             </div>
 
             <p-button  styleClass="w-full" label="Guardar Cambios" (onClick)="guardarCambios()"/>

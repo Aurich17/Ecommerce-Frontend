@@ -1,1 +1,54 @@
-<p>cuerpo works!</p>
+<div class="flex flex-column gap-4">
+    <p-card>
+        <ng-template pTemplate="header">
+            <div class="p-2 font-bold text-xl">
+                <p>Características</p>
+            </div>
+        </ng-template>
+        <p-table [value]="caracteristicasTable" class="w-full">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="text-sm">ID</th>
+                    <th class="text-sm">Ícono</th>
+                    <th class="text-sm">Título</th>
+                    <th class="text-sm">Descripción</th>
+                    <th class="text-sm">Acciones</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-product>
+                <tr>
+                    <td class="text-sm">{{ product.code }}</td>
+                    <td class="text-sm">{{ product.name }}</td>
+                    <td class="text-sm">{{ product.category }}</td>
+                    <td class="text-sm">{{ product.quantity }}</td>
+                    <td class="text-sm">{{ product.quantity }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-card>
+    <p-card>
+        <ng-template pTemplate="header">
+            <div class="p-2">
+                <p>Preguntas Frecuentes</p>
+            </div>
+        </ng-template>
+        <p-table [value]="preguntasTable" class="w-full">
+            <ng-template pTemplate="header" class="text-xs">
+                <tr>
+                    <th class="text-sm">ID</th>
+                    <th class="text-sm">Pregunta</th>
+                    <th class="text-sm">Respuesta</th>
+                    <th class="text-sm">Acciones</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-product>
+                <tr>
+                    <td class="text-sm">{{ product.code }}</td>
+                    <td class="text-sm">{{ product.name }}</td>
+                    <td class="text-sm">{{ product.category }}</td>
+                    <td class="text-sm">{{ product.quantity }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-card>
+</div>
