@@ -17,6 +17,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import intlTelInput from 'intl-tel-input';
 import { ToastModule } from 'primeng/toast';
 import { PanelModule } from 'primeng/panel';
+import { DividerModule } from 'primeng/divider';
+import { InputIconModule } from 'primeng/inputicon';
+import { IconFieldModule } from 'primeng/iconfield';
+import { CardModule } from 'primeng/card';
 
 type IntlTelOptions = NonNullable<Parameters<typeof intlTelInput>[1]>;
 
@@ -36,7 +40,11 @@ type IntlTelOptions = NonNullable<Parameters<typeof intlTelInput>[1]>;
     PasswordModule,
     ButtonModule,
     ToastModule,
-    PanelModule
+    PanelModule,
+    DividerModule,
+    InputIconModule,
+    IconFieldModule,
+    CardModule
   ],
   templateUrl: './cliente.component.html',
   styleUrl: './cliente.component.css',
@@ -83,10 +91,10 @@ export class ClienteComponent implements AfterViewInit, OnDestroy{
   });
 
   credentialsForm = new FormGroup({
-    email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', Validators.required),
-    contactoNombre: new FormControl(''),
-    contactoTelefono: new FormControl('')
+    email: new FormControl(null, [Validators.required, Validators.email]),
+    password: new FormControl(null, Validators.required),
+    contactoNombre: new FormControl(null),
+    contactoTelefono: new FormControl(null)
   });
   // Constructor======================================================================================
   constructor(private apiService: ApiService, private router: Router, private messageService: MessageService){}
