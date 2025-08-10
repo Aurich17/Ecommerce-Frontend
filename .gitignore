@@ -11,7 +11,7 @@
 /node_modules
 npm-debug.log
 yarn-error.log
-
+.vscode/settings.json
 # IDEs and editors
 .idea/
 .project
@@ -41,3 +41,4 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+.vscode/settings.json
