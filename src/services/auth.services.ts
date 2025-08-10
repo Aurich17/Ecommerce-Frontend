@@ -3,11 +3,12 @@ import { HttpClient} from '@angular/common/http';
 import { Observable} from 'rxjs';
 import { LoginResponse } from '../app/auth/login/domain/response/login.response';
 import { LoginRequest } from '../app/auth/login/domain/request/login.request';
+import { environment } from '../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000';
+  private apiUrl = environment.urlApi;
   // private apiUrl = 'https://ecommerce-backend-na5u.onrender.com/api'; // URL de tu API
 
   constructor(private http: HttpClient) {}

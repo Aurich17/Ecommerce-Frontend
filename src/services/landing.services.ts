@@ -4,11 +4,12 @@ import { BehaviorSubject, catchError, Observable, of, shareReplay, tap, throwErr
 import { ciudadesResponse, paisesResponse, provinciasResponse, tiposResponse } from '../app/auth/register/domain/response/register.response';
 import { EncabezadoResponse } from '../app/admin/landing/encabezado/domain/response/encabezado.response';
 import { EncabezadoRequest } from '../app/admin/landing/encabezado/domain/request/encabezado.request';
+import { environment } from '../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class LandingService {
-  private apiUrl = 'http://localhost:3000';
+  private apiUrl = environment.urlApi;
   // private apiUrl = 'https://ecommerce-backend-na5u.onrender.com/api'; // URL de tu API
 
   constructor(private http: HttpClient) {}

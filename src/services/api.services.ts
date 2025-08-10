@@ -3,11 +3,13 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, catchError, Observable, of, shareReplay, tap, throwError } from 'rxjs';
 import { ciudadesResponse, paisesResponse, provinciasResponse, registerClienteResponse, tiposResponse } from '../app/auth/register/domain/response/register.response';
 import { registerClienteRequest } from '../app/auth/register/domain/request/register.request';
+import { environment } from '../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = 'http://localhost:3000';
+  private apiUrl = environment.urlApi; // URL de tu API desde el entorno
+  // private apiUrl = 'http://localhost:3000';
   // private apiUrl = 'https://ecommerce-backend-na5u.onrender.com/api'; // URL de tu API
 
   constructor(private http: HttpClient) { }
