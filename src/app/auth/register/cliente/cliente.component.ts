@@ -58,12 +58,12 @@ type IntlTelOptions = NonNullable<Parameters<typeof intlTelInput>[1]>;
   styleUrl: './cliente.component.css',
   providers: [MessageService]
 })
-export class ClienteComponent implements AfterViewInit, OnDestroy {
+export class ClienteComponent implements AfterViewInit {
   @ViewChild('phoneInput', { static: true }) phoneInput!: ElementRef<HTMLInputElement>;
   private iti: any;
   visible: boolean = false;
   private auth = inject(AuthService);
-    private session = inject(SessionService);
+  private session = inject(SessionService);
   // Options (deben cargarse dinámicamente)
   listPaises: paisesResponse[] = []
   listProvincias: provinciasResponse[] = [];
@@ -112,9 +112,6 @@ export class ClienteComponent implements AfterViewInit, OnDestroy {
   });
   // Constructor======================================================================================
   constructor(private apiService: ApiService, private router: Router, private messageService: MessageService) { }
-  ngOnDestroy(): void {
-    throw new Error('Method not implemented.');
-  }
   //NgOnInit==========================================================================================
   ngOnInit() {
     this.getPaises();
@@ -377,8 +374,9 @@ export class ClienteComponent implements AfterViewInit, OnDestroy {
       )
       .subscribe({
         next: (res) => {
+          console.log('Login OK', res);
           this.session.setFromLogin(res);
-          this.router.navigate(['/principal']);
+          this.router.navigate(["/principal"]);
         },
         error: (err: HttpErrorResponse) => {
           this.errorMsg = err?.error?.message
