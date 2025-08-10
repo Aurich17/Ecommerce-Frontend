@@ -1,3 +1,29 @@
 :host ::ng-deep .p-panelmenu a {
   text-decoration: none !important;
 }
+
+:host ::ng-deep .p-panelmenu .p-panelmenu-header .p-panelmenu-header-content{
+  border: none !important;
+  color: white !important;
+  background: white !important;
+  width: 100% !important;
+}
+
+:host ::ng-deep .text-primary{
+  color: #6b7280 !important;
+}
+
+::ng-deep .p-panelmenu .p-panelmenu-content{
+  display: flex !important;
+  padding-left: 1.5rem;
+  border: none !important;
+}
+::ng-deep .p-panelmenu .p-panelmenu-content .p-panelmenu-root-list{
+  gap: 1rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+::ng-deep .p-panelmenulist.p-element .ng-tns-c147418153-0 {
+  border-left: #6b7280 1px solid !important;
+}
