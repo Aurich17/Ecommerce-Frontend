@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, OnDestroy, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { MenuItem, MessageService } from 'primeng/api';
@@ -12,11 +12,22 @@ import { DropdownModule } from 'primeng/dropdown';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ciudadesResponse, paisesResponse, provinciasResponse, tiposResponse } from '../domain/response/register.response';
 import { ApiService } from '../../../../services/api.services';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpErrorResponse } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import intlTelInput from 'intl-tel-input';
 import { ToastModule } from 'primeng/toast';
 import { PanelModule } from 'primeng/panel';
+import { DividerModule } from 'primeng/divider';
+import { InputIconModule } from 'primeng/inputicon';
+import { IconFieldModule } from 'primeng/iconfield';
+import { CardModule } from 'primeng/card';
+import { registerClienteRequest } from '../domain/request/register.request';
+import { finalize } from 'rxjs/operators';
+import { DialogModule } from 'primeng/dialog';
+import { LoginRequest } from '../../login/domain/request/login.request';
+import { AuthService } from '../../../../services/auth.services';
+import { SessionService } from '../../../../services/session/session.service';
+
 
 type IntlTelOptions = NonNullable<Parameters<typeof intlTelInput>[1]>;
 
@@ -36,18 +47,25 @@ type IntlTelOptions = NonNullable<Parameters<typeof intlTelInput>[1]>;
     PasswordModule,
     ButtonModule,
     ToastModule,
-    PanelModule
+    PanelModule,
+    DividerModule,
+    InputIconModule,
+    IconFieldModule,
+    CardModule,
+    DialogModule
   ],
   templateUrl: './cliente.component.html',
   styleUrl: './cliente.component.css',
   providers: [MessageService]
 })
-export class ClienteComponent implements AfterViewInit, OnDestroy{
+export class ClienteComponent implements AfterViewInit, OnDestroy {
   @ViewChild('phoneInput', { static: true }) phoneInput!: ElementRef<HTMLInputElement>;
   private iti: any;
-
+  visible: boolean = false;
+  private auth = inject(AuthService);
+    private session = inject(SessionService);
   // Options (deben cargarse dinámicamente)
-  listPaises:paisesResponse[] = []
+  listPaises: paisesResponse[] = []
   listProvincias: provinciasResponse[] = [];
   listCiudades: ciudadesResponse[] = [];
   filteredCiudades: ciudadesResponse[] = [];
@@ -63,12 +81,12 @@ export class ClienteComponent implements AfterViewInit, OnDestroy{
   ];
   activeIndex: number = 0;
   //FORMULARIOS==========================================================================================
-   // Form groups
+  // Form groups
   personalForm = new FormGroup({
     nombres: new FormControl('', Validators.required),
-    apellidos: new FormControl('', Validators.required),
-    telefono: new FormControl('', null),
-    direccion: new FormControl(''),
+    apellidos: new FormControl(null, Validators.required),
+    telefono: new FormControl(null, null),
+    direccion: new FormControl(null),
     fechaNacimiento: new FormControl(null),
     pais: new FormControl(null),
     provincia: new FormControl(null),
@@ -83,13 +101,17 @@ export class ClienteComponent implements AfterViewInit, OnDestroy{
   });
 
   credentialsForm = new FormGroup({
-    email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', Validators.required),
-    contactoNombre: new FormControl(''),
-    contactoTelefono: new FormControl('')
+    email: new FormControl(null, [Validators.required, Validators.email]),
+    password: new FormControl(null, Validators.required),
+    contactoNombre: new FormControl(null),
+    contactoTelefono: new FormControl(null)
+  });
+
+  socialsecurity = new FormGroup({
+    socialsecurity: new FormControl('')
   });
   // Constructor======================================================================================
-  constructor(private apiService: ApiService, private router: Router, private messageService: MessageService){}
+  constructor(private apiService: ApiService, private router: Router, private messageService: MessageService) { }
   ngOnDestroy(): void {
     throw new Error('Method not implemented.');
   }
@@ -114,27 +136,27 @@ export class ClienteComponent implements AfterViewInit, OnDestroy{
       }
     });
 
-      // Provincia → Ciudades (llamando a la API)
-  this.personalForm.get('provincia')?.valueChanges.subscribe((provinciaId: number | null) => {
-    this.personalForm.patchValue({ ciudad: null }, { emitEvent: false });
-    this.filteredCiudades = [];
+    // Provincia → Ciudades (llamando a la API)
+    this.personalForm.get('provincia')?.valueChanges.subscribe((provinciaId: number | null) => {
+      this.personalForm.patchValue({ ciudad: null }, { emitEvent: false });
+      this.filteredCiudades = [];
 
-    if (provinciaId == null) return;
+      if (provinciaId == null) return;
 
-    // Lean (rápido y suficiente para dropdown)
-    this.apiService.getCiudades(provinciaId).subscribe({
-      next: (rows) => {
-        console.log(rows);
-        this.filteredCiudades = rows;
-        // (opcional) guarda en cache por provinciaId si re-usarás
-        // this.listCiudadesPorProvincia[provinciaId] = rows;
-      },
-      error: (err) => console.error('Error al obtener ciudades', err),
+      // Lean (rápido y suficiente para dropdown)
+      this.apiService.getCiudades(provinciaId).subscribe({
+        next: (rows) => {
+          console.log(rows);
+          this.filteredCiudades = rows;
+          // (opcional) guarda en cache por provinciaId si re-usarás
+          // this.listCiudadesPorProvincia[provinciaId] = rows;
+        },
+        error: (err) => console.error('Error al obtener ciudades', err),
+      });
+
+      // Si alguna vista necesitara la relación:
+      // this.apiService.getCiudadesByProvinciaWithProvincia(provinciaId).subscribe(...)
     });
-
-    // Si alguna vista necesitara la relación:
-    // this.apiService.getCiudadesByProvinciaWithProvincia(provinciaId).subscribe(...)
-  });
   }
 
   ngAfterViewInit() {
@@ -170,20 +192,20 @@ export class ClienteComponent implements AfterViewInit, OnDestroy{
   // any[] = [{ label: 'Seleccione un país', value: null }];
 
   next() {
-    if (this.activeIndex === 0 && this.personalForm.invalid){
-      this.personalForm.markAllAsTouched(); 
+    if (this.activeIndex === 0 && this.personalForm.invalid) {
+      this.personalForm.markAllAsTouched();
       this.messageService.clear();
       this.messageService.add({ severity: 'warn', summary: 'Campos Obligatorios', detail: 'Falta llenar campos.' });
       return;
-    } 
-    if (this.activeIndex === 1 && this.docsForm.invalid){ 
-      this.docsForm.markAllAsTouched(); 
+    }
+    if (this.activeIndex === 1 && this.docsForm.invalid) {
+      this.docsForm.markAllAsTouched();
       this.messageService.clear();
       this.messageService.add({ severity: 'warn', summary: 'Documentos Obligatorios', detail: 'No se hn adjuntado todos los documentos necesarios.' });
       return;
     }
-    if (this.activeIndex === 2 && this.credentialsForm.invalid){ 
-      this.credentialsForm.markAllAsTouched(); 
+    if (this.activeIndex === 2 && this.credentialsForm.invalid) {
+      this.credentialsForm.markAllAsTouched();
       this.messageService.clear();
       this.messageService.add({ severity: 'warn', summary: 'Credenciales Obligtorias', detail: 'Falta llenar campos.' });
       return;
@@ -195,17 +217,69 @@ export class ClienteComponent implements AfterViewInit, OnDestroy{
     this.activeIndex = Math.max(this.activeIndex - 1, 0);
   }
 
+  loading = false;
+  social_security: string = '';
+  cliente: string = '';
+
   finish() {
+    this.social_security = '';
+    this.cliente = '';
     // Aquí enviarías todos los datos al backend
-    const e164 = this.iti?.getNumber() ?? '';
-    const payload = { ...this.personalForm.value, telefono: e164 };
-    this.router.navigate(['/register/cliente/success'], {
-      state: {
-        ...this.personalForm.value,
-        ...this.docsForm.value,
-        ...this.credentialsForm.value
-      }
-    });
+    const personal = this.personalForm.value;
+    const docs = this.docsForm.value;
+    const credentials = this.credentialsForm.value;
+
+    const payload: registerClienteRequest = <registerClienteRequest>{}
+    payload.nombres = personal.nombres || '';
+    payload.apellidos = personal.apellidos || '';
+    payload.telefono = personal.telefono || '';
+    payload.fecha_nac = personal.fechaNacimiento || new Date("1990-01-01");
+    payload.direccion = personal.direccion || '';
+    payload.pais_id = personal.pais || 0;
+    payload.provincia_id = personal.provincia || 0;
+    payload.ciudad_id = personal.ciudad || 0;
+    payload.ocupacion_id = personal.ocupacion || 0;
+    payload.genero_id = personal.genero || 0;
+    payload.selfie_url = '12345';
+    payload.dni_url = '12345';
+    payload.email = credentials.email || '';
+    payload.password = credentials.password || '';
+    payload.alt_nombre = credentials.contactoNombre || '';
+    payload.alt_telefono = credentials.contactoTelefono || '';
+
+    this.loading = true;
+
+    this.apiService.registerClient(payload)
+      .pipe(finalize(() => (this.loading = false)))
+      .subscribe({
+        next: (res) => {
+          if (res.social_security) {
+            // ✅ Toast éxito
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Guardado',
+              detail: 'El encabezado se actualizó correctamente.',
+              life: 2500,
+            });
+
+            // const e164 = this.iti?.getNumber() ?? '';
+            this.visible = true;
+            this.social_security = res.social_security || '';
+            this.cliente = `${this.personalForm.value.nombres} ${this.personalForm.value.apellidos}` || ''
+
+            this.socialsecurity.get('socialsecurity')?.setValue(this.social_security);
+          }
+        },
+        error: (err) => {
+          console.error('Error al actualizar encabezado:', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: `No se pudo registrar cliente.${err?.error?.message || ''}`,
+            life: 3500,
+          });
+        },
+      });
   }
 
   // register-cliente.component.ts
@@ -217,7 +291,7 @@ export class ClienteComponent implements AfterViewInit, OnDestroy{
     this.docsForm.get('dniReverso')!.setValue(event.files[0]);
   }
 
- getPaises(){
+  getPaises() {
     this.apiService.getPaises().subscribe(
       (data: paisesResponse[]) => {
         this.listPaises = data
@@ -228,7 +302,7 @@ export class ClienteComponent implements AfterViewInit, OnDestroy{
     );
   }
 
-  getProvincias(){
+  getProvincias() {
     this.apiService.getProvincias().subscribe(
       (data: provinciasResponse[]) => {
         this.listProvincias = data
@@ -239,7 +313,7 @@ export class ClienteComponent implements AfterViewInit, OnDestroy{
     );
   }
 
-  getCiudades(id_provincia:number){
+  getCiudades(id_provincia: number) {
     this.apiService.getCiudades(id_provincia).subscribe(
       (data: ciudadesResponse[]) => {
         this.listCiudades = data;
@@ -270,5 +344,46 @@ export class ClienteComponent implements AfterViewInit, OnDestroy{
         console.error('Error al obtener géneros', error);
       }
     );
+  }
+  copy() {
+    const value = this.socialsecurity.get('socialsecurity')?.value || '';
+    if (value) {
+      navigator.clipboard.writeText(value).then(() => {
+        console.log('Copiado:', value);
+      }).catch(err => {
+        console.error('Error al copiar:', err);
+      });
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Copiado',
+        detail: 'Se ha copiado al portapapeles.',
+        life: 2500,
+      });
+    }
+  }
+  errorMsg: string = '';
+  login() {
+
+    this.loading = true;
+    this.errorMsg = '';
+
+    const request: LoginRequest = <LoginRequest>{}
+    request.email = this.credentialsForm.value.email || '';
+    request.password = this.credentialsForm.value.password || '';
+
+    this.auth.login(request)
+      .pipe(
+        finalize(() => (this.loading = false))
+      )
+      .subscribe({
+        next: (res) => {
+          this.session.setFromLogin(res);
+          this.router.navigate(['/principal']);
+        },
+        error: (err: HttpErrorResponse) => {
+          this.errorMsg = err?.error?.message
+            || (err.status === 0 ? 'No se pudo conectar con el servidor' : 'Credenciales inválidas');
+        }
+      });
   }
 }

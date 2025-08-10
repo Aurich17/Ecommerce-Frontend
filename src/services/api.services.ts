@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, catchError, Observable, of, shareReplay, tap, throwError } from 'rxjs';
-import { ciudadesResponse, paisesResponse, provinciasResponse, tiposResponse } from '../app/auth/register/domain/response/register.response';
+import { ciudadesResponse, paisesResponse, provinciasResponse, registerClienteResponse, tiposResponse } from '../app/auth/register/domain/response/register.response';
+import { registerClienteRequest } from '../app/auth/register/domain/request/register.request';
 @Injectable({
   providedIn: 'root'
 })
@@ -9,7 +10,7 @@ export class ApiService {
   private apiUrl = 'http://localhost:3000';
   // private apiUrl = 'https://ecommerce-backend-na5u.onrender.com/api'; // URL de tu API
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // insertaUsuario(item: any): Observable<any>{
   //   return this.http.post(`${this.apiUrl}/register`, item);
@@ -111,4 +112,8 @@ export class ApiService {
   // userRegister(request:RegisterRequest):Observable<any>{
   //   return this.http.post<any>(`${this.apiUrl}/api/usuario/newUser`, request);
   // }
+
+  registerClient(encabezado: registerClienteRequest): Observable<registerClienteResponse> {
+    return this.http.post<registerClienteResponse>(`${this.apiUrl}/clientes/registro-completo`, encabezado);
+  }
 }
