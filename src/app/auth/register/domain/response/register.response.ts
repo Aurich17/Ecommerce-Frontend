@@ -22,3 +22,7 @@ export interface tiposResponse {
   id: number,
   descripcion: string
 }
+
+export interface registerClienteResponse {
+  social_security: string
+}
