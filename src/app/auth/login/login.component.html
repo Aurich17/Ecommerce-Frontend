@@ -4,7 +4,12 @@
     <h2 class="text-3xl text-orange-500 font-bold mb-2">Iniciar Sesión</h2>
     <p class="text-gray-600 mb-4 text-center">Bienvenido de nuevo</p>
 
-    <form [formGroup]="loginForm" class="w-full" style="max-width: 350px">
+    <form
+      [formGroup]="loginForm"
+      (ngSubmit)="onSubmit()"
+      class="w-full"
+      style="max-width: 350px"
+    >
       <!-- Email -->
       <div class="field mb-3">
         <span class="p-input-icon-left w-full">
@@ -15,6 +20,8 @@
             placeholder="Ingresa tu correo electrónico"
             formControlName="email"
             class="w-full"
+            autocomplete="email"
+            name="email"
           />
         </span>
       </div>
@@ -22,15 +29,16 @@
       <!-- Contraseña -->
       <div class="field mb-3">
         <p-password
-          id="password1"
-          type="password"
-          class="w-full"
+          formControlName="password"
           [feedback]="false"
           placeholder="Password"
           styleClass="p-password p-component p-inputwrapper p-input-icon-right"
           [style]="{'width':'100%'}"
           [inputStyle]="{'width':'100%'}"
-          [toggleMask]="true">
+          [toggleMask]="true"
+          [autocomplete]="'current-password'"
+          inputId="password"
+        >
         </p-password>
       </div>
 
@@ -40,9 +48,14 @@
           label="Iniciar Sesión"
           styleClass="w-full p-button-warning"
           type="submit"
-          [disabled]="loginForm.invalid"
+          (onClick)="onSubmit()"
+          [disabled]="loginForm.invalid || loading"
+          [loading]="loading"
         ></p-button>
       </div>
+
+      <!-- Error -->
+      <div *ngIf="errorMsg" class="p-error mt-2 text-sm">{{ errorMsg }}</div>
 
       <!-- ¿Olvidaste tu contraseña? -->
       <div class="text-right mb-3">

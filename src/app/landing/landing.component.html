@@ -52,12 +52,12 @@
 <div class="flex justify-content-center mt-5 px-3">
   <div class="surface-0 border-round-2xl shadow-3 p-4 text-center w-full md:w-10 lg:w-8"
        style="background: url('../../assets/fondo_ciudad.jpg') center/cover no-repeat;">
-    <h2 class="text-2xl md:text-4xl text-0 font-bold mb-3">Bienvenido a FIAOX</h2>
+    <h2 class="text-2xl md:text-4xl text-0 font-bold mb-3">{{encabezadoLanding?.titulo_principal}}</h2>
     <p class="text-0 text-md md:text-lg font-medium mb-2">
-      Flexibilizamos las compras en CUBA con PAGOS EN CUOTAS
+      {{encabezadoLanding?.subtitulo}}
     </p>
     <p class="text-0 text-sm mb-4">
-      Compra el producto que necesitas pagando solo el 50% al inicio. Recibe el producto y paga el resto en dos cómodas cuotas.
+      {{encabezadoLanding?.parrafo_encabezado}}
     </p>
     <div class="flex flex-column md:flex-row justify-content-center gap-3">
       <p-button label="Registrar cliente" styleClass="p-button-sm button-white" [raised]="true"></p-button>

@@ -3,7 +3,10 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { CarouselModule } from 'primeng/carousel';
 import { AccordionModule } from 'primeng/accordion';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { ApiService } from '../../services/api.services';
+import { LandingService } from '../../services/landing.services';
+import { EncabezadoResponse } from '../admin/landing/encabezado/domain/response/encabezado.response';
 
 @Component({
   selector: 'app-landing',
@@ -14,6 +17,13 @@ import { RouterModule } from '@angular/router';
 })
 export class LandingComponent {
   showMobileMenu = false;
+  encabezadoLanding?: EncabezadoResponse;
+
+  constructor(private apiService: LandingService, private router: Router){}
+  ngOnInit(){
+    this.getEncabezado()
+  }
+
   empresas = [
     {
       nombre: 'Alexis Gamer',
@@ -58,4 +68,16 @@ export class LandingComponent {
       mensaje: 'Rápido, confiable y muy intuitivo.'
     }
   ];
+
+  getEncabezado() {
+    this.apiService.getLandingEncabezado().subscribe({
+      next: (data) => {
+        console.log('Encabezado data:', data);
+        // si quieres convertir la fecha a Date real:
+        this.encabezadoLanding = { ...data, updated_at: new Date(data.updated_at) };
+        console.log('Encabezado asignado:', this.encabezadoLanding);
+      },
+      error: (err) => console.error('Error fetching encabezado:', err),
+    });
+}
 }
