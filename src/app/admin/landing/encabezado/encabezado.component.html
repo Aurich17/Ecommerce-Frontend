@@ -3,37 +3,37 @@
     <p-accordionTab header="Contenido Principal">
         <form [formGroup]="encabezadoform" class="block p-fluid p-formgrid p-grid gap-2 p-4">
             <div class="field">
-                <label class="text-base font-bold" for="titulo">Título principal</label>
+                <label class="text-sm font-bold" for="titulo">Título principal</label>
                 <input type="text" pInputText class="w-full text-sm" formControlName="titulo" id="titulo">
             </div>
 
             <div class="field">
-                <label class="text-base font-bold" for="subtitulo">Subtítulo</label>
+                <label class="text-sm font-bold" for="subtitulo">Subtítulo</label>
                 <input type="text" pInputText class="w-full text-sm" formControlName="subtitulo" id="subtitulo">
             </div>
 
             <div class="field">
-                <label class="text-base font-bold" for="parafrasis">Paráfrasis del encabezado</label>
+                <label class="text-sm font-bold" for="parafrasis">Paráfrasis del encabezado</label>
                 <input type="text" pInputText class="w-full text-sm" formControlName="parafrasis" id="parafrasis">
             </div>
 
             <div class="field">
-                <label class="text-base font-bold" for="tituloMP">Título del Marketplace</label>
+                <label class="text-sm font-bold" for="tituloMP">Título del Marketplace</label>
                 <input type="text" pInputText class="w-full text-sm" formControlName="tituloMP" id="tituloMP">
             </div>
 
             <div class="field">
-                <label class="text-base font-bold" for="subtituloMP">Subtítulo del Marketplace</label>
+                <label class="text-sm font-bold" for="subtituloMP">Subtítulo del Marketplace</label>
                 <input type="text" pInputText class="w-full text-sm" formControlName="subtituloMP" id="subtituloMP">
             </div>
 
             <div class="field">
-                <label class="text-base font-bold" for="nota">Nota: ¿Cómo funciona?</label>
+                <label class="text-sm font-bold" for="nota">Nota: ¿Cómo funciona?</label>
                 <input type="text" pInputText class="w-full text-sm" formControlName="nota" id="nota">
             </div>
 
             <p-button
-              styleClass="w-full"
+              styleClass="w-full text-sm"
               label="Guardar Cambios"
               [disabled]="loading || encabezadoform.invalid"
               [loading]="loading"

@@ -1,7 +1,7 @@
 <div class="w-full h-full flex">
     <div class="w-3 h-full">
         <p>Fiaox Market</p>
-        <p-panelMenu [model]="items" styleClass="h-full">
+        <p-panelMenu [model]="items" styleClass="flex flex-column h-full gap-4">
             <ng-template pTemplate="item" let-item>
                 <ng-container *ngIf="item.route; else urlRef">
                     <a [routerLink]="item.route" class="flex align-items-center 
