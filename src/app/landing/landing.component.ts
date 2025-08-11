@@ -7,7 +7,11 @@ import { Router, RouterModule } from '@angular/router';
 import { ApiService } from '../../services/api.services';
 import { LandingService } from '../../services/landing.services';
 import { EncabezadoResponse } from '../admin/landing/encabezado/domain/response/encabezado.response';
+import { ImagekitClient } from '../../services/imagekit.service';
 
+type UploadItem = {
+  file: File; progress: number; url?: string; thumb?: string; error?: string;
+};
 @Component({
   selector: 'app-landing',
   standalone: true,
@@ -16,10 +20,11 @@ import { EncabezadoResponse } from '../admin/landing/encabezado/domain/response/
   styleUrl: './landing.component.css'
 })
 export class LandingComponent {
+  uploads: UploadItem[] = [];
   showMobileMenu = false;
   encabezadoLanding?: EncabezadoResponse;
 
-  constructor(private apiService: LandingService, private router: Router){}
+  constructor(private apiService: LandingService, private router: Router,private ik: ImagekitClient){}
   ngOnInit(){
     this.getEncabezado()
   }
@@ -79,5 +84,26 @@ export class LandingComponent {
       },
       error: (err) => console.error('Error fetching encabezado:', err),
     });
+  }
+
+  async onPick(e: Event) {
+  const input = e.target as HTMLInputElement;
+  const files = Array.from(input.files ?? []);
+  if (!files.length) return;
+
+  for (const file of files) {
+    const item = { file, progress: 0 } as any;
+    this.uploads.unshift(item);
+    try {
+      const res:any = await this.ik.uploadAndSave(file, '/projectA', ['angular']);
+      // usa filePath para construir URL optimizada
+      item.url = this.ik.url({ path: res.filePath }, { w: 800, q: 80, f: 'auto' });
+      item.thumb = res.thumbnailUrl;
+      item.progress = 100;
+    } catch (err:any) {
+      item.error = err?.message ?? 'Error subiendo';
+    }
+  }
+  input.value = '';
 }
 }

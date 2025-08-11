@@ -47,7 +47,12 @@
   </div>
 </header>
 
-
+<input type="file" (change)="onPick($event)" multiple accept="image/*" />
+<div *ngFor="let i of uploads">
+  <div>{{ i.file.name }} — {{ i.progress }}%</div>
+  <img *ngIf="i.url" [src]="i.url" alt="preview" style="max-width:240px" />
+  <div *ngIf="i.error" style="color:red">{{ i.error }}</div>
+</div>
 <!-- Cuerpo -->
 <div class="flex justify-content-center mt-5 px-3">
   <div class="surface-0 border-round-2xl shadow-3 p-4 text-center w-full md:w-10 lg:w-8"

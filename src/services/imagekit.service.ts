@@ -1,3 +1,4 @@
+// src/app/services/imagekit.service.ts
 import { Injectable } from '@angular/core';
 import ImageKit from 'imagekit-javascript';
 import { HttpClient } from '@angular/common/http';
@@ -6,44 +7,44 @@ import { environment } from '../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class ImagekitClient {
   private ik = new ImageKit({
-    publicKey: environment.imagekitPublicKey,              // o desde environment
-    urlEndpoint: environment.imagekitUrlEndpoint,           // idem
-    authenticationEndpoint: '/api/imagekit/auth', // proxy del backend Nest
+    publicKey: environment.imagekitPublicKey,
+    urlEndpoint: environment.imagekitUrlEndpoint,
+    authenticationEndpoint: `${environment.urlApi}/imagekit/auth`, // Nest
   });
 
   constructor(private http: HttpClient) {}
 
-  async uploadBrowser(file: File, folder = '/uploads', tags: string[] = []) {
-    return this.ik.upload({
-      file,
-      fileName: file.name,
-      folder,
-      tags,
-      useUniqueFileName: true,
+  async uploadAndSave(file: File, folder = '/uploads', tags: string[] = []) {
+    const res: any = await this.ik.upload({
+      file, fileName: file.name, folder, tags, useUniqueFileName: true,
     });
+
+    // 👇 Llamada a tu API Nest (ajusta URL si no usas proxy o prefix)
+    await this.http.post(
+      `${environment.urlApi}/media/save`,
+      {
+        fileId: res.fileId,
+        url: res.url,
+        thumbnailUrl: res.thumbnailUrl,
+        width: res.width,
+        height: res.height,
+        size: res.size,
+        format: res.fileType ?? res.mime,
+        tags: res.tags,
+      }
+    ).toPromise();
+
+    return res; // devuelves lo de ImageKit
   }
 
-  // Generar URL transformada (resize/format al vuelo)
   url(pathOrSrc: { path?: string; src?: string }, opts?: { w?: number; h?: number; q?: number; f?: 'auto'|'webp'|'jpg'|'png' }) {
-    const transformation: any[] = [];
+    const transformation:any[] = [];
     if (opts?.w) transformation.push({ width: opts.w });
     if (opts?.h) transformation.push({ height: opts.h });
     if (opts?.q) transformation.push({ quality: opts.q });
     if (opts?.f) transformation.push({ format: opts.f });
-
-    // Ensure either 'path' or 'src' is a defined string
-    if (pathOrSrc.path) {
-      return this.ik.url({
-        path: pathOrSrc.path,
-        transformation,
-      });
-    } else if (pathOrSrc.src) {
-      return this.ik.url({
-        src: pathOrSrc.src,
-        transformation,
-      });
-    } else {
-      throw new Error('Either path or src must be provided');
-    }
+    if (pathOrSrc.path) return this.ik.url({ path: pathOrSrc.path, transformation });
+    if (pathOrSrc.src)  return this.ik.url({ src:  pathOrSrc.src,  transformation });
+    throw new Error('Either path or src must be provided');
   }
 }
