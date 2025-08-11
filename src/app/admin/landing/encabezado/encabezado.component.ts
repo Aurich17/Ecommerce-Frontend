@@ -10,6 +10,7 @@ import { EncabezadoRequest } from './domain/request/encabezado.request';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { finalize } from 'rxjs/operators';
+import { EncabezadoResponse } from './domain/response/encabezado.response';
 
 @Component({
   selector: 'app-encabezado',
@@ -21,7 +22,13 @@ import { finalize } from 'rxjs/operators';
 })
 export class EncabezadoComponent {
   loading = false;
+  encabezadoLanding?: EncabezadoResponse;
   constructor(private apiService: LandingService, private router: Router,private messageService: MessageService){}
+
+  ngOnInit(){
+    this.getEncabezado()
+  }
+
   encabezadoform = new FormGroup({
     titulo: new FormControl(null),
     subtitulo: new FormControl(null),
@@ -78,5 +85,14 @@ export class EncabezadoComponent {
           });
         },
       });
+  }
+
+  getEncabezado() {
+    this.apiService.getLandingEncabezado().subscribe({
+      next: (data) => {
+        this.encabezadoLanding = { ...data, updated_at: new Date(data.updated_at) };
+      },
+      error: (err) => console.error('Error fetching encabezado:', err),
+    });
   }
 }

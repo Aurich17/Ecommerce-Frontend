@@ -77,10 +77,7 @@ export class LandingComponent {
   getEncabezado() {
     this.apiService.getLandingEncabezado().subscribe({
       next: (data) => {
-        console.log('Encabezado data:', data);
-        // si quieres convertir la fecha a Date real:
         this.encabezadoLanding = { ...data, updated_at: new Date(data.updated_at) };
-        console.log('Encabezado asignado:', this.encabezadoLanding);
       },
       error: (err) => console.error('Error fetching encabezado:', err),
     });

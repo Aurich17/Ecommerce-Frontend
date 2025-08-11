@@ -4,7 +4,7 @@
         <form [formGroup]="encabezadoform" class="block p-fluid p-formgrid p-grid gap-2 p-4">
             <div class="field">
                 <label class="text-sm font-bold" for="titulo">Título principal</label>
-                <input type="text" pInputText class="w-full text-sm" formControlName="titulo" id="titulo">
+                <input type="text" pInputText class="w-full text-sm" formControlName="titulo" id="titulo" value="{{encabezadoLanding?.titulo_principal}}">
             </div>
 
             <div class="field">
