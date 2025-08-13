@@ -9,33 +9,32 @@
 
             <div class="field">
                 <label class="text-sm font-bold" for="subtitulo">Subtítulo</label>
-                <input type="text" pInputText class="w-full text-sm" formControlName="subtitulo" id="subtitulo">
+                <input type="text" pInputText class="w-full text-sm" formControlName="subtitulo" id="subtitulo" value="{{encabezadoLanding?.subtitulo}}">
             </div>
 
             <div class="field">
                 <label class="text-sm font-bold" for="parafrasis">Paráfrasis del encabezado</label>
-                <input type="text" pInputText class="w-full text-sm" formControlName="parafrasis" id="parafrasis">
+                <input type="text" pInputText class="w-full text-sm" formControlName="parafrasis" id="parafrasis" value="{{encabezadoLanding?.parrafo_encabezado}}">
             </div>
 
             <div class="field">
                 <label class="text-sm font-bold" for="tituloMP">Título del Marketplace</label>
-                <input type="text" pInputText class="w-full text-sm" formControlName="tituloMP" id="tituloMP">
+                <input type="text" pInputText class="w-full text-sm" formControlName="tituloMP" id="tituloMP" value="{{encabezadoLanding?.titulo_marketplace}}">
             </div>
 
             <div class="field">
                 <label class="text-sm font-bold" for="subtituloMP">Subtítulo del Marketplace</label>
-                <input type="text" pInputText class="w-full text-sm" formControlName="subtituloMP" id="subtituloMP">
+                <input type="text" pInputText class="w-full text-sm" formControlName="subtituloMP" id="subtituloMP" value="{{encabezadoLanding?.subtitulo_marketplace}}">
             </div>
 
             <div class="field">
                 <label class="text-sm font-bold" for="nota">Nota: ¿Cómo funciona?</label>
-                <input type="text" pInputText class="w-full text-sm" formControlName="nota" id="nota">
+                <input type="text" pInputText class="w-full text-sm" formControlName="nota" id="nota" value="{{encabezadoLanding?.nota}}">
             </div>
 
             <p-button
               styleClass="w-full text-sm"
               label="Guardar Cambios"
-              [disabled]="loading || encabezadoform.invalid"
               [loading]="loading"
               (onClick)="guardarCambios()"
             />

@@ -1,79 +1,91 @@
-import { Component } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { AccordionModule } from 'primeng/accordion';
-import { CommonModule } from '@angular/common';
-import { InputTextModule } from 'primeng/inputtext';
-import { ButtonModule } from 'primeng/button';
-import { Router } from '@angular/router';
-import { LandingService } from '../../../../services/landing.services';
-import { EncabezadoRequest } from './domain/request/encabezado.request';
-import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
-import { finalize } from 'rxjs/operators';
-import { EncabezadoResponse } from './domain/response/encabezado.response';
+import { CommonModule } from "@angular/common";
+import { Component } from "@angular/core";
+import { ReactiveFormsModule, FormGroup, FormControl } from "@angular/forms";
+import { Router } from "@angular/router";
+import { AccordionModule } from "primeng/accordion";
+import { MessageService } from "primeng/api";
+import { ButtonModule } from "primeng/button";
+import { InputTextModule } from "primeng/inputtext";
+import { ToastModule } from "primeng/toast";
+import { finalize } from "rxjs";
+import { LandingService } from "../../../../services/landing.services";
+import { EncabezadoRequest } from "./domain/request/encabezado.request";
+import { EncabezadoResponse } from "./domain/response/encabezado.response";
 
 @Component({
   selector: 'app-encabezado',
   standalone: true,
-  imports: [AccordionModule,CommonModule,ReactiveFormsModule,InputTextModule,ButtonModule,ToastModule],
+  imports: [AccordionModule, CommonModule, ReactiveFormsModule, InputTextModule, ButtonModule, ToastModule],
   providers: [MessageService],
   templateUrl: './encabezado.component.html',
-  styleUrl: './encabezado.component.css'
+  styleUrls: ['./encabezado.component.css'] // <- plural
 })
 export class EncabezadoComponent {
   loading = false;
   encabezadoLanding?: EncabezadoResponse;
-  constructor(private apiService: LandingService, private router: Router,private messageService: MessageService){}
-
-  ngOnInit(){
-    this.getEncabezado()
-  }
 
   encabezadoform = new FormGroup({
-    titulo: new FormControl(null),
-    subtitulo: new FormControl(null),
-    parafrasis: new FormControl(null),
-    tituloMP: new FormControl(null),
-    subtituloMP: new FormControl(null),
-    nota: new FormControl(null)
+    titulo: new FormControl<string>(''),
+    subtitulo: new FormControl<string>(''),
+    parafrasis: new FormControl<string>(''),
+    tituloMP: new FormControl<string>(''),
+    subtituloMP: new FormControl<string>(''),
+    nota: new FormControl<string>(''),
   });
 
-  guardarCambios() {
-    if (this.encabezadoform.invalid) {
-      this.encabezadoform.markAllAsTouched();
-      return;
-    }
+  constructor(
+    private apiService: LandingService,
+    private router: Router,
+    private messageService: MessageService
+  ) {}
 
-    const v = this.encabezadoform.getRawValue();
-    const payload: EncabezadoRequest = {
-      titulo_principal:      v.titulo ?? '',
-      subtitulo:             v.subtitulo ?? '',
-      parrafo_encabezado:    v.parafrasis ?? '',
-      titulo_marketplace:    v.tituloMP ?? '',
-      subtitulo_marketplace: v.subtituloMP ?? '',
-      nota:                  v.nota ?? '',
+  ngOnInit() {
+    this.getEncabezado();
+  }
+
+  getEncabezado() {
+    this.apiService.getLandingEncabezado().subscribe({
+      next: (data) => {
+        this.encabezadoLanding = { ...data, updated_at: new Date(data.updated_at) };
+        // >>> PONEMOS LOS VALORES EN EL FORM AQUÍ <<<
+        this.encabezadoform.patchValue({
+          titulo: data.titulo_principal ?? '',
+          subtitulo: data.subtitulo ?? '',
+          parafrasis: data.parrafo_encabezado ?? '',
+          tituloMP: data.titulo_marketplace ?? '',
+          subtituloMP: data.subtitulo_marketplace ?? '',
+          nota: data.nota ?? '',
+        });
+      },
+      error: (err) => console.error('Error fetching encabezado:', err),
+    });
+  }
+
+  guardarCambios() {
+    const v = this.encabezadoform.value;
+    const request: EncabezadoRequest = {
+      titulo_principal: v.titulo || '',
+      subtitulo: v.subtitulo || '',
+      parrafo_encabezado: v.parafrasis || '',
+      titulo_marketplace: v.tituloMP || '',
+      subtitulo_marketplace: v.subtituloMP || '',
+      nota: v.nota || ''
     };
 
     this.loading = true;
-    this.apiService.updateLandingEncabezado(payload)
+    this.apiService.updateLandingEncabezado(request)
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
-        next: (res) => {
-          // ✅ Toast éxito
+        next: () => {
           this.messageService.add({
             severity: 'success',
             summary: 'Guardado',
             detail: 'El encabezado se actualizó correctamente.',
             life: 2500,
           });
-
-          // ✅ Limpiar formulario
-          this.encabezadoform.reset();
-          this.encabezadoform.markAsPristine();
-          this.encabezadoform.markAsUntouched();
-
-          // Si quieres navegar después de un rato:
-          // setTimeout(() => this.router.navigate(['/admin/landing']), 300);
+          // Si NO quieres perder lo que está cargado, evita resetear:
+          // this.encabezadoform.markAsPristine();
+          // this.encabezadoform.markAsUntouched();
         },
         error: (err) => {
           console.error('Error al actualizar encabezado:', err);
@@ -85,14 +97,5 @@ export class EncabezadoComponent {
           });
         },
       });
-  }
-
-  getEncabezado() {
-    this.apiService.getLandingEncabezado().subscribe({
-      next: (data) => {
-        this.encabezadoLanding = { ...data, updated_at: new Date(data.updated_at) };
-      },
-      error: (err) => console.error('Error fetching encabezado:', err),
-    });
   }
 }
