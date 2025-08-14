@@ -27,6 +27,7 @@ import { DialogModule } from 'primeng/dialog';
 import { LoginRequest } from '../../login/domain/request/login.request';
 import { AuthService } from '../../../../services/auth.services';
 import { SessionService } from '../../../../services/session/session.service';
+import { ImagekitClient } from '../../../../services/imagekit.service';
 
 
 type IntlTelOptions = NonNullable<Parameters<typeof intlTelInput>[1]>;
@@ -59,6 +60,7 @@ type IntlTelOptions = NonNullable<Parameters<typeof intlTelInput>[1]>;
   providers: [MessageService]
 })
 export class ClienteComponent implements AfterViewInit {
+  private ik = inject(ImagekitClient);
   @ViewChild('phoneInput', { static: true }) phoneInput!: ElementRef<HTMLInputElement>;
   private iti: any;
   visible: boolean = false;
@@ -72,6 +74,10 @@ export class ClienteComponent implements AfterViewInit {
   filteredProvincias: provinciasResponse[] = [];
   listOcupaciones: tiposResponse[] = [];
   listGeneros: tiposResponse[] = [];
+
+  //IMAGENES DE VALIDACION
+  selfieFile?: File;
+  dniFile?: File;
   // Step indicator
   items: MenuItem[] = [
     { label: 'Información personal' },
@@ -196,9 +202,10 @@ export class ClienteComponent implements AfterViewInit {
       return;
     }
     if (this.activeIndex === 1 && this.docsForm.invalid) {
+      console.log(this.docsForm)
       this.docsForm.markAllAsTouched();
       this.messageService.clear();
-      this.messageService.add({ severity: 'warn', summary: 'Documentos Obligatorios', detail: 'No se hn adjuntado todos los documentos necesarios.' });
+      this.messageService.add({ severity: 'warn', summary: 'Documentos Obligatorios', detail: 'No se han adjuntado todos los documentos necesarios.' });
       return;
     }
     if (this.activeIndex === 2 && this.credentialsForm.invalid) {
@@ -218,74 +225,78 @@ export class ClienteComponent implements AfterViewInit {
   social_security: string = '';
   cliente: string = '';
 
-  finish() {
-    this.social_security = '';
-    this.cliente = '';
-    // Aquí enviarías todos los datos al backend
+async finish() {
+  this.loading = true;
+  try {
+    const [selfieUrl, dniUrl] = await Promise.all([
+      this.selfieFile ? this.uploadToIK(this.selfieFile) : Promise.resolve(''),
+      this.dniFile ? this.uploadToIK(this.dniFile) : Promise.resolve(''),
+    ]);
+
     const personal = this.personalForm.value;
-    const docs = this.docsForm.value;
     const credentials = this.credentialsForm.value;
 
-    const payload: registerClienteRequest = <registerClienteRequest>{}
-    payload.nombres = personal.nombres || '';
-    payload.apellidos = personal.apellidos || '';
-    payload.telefono = personal.telefono || '';
-    payload.fecha_nac = personal.fechaNacimiento || new Date("1990-01-01");
-    payload.direccion = personal.direccion || '';
-    payload.pais_id = personal.pais || 0;
-    payload.provincia_id = personal.provincia || 0;
-    payload.ciudad_id = personal.ciudad || 0;
-    payload.ocupacion_id = personal.ocupacion || 0;
-    payload.genero_id = personal.genero || 0;
-    payload.selfie_url = '12345';
-    payload.dni_url = '12345';
-    payload.email = credentials.email || '';
-    payload.password = credentials.password || '';
-    payload.alt_nombre = credentials.contactoNombre || '';
-    payload.alt_telefono = credentials.contactoTelefono || '';
-
-    this.loading = true;
+    const payload: registerClienteRequest = {
+      nombres: personal.nombres || '',
+      apellidos: personal.apellidos || '',
+      telefono: personal.telefono || '',
+      fecha_nac: personal.fechaNacimiento || new Date('1990-01-01'),
+      direccion: personal.direccion || '',
+      pais_id: personal.pais || 0,
+      provincia_id: personal.provincia || 0,
+      ciudad_id: personal.ciudad || 0,
+      ocupacion_id: personal.ocupacion || 0,
+      genero_id: personal.genero || 0,
+      selfie_url: selfieUrl,     // 🔹 ya viene de ImageKit
+      dni_url: dniUrl,           // 🔹 ya viene de ImageKit
+      email: credentials.email || '',
+      password: credentials.password || '',
+      alt_nombre: credentials.contactoNombre || '',
+      alt_telefono: credentials.contactoTelefono || '',
+    };
 
     this.apiService.registerClient(payload)
       .pipe(finalize(() => (this.loading = false)))
-      .subscribe({
-        next: (res) => {
-          if (res.social_security) {
-            // ✅ Toast éxito
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Guardado',
-              detail: 'El encabezado se actualizó correctamente.',
-              life: 2500,
-            });
+      .subscribe(/* tu manejo de éxito/error */);
 
-            // const e164 = this.iti?.getNumber() ?? '';
-            this.visible = true;
-            this.social_security = res.social_security || '';
-            this.cliente = `${this.personalForm.value.nombres} ${this.personalForm.value.apellidos}` || ''
-
-            this.socialsecurity.get('socialsecurity')?.setValue(this.social_security);
-          }
-        },
-        error: (err) => {
-          console.error('Error al actualizar encabezado:', err);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: `No se pudo registrar cliente.${err?.error?.message || ''}`,
-            life: 3500,
-          });
-        },
-      });
+  } catch (err: any) {
+    this.loading = false;
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: `No se pudo subir imágenes: ${err?.message || ''}`,
+      life: 3500,
+    });
   }
+}
+
 
   // register-cliente.component.ts
-  onSelfieSelect(event: any) {
-    this.docsForm.get('selfie')!.setValue(event.files[0]);
+  onSelfieSelect(e: any) {
+    const file = e.files?.[0];
+    if (!file) return;
+    this.selfieFile = file;
+
+    // marca el control como con valor para que pase Validators.required
+    this.docsForm.get('selfie')?.setValue(file);
+    this.docsForm.get('selfie')?.markAsDirty();
+    this.docsForm.get('selfie')?.updateValueAndValidity();
   }
 
-  onDniReversoSelect(event: any) {
-    this.docsForm.get('dniReverso')!.setValue(event.files[0]);
+  onDniReversoSelect(e: any) {
+    const file = e.files?.[0];
+    if (!file) return;
+    this.dniFile = file;
+
+    this.docsForm.get('dniReverso')?.setValue(file);
+    this.docsForm.get('dniReverso')?.markAsDirty();
+    this.docsForm.get('dniReverso')?.updateValueAndValidity();
+  }
+
+  private async uploadToIK(file: File): Promise<string> {
+    const res: any = await this.ik.uploadAndSave(file, '/clientes', ['registro']);
+    // URL optimizada
+    return this.ik.url({ path: res.filePath }, { w: 1000, q: 80, f: 'auto' });
   }
 
   getPaises() {
@@ -359,29 +370,4 @@ export class ClienteComponent implements AfterViewInit {
     }
   }
   errorMsg: string = '';
-  login() {
-
-    this.loading = true;
-    this.errorMsg = '';
-
-    const request: LoginRequest = <LoginRequest>{}
-    request.email = this.credentialsForm.value.email || '';
-    request.password = this.credentialsForm.value.password || '';
-
-    this.auth.login(request)
-      .pipe(
-        finalize(() => (this.loading = false))
-      )
-      .subscribe({
-        next: (res) => {
-          console.log('Login OK', res);
-          this.session.setFromLogin(res);
-          this.router.navigate(["/principal"]);
-        },
-        error: (err: HttpErrorResponse) => {
-          this.errorMsg = err?.error?.message
-            || (err.status === 0 ? 'No se pudo conectar con el servidor' : 'Credenciales inválidas');
-        }
-      });
-  }
 }

@@ -103,9 +103,20 @@
                 <div class="font-bold pb-3">Foto del rostro (selfie)</div>
 
                 <div class="pb-2">
-                  <p-fileUpload mode="basic" name="selfie" accept="image/*" maxFileSize="1000000" class="textoNegro"
-                    styleClass="border-dashed w-full surface-100 border-500" chooseLabel="Seleccionar selfie"
-                    customUpload="true" (onSelect)="onSelfieSelect($event)"></p-fileUpload>
+                  <p-fileUpload
+                    mode="advanced"
+                    [auto]="false"
+                    [customUpload]="true"
+                    [showUploadButton]="false"
+                    [showCancelButton]="false"
+                    name="selfie"
+                    accept="image/*"
+                    maxFileSize="1000000"
+                    class="textoNegro"
+                    styleClass="border-dashed w-full surface-100 border-500"
+                    chooseLabel="Seleccionar selfie"
+                    (onSelect)="onSelfieSelect($event)">
+                  </p-fileUpload>
                 </div>
 
                 <div class="text-sm">Solo se aceptan imágenes</div>
@@ -117,10 +128,20 @@
                 </ng-template>
                 <div class="font-bold pb-3">Foto reverso del DNI</div>
                 <div class="pb-2">
-                  <p-fileUpload mode="basic" name="dniReverso" accept="image/*" maxFileSize="1000000" class="textoNegro"
-                    chooseLabel="Seleccionar reverso" customUpload="true"
+                  <p-fileUpload
+                    mode="advanced"
+                    [auto]="false"
+                    [customUpload]="true"
+                    [showUploadButton]="false"
+                    [showCancelButton]="false"
+                    name="dniReverso"
+                    accept="image/*"
+                    maxFileSize="1000000"
+                    class="textoNegro"
                     styleClass="border-dashed w-full surface-100 border-500"
-                    (onSelect)="onDniReversoSelect($event)"></p-fileUpload>
+                    chooseLabel="Seleccionar reverso"
+                    (onSelect)="onDniReversoSelect($event)">
+                  </p-fileUpload>
                 </div>
                 <div class="text-sm">Solo se aceptan imágenes</div>
               </p-panel>
@@ -245,8 +266,7 @@
       Gracias por ser parte de<strong> FiaoX.</strong>
     </div>
     <div class="p-field p-col-12 flex justify-content-between mt-4 gap-4">
-      <button pButton label="Iniciar Sesión" class="p-button-warning p-button-sm w-full"
-        (click)="login()"></button>
+      <button pButton label="Iniciar Sesión" class="p-button-warning p-button-sm w-full"></button>
     </div>
   </div>
 </p-dialog>

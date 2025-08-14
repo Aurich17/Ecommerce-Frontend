@@ -103,4 +103,9 @@ export class LandingComponent {
   }
   input.value = '';
 }
+
+go(id: string) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  this.showMobileMenu = false; // cierra el menú móvil al navegar
+}
 }

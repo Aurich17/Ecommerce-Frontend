@@ -11,11 +11,12 @@ import { finalize } from "rxjs";
 import { LandingService } from "../../../../services/landing.services";
 import { EncabezadoRequest } from "./domain/request/encabezado.request";
 import { EncabezadoResponse } from "./domain/response/encabezado.response";
+import { RippleModule } from 'primeng/ripple';
 
 @Component({
   selector: 'app-encabezado',
   standalone: true,
-  imports: [AccordionModule, CommonModule, ReactiveFormsModule, InputTextModule, ButtonModule, ToastModule],
+  imports: [AccordionModule, CommonModule, ReactiveFormsModule, InputTextModule, ButtonModule, ToastModule,RippleModule],
   providers: [MessageService],
   templateUrl: './encabezado.component.html',
   styleUrls: ['./encabezado.component.css'] // <- plural
@@ -81,6 +82,7 @@ export class EncabezadoComponent {
             severity: 'success',
             summary: 'Guardado',
             detail: 'El encabezado se actualizó correctamente.',
+            key:"tc",
             life: 2500,
           });
           // Si NO quieres perder lo que está cargado, evita resetear:

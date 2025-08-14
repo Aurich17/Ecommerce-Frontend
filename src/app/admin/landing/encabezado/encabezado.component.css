@@ -1,0 +1,7 @@
+:host ::ng-deep .p-toast {
+  width: 400px !important; /* Ajusta el valor a lo que necesites */
+}
+
+:host ::ng-deep .p-toast .p-toast-message {
+  width: 100% !important;
+}

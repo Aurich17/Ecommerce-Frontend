@@ -21,7 +21,7 @@ export class ImagekitClient {
 
     // 👇 Llamada a tu API Nest (ajusta URL si no usas proxy o prefix)
     await this.http.post(
-      `${environment.urlApi}/media/save`,
+      `${environment.urlApi}/imagekit/upload`,
       {
         fileId: res.fileId,
         url: res.url,
