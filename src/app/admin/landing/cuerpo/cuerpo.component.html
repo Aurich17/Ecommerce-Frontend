@@ -6,7 +6,7 @@
                     Características
                 </div>
                 <div class="p-3 font-bold text-sm">
-                    <p-button icon="pi pi-plus" [rounded]="true" [outlined]="true" />
+                    <p-button icon="pi pi-plus" [rounded]="true" [outlined]="true" (onClick)="addRow('C')" />
                 </div>
             </div>
         </ng-template>
@@ -28,8 +28,10 @@
                     <td>{{product.titulo}}</td>
                     <td>{{product.descripcion}}</td>
                     <td>
-                        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" (onClick)="onEditPoppupC()" />
-                        <p-button icon="pi pi-trash" [rounded]="true" [text]="true" (onClick)="onDeleteRowC()" />
+                        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true"
+                            (onClick)="onEditPoppup(product, 'C')" />
+                        <p-button icon="pi pi-trash" [rounded]="true" [text]="true"
+                            (onClick)="onDeleteRow(product, 'C')" />
                     </td>
                 </tr>
             </ng-template>
@@ -42,7 +44,7 @@
                     Preguntas Frecuentes
                 </div>
                 <div class="p-3 font-bold text-sm">
-                    <p-button icon="pi pi-plus" [rounded]="true" [outlined]="true" />
+                    <p-button icon="pi pi-plus" [rounded]="true" [outlined]="true" (onClick)="addRow('P')" />
                 </div>
             </div>
         </ng-template>
@@ -61,11 +63,59 @@
                     <td>{{product.pregunta}}</td>
                     <td>{{product.respuesta}}</td>
                     <td>
-                        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" (onClick)="onEditPoppupP()" />
-                        <p-button icon="pi pi-trash" [rounded]="true" [text]="true" (onClick)="onDeleteRowP()" />
+                        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true"
+                            (onClick)="onEditPoppup(product, 'P')" />
+                        <p-button icon="pi pi-trash" [rounded]="true" [text]="true"
+                            (onClick)="onDeleteRow(product, 'P')" />
                     </td>
                 </tr>
             </ng-template>
         </p-table>
     </p-card>
 </div>
+
+<p-dialog [header]="titulomantenimiento" [modal]="true" [(visible)]="visible"
+    [style]="{ width: '50rem', height: '34rem' }">
+    <form [formGroup]="cuerpoform" class="w-full flex flex-column gap-4">
+        <div *ngIf="isfeature" class="w-full flex flex-column gap-3">
+            <div class="w-full flex gap-3">
+                <div class="flex flex-column gap-3 w-6">
+                    <label class="font-bold text-sm">Ícono</label>
+                    <input pInputText formControlName="icono" class="w-full" [readonly]="true">
+                </div>
+                <div class="flex flex-column gap-3 w-6">
+                    <label class="font-bold text-sm">Título</label>
+                    <input pInputText formControlName="titulo" class="w-full" [readonly]="true">
+                </div>
+            </div>
+            <div class="flex flex-column gap-3 w-full">
+                <label class="font-bold text-sm">Descripción</label>
+                <textarea rows="5" cols="30" class="w-full" pInputTextarea formControlName="descripcion"></textarea>
+            </div>
+        </div>
+        <div *ngIf="!isfeature" class="w-full flex flex-column gap-3">
+            <div class="flex flex-column gap-3 w-full">
+                <label class="font-bold text-sm">Pregunta</label>
+                <input pInputText formControlName="pregunta" class="w-full" [readonly]="true">
+            </div>
+            <div class="flex flex-column gap-3 w-full">
+                <label class="font-bold text-sm">Respuesta</label>
+                <textarea rows="5" cols="30" class="w-full" pInputTextarea formControlName="respuesta"></textarea>
+            </div>
+        </div>
+        <div class="w-full flex gap-3 pt-2">
+            <div class="flex flex-column gap-3 w-6">
+                <label class="font-bold text-sm">Activo</label>
+                <p-dropdown formControlName="estado" [options]="listaEstado" optionLabel="label" optionValue="value"
+                    styleClass="w-full" appendTo="body" [disabled]="!addRegister" />
+            </div>
+            <div class="flex flex-column gap-3 w-6">
+                <label class="font-bold text-sm">Número de Orden</label>
+                <p-inputNumber inputId="orden" styleClass="w-full" formControlName="orden" />
+            </div>
+        </div>
+        <div class="w-full flex justify-content-end">
+            <p-button [label]="labelbtn" severity="warning" [loading]="loading" (onClick)="guardarData()" />
+        </div>
+    </form>
+</p-dialog>
