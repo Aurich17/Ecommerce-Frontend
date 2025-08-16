@@ -1,0 +1,93 @@
+<form [formGroup]="usuariosform" class="block p-fluid p-formgrid p-grid gap-2 p-4">
+    <div class="flex justify-content-between">
+        <div class="text-lg font-bold">Lista de Usuarios</div>
+        <div class="flex gap-2">
+            <p-button icon="pi pi-plus" iconPos="right" label="Agregar Usuario" severity="warning"
+                (onClick)="agregarUsuario()" styleClass="text-sm" />
+            <p-button icon="pi pi-file-excel" styleClass="text-sm" iconPos="left" label="Excel" severity="success"
+                (onClick)="exportExcel()" />
+            <p-button icon="pi pi-file-o" styleClass="text-sm" iconPos="left" label="Csv" (onClick)="exportCsv()" />
+            <p-button icon="pi pi-file-pdf" styleClass="text-sm" iconPos="left" label="Pdf" severity="danger"
+                (onClick)="exportPdf()" />
+        </div>
+    </div>
+    <div class="pt-3 flex justify-content-between w-full">
+        <div class="w-6">
+            <p-selectButton [options]="optionsFiltro" formControlName="selectfiltro" optionLabel="label"
+                optionValue="value" class="filtrobandeja" />
+        </div>
+        <div class="w-2">
+            <input pInputText formControlName="nombreapellidocod" [readOnly]="true"
+                placeholder="Buscar por nombre, apellido o código.." class="text-xs w-full" />
+        </div>
+    </div>
+    <div class="pt-3">
+        <p-table [value]="usuariosTable" class="w-full" dataKey="id" editMode="row">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="text-sm">ID</th>
+                    <th class="text-sm">Nombre Completo</th>
+                    <th class="text-sm">Email</th>
+                    <th class="text-sm">Teléfono</th>
+                    <th class="text-sm">Social Security</th>
+                    <th class="text-sm">Estado</th>
+                    <th class="text-sm">Rol</th>
+                    <th class="text-sm">Comentarios</th>
+                    <th class="text-sm">Acciones</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-product>
+                <tr>
+                    <td>{{product.id}}</td>
+                    <td>{{product.nombrecompleto}}</td>
+                    <td>{{product.email}}</td>
+                    <td>{{product.telefono}}</td>
+                    <td>{{product.socialsecurity}}</td>
+                    <td><p-tag [value]="product.estado" [severity]="getSeverity(product.estado)" /></td>
+                    <td>{{product.rol}}</td>
+                    <td><p-tag [value]="product.comentarios" [severity]="getSeverityC(product.comentarios)" /></td>
+                    <td>
+                        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true"
+                            (onClick)="onEditPoppup(product)" />
+                        <p-button icon="pi pi-trash" [rounded]="true" [text]="true" (onClick)="onDeleteRow()" />
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</form>
+<p-dialog header="Editar Usuario" [modal]="true" [(visible)]="visible" [style]="{ width: '40rem', height: '42rem' }">
+    <div class="text-sm">
+        Modifica la información del usuario seleccionado.
+    </div>
+    <form [formGroup]="poppupgroup">
+        <div class="pt-4 w-full flex flex-column gap-3">
+            <div class="p-field p-col-12 flex flex-column gap-3 w-full">
+                <label class="font-bold text-sm">Nombre</label>
+                <input pInputText formControlName="nombre" class="w-full" [readOnly]="true" />
+            </div>
+            <div class="p-field p-col-12 flex flex-column gap-3 w-full">
+                <label class="font-bold text-sm">Apellido</label>
+                <input pInputText formControlName="apellido" class="w-full" [readOnly]="true" />
+            </div>
+            <div class="p-field p-col-12 flex flex-column gap-3 w-full">
+                <label class="font-bold text-sm">Email</label>
+                <input pInputText formControlName="email" class="w-full" [readOnly]="true" />
+            </div>
+            <div class="p-field p-col-12 flex flex-column gap-3 w-full">
+                <label class="font-bold text-sm">Estado</label>
+                <p-dropdown formControlName="estado" [options]="listaEstado" optionLabel="label" optionValue="label"
+                    styleClass="w-full" appendTo="body" />
+            </div>
+            <div class="p-field p-col-12 flex flex-column gap-3 w-full">
+                <label class="font-bold text-sm">Visibilidad de Comentarios</label>
+                <p-dropdown formControlName="comentarios" [options]="listaVisible" optionLabel="label"
+                    optionValue="label" styleClass="w-full" appendTo="body" />
+            </div>
+        </div>
+        <div class="pt-4 w-full flex justify-content-end">
+            <p-button [label]="labelbtn" severity="warning" [loading]="loading" (onClick)="actualizarCliente()" />
+        </div>
+    </form>
+</p-dialog>

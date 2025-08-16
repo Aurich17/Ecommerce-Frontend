@@ -1,0 +1,38 @@
+<div class="flex flex-column gap-4">
+    <div class="text-lg font-bold">Permisos del Rol</div>
+    <div class="text-sm">Estás editando lo permisos del rol: {{descripcionrol}}</div>
+</div>
+<div class="pt-3">
+    <p-accordion [multiple]="true">
+        <p-accordionTab header="Migración">
+            <p-table [value]="migracionTable" class="w-full" dataKey="id" editMode="row">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="text-sm">#</th>
+                        <th class="text-sm">Módulo</th>
+                        <th class="text-sm">Acceso</th>
+                        <th class="text-sm">Ver</th>
+                        <th class="text-sm">Agregar</th>
+                        <th class="text-sm">Editar</th>
+                        <th class="text-sm">Eliminar</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-product>
+                    <tr>
+                        <td>{{product.id}}</td>
+                        <td>{{product.nombre}}</td>
+                        <td><p-checkbox [binary]="true" [inputId]="product.id" [(ngModel)]="product.acceso" (onChange)="seleccionarPermiso($event, product, 'acceso')" /></td>
+                        <td><p-checkbox [binary]="true" [inputId]="product.id" [(ngModel)]="product.ver" (onChange)="seleccionarPermiso($event, product, 'ver')" /></td>
+                        <td><p-checkbox [binary]="true" [inputId]="product.id" [(ngModel)]="product.agregar" (onChange)="seleccionarPermiso($event, product, 'agregar')" /></td>
+                        <td><p-checkbox [binary]="true" [inputId]="product.id" [(ngModel)]="product.editar" (onChange)="seleccionarPermiso($event, product, 'editar')" /></td>
+                        <td><p-checkbox [binary]="true" [inputId]="product.id" [(ngModel)]="product.eliminar" (onChange)="seleccionarPermiso($event, product, 'eliminar')" /></td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-accordionTab>
+        <p-accordionTab header="Mantenimiento">
+            <div>No hay módulos en esta sección</div>
+        </p-accordionTab>
+    </p-accordion>
+</div>

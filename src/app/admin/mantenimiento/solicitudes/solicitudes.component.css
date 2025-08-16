@@ -1,0 +1,7 @@
+::ng-deep .filtrobtn .p-button{
+    width: 50%;
+}
+
+::ng-deep .filtrobandeja .p-button{
+    width: auto;
+}

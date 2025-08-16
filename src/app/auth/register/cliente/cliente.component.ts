@@ -225,50 +225,78 @@ export class ClienteComponent implements AfterViewInit {
   social_security: string = '';
   cliente: string = '';
 
-async finish() {
-  this.loading = true;
-  try {
-    const [selfieUrl, dniUrl] = await Promise.all([
-      this.selfieFile ? this.uploadToIK(this.selfieFile) : Promise.resolve(''),
-      this.dniFile ? this.uploadToIK(this.dniFile) : Promise.resolve(''),
-    ]);
+  async finish() {
+    this.loading = true;
+    try {
+      const [selfieUrl, dniUrl] = await Promise.all([
+        this.selfieFile ? this.uploadToIK(this.selfieFile) : Promise.resolve(''),
+        this.dniFile ? this.uploadToIK(this.dniFile) : Promise.resolve(''),
+      ]);
 
-    const personal = this.personalForm.value;
-    const credentials = this.credentialsForm.value;
+      const personal = this.personalForm.value;
+      const credentials = this.credentialsForm.value;
 
-    const payload: registerClienteRequest = {
-      nombres: personal.nombres || '',
-      apellidos: personal.apellidos || '',
-      telefono: personal.telefono || '',
-      fecha_nac: personal.fechaNacimiento || new Date('1990-01-01'),
-      direccion: personal.direccion || '',
-      pais_id: personal.pais || 0,
-      provincia_id: personal.provincia || 0,
-      ciudad_id: personal.ciudad || 0,
-      ocupacion_id: personal.ocupacion || 0,
-      genero_id: personal.genero || 0,
-      selfie_url: selfieUrl,     // 🔹 ya viene de ImageKit
-      dni_url: dniUrl,           // 🔹 ya viene de ImageKit
-      email: credentials.email || '',
-      password: credentials.password || '',
-      alt_nombre: credentials.contactoNombre || '',
-      alt_telefono: credentials.contactoTelefono || '',
-    };
+      const payload: registerClienteRequest = {
+        nombres: personal.nombres || '',
+        apellidos: personal.apellidos || '',
+        telefono: personal.telefono || '',
+        fecha_nac: personal.fechaNacimiento || new Date('1990-01-01'),
+        direccion: personal.direccion || '',
+        pais_id: personal.pais || 0,
+        provincia_id: personal.provincia || 0,
+        ciudad_id: personal.ciudad || 0,
+        ocupacion_id: personal.ocupacion || 0,
+        genero_id: personal.genero || 0,
+        selfie_url: selfieUrl,     // 🔹 ya viene de ImageKit
+        dni_url: dniUrl,           // 🔹 ya viene de ImageKit
+        email: credentials.email || '',
+        password: credentials.password || '',
+        alt_nombre: credentials.contactoNombre || '',
+        alt_telefono: credentials.contactoTelefono || '',
+      };
 
-    this.apiService.registerClient(payload)
-      .pipe(finalize(() => (this.loading = false)))
-      .subscribe(/* tu manejo de éxito/error */);
+      this.apiService.registerClient(payload)
+        .pipe(finalize(() => (this.loading = false)))
+        .subscribe({
+          next: (res) => {
+            if (res.social_security) {
+              // ✅ Toast éxito
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Guardado',
+                detail: 'El encabezado se actualizó correctamente.',
+                life: 2500,
+              });
 
-  } catch (err: any) {
-    this.loading = false;
-    this.messageService.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: `No se pudo subir imágenes: ${err?.message || ''}`,
-      life: 3500,
-    });
+              // const e164 = this.iti?.getNumber() ?? '';
+              this.visible = true;
+              this.social_security = res.social_security || '';
+              this.cliente = `${this.personalForm.value.nombres} ${this.personalForm.value.apellidos}` || ''
+
+              this.socialsecurity.get('socialsecurity')?.setValue(this.social_security);
+            }
+          },
+          error: (err) => {
+            console.error('Error al actualizar encabezado:', err);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: `No se pudo registrar cliente.${err?.error?.message || ''}`,
+              life: 3500,
+            });
+          },
+        });
+
+    } catch (err: any) {
+      this.loading = false;
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: `No se pudo subir imágenes: ${err?.message || ''}`,
+        life: 3500,
+      });
+    }
   }
-}
 
 
   // register-cliente.component.ts
