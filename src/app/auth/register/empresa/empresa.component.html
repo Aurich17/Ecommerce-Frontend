@@ -1,1 +1,217 @@
-<p>empresa works!</p>
+<!-- register-cliente.component.html -->
+<p-toast />
+<div class="flex justify-content-center align-content-center px-4">
+    <div class="surface-0 border-round shadow-2 py-4 px-6 w-full md:w-10/12 lg:w-8/12" style="max-width:85vw;">
+
+        <!-- Título general -->
+        <div class="text-center mb-6">
+            <h2 class="text-2xl font-bold text-orange-500 mb-1">FiaoX</h2>
+            <p class="text-sm text-gray-600">Registro de Cliente</p>
+        </div>
+
+        <!-- Barra de pasos -->
+        <p-steps [model]="items" [activeIndex]="activeIndex" readOnly="true" class="mb-6"></p-steps>
+
+        <div [ngSwitch]="activeIndex">
+
+            <!-- Paso 1: Información basica -->
+            <form [formGroup]="basicForm" class="p-fluid p-formgrid p-grid gap-3 p-4" *ngSwitchCase="0">
+                <!-- SECCION NOMBRES Y APELLIDOS  -->
+                <div class="formgrid grid">
+                    <div class="field col-12 md:col-6">
+                        <label class="font-bold" for="nombrecompleto">Nombre Completo</label>
+                        <input id="nombrecompleto" pInputText formControlName="nombrecompleto" />
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label class="font-bold" for="tiponegocio">Tipo de Negocio</label>
+                        <p-dropdown formControlName="tiponegocio" [options]="listaTipoNegocio" optionLabel="label"
+                            optionValue="value" inputId="tiponegocio" />
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label class="font-bold" for="fechafundacion">Fecha Fundación</label>
+                        <p-calendar inputId="fechafundacion" formControlName="fechafundacion" [iconDisplay]="'input'"
+                            [showIcon]="true" dateFormat="yy-mm-dd">
+                        </p-calendar>
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label class="font-bold" for="numeroempleados">Número de Empleados</label>
+                        <p-inputNumber inputId="numeroempleados" formControlName="numeroempleados" />
+                    </div>
+                </div>
+                <!-- Botones -->
+                <div class="p-col-12 flex justify-content-between mt-3 gap-4">
+                    <button pButton label="Atrás" [outlined]="true" severity="secondary" (click)="prev()"
+                        [disabled]="activeIndex === 0"></button>
+                    <button pButton label="Siguiente" class="p-button-warning p-button-sm" (click)="next()"></button>
+                </div>
+            </form>
+
+
+            <!-- Paso 2: Ubicacion -->
+            <div *ngSwitchCase="1">
+                <form [formGroup]="ubicacionForm" class="p-fluid p-formgrid p-grid gap-2 p-4">
+                    <div class="formgrid grid">
+                        <div class="field col-12 md:col-6">
+                            <label class="font-bold" for="direccionfiscal">Direccion Fiscal</label>
+                            <input id="direccionfiscal" pInputText formControlName="direccionfiscal" />
+                        </div>
+                        <div class="field col-12 md:col-6">
+                            <label class="font-bold" for="ciudad">Ciudad</label>
+                            <p-dropdown formControlName="ciudad" [options]="listaCiudad" optionLabel="label"
+                                optionValue="value" inputId="ciudad" />
+                        </div>
+                        <div class="field col-12 md:col-6">
+                            <label class="font-bold" for="departamento">Estado o Departamento</label>
+                            <p-dropdown formControlName="departamento" [options]="listaDepartamento" optionLabel="label"
+                                optionValue="value" inputId="departamento" />
+                        </div>
+                        <div class="field col-12 md:col-6">
+                            <label class="font-bold" for="codigopostal">Código Postal</label>
+                            <p-inputNumber inputId="codigopostal" formControlName="codigopostal" />
+                        </div>
+                        <div class="field col-12 md:col-6">
+                            <label class="font-bold" for="sitioweb">Sitio Web (Opcional)</label>
+                            <input id="sitioweb" pInputText formControlName="sitioweb" />
+                        </div>
+                    </div>
+                    <div class="p-field p-col-12 flex justify-content-between mt-4 gap-4">
+                        <button pButton label="Atrás" [outlined]="true" severity="secondary" (click)="prev()"></button>
+                        <button pButton label="Siguiente" class="p-button-warning p-button-sm"
+                            (click)="next()"></button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Paso 3: Representante Legal -->
+            <form *ngSwitchCase="2" [formGroup]="representanteForm" class="p-fluid p-formgrid p-grid gap-2 p-4">
+                <div class="formgrid grid">
+                    <div class="field col-12 md:col-6">
+                        <label class="font-bold" for="nombrerepresentante">Nombre del Representante</label>
+                        <input id="nombrerepresentante" pInputText formControlName="nombrerepresentante" />
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label class="font-bold" for="cargo">Cargo</label>
+                        <p-dropdown formControlName="cargo" [options]="listaCargo" optionLabel="label"
+                            optionValue="value" inputId="cargo" />
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label class="font-bold" for="telefono">Teléfono de Contacto</label>
+                        <input #phoneInput id="telefono" type="tel" dir="ltr" [class.p-inputtext]="true"
+                            formControlName="telefono" />
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label class="font-bold" for="telefonoalt">Teléfono Alternativo</label>
+                        <input #phoneInput id="telefonoalt" type="tel" dir="ltr" [class.p-inputtext]="true"
+                            formControlName="telefonoalt" />
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label class="font-bold" for="correo">Correo del Representante</label>
+                        <input id="correo" pInputText formControlName="correo" />
+                    </div>
+                </div>
+
+                <div class="p-field p-col-12 flex justify-content-between mt-4 gap-4">
+                    <button pButton label="Atrás" [outlined]="true" severity="secondary" (click)="prev()"></button>
+                    <button pButton label="Siguiente" class="p-button-warning p-button-sm" (click)="next()"></button>
+                </div>
+            </form>
+
+            <!-- Paso 4: Credenciales -->
+            <form *ngSwitchCase="3" [formGroup]="credencialesForm" class="p-fluid p-formgrid p-grid gap-2 p-4">
+                <div class="formgrid grid">
+                    <div class="field col-12">
+                        <label class="font-bold" for="correo">Correo Electrónico</label>
+                        <input id="correo" pInputText formControlName="correo" />
+                    </div>
+                    <div class="field col-12">
+                        <label class="font-bold" for="contrasenia">Contrasenia</label>
+                        <p-password formControlName="contrasenia" [feedback]="false" toggleMask="true" inputClass="w-full">
+                            <ng-template pTemplate="lefticon">
+                                <i class="pi pi-lock"></i>
+                            </ng-template>
+                        </p-password>
+                    </div>
+                </div>
+
+                <div class="p-field p-col-12 flex justify-content-between mt-4 gap-4">
+                    <button pButton label="Atrás" [outlined]="true" severity="secondary" (click)="prev()"></button>
+                    <button pButton label="Siguiente" class="p-button-warning p-button-sm" (click)="next()"></button>
+                </div>
+            </form>
+
+            <!-- Paso 5: Confirmación -->
+            <div *ngSwitchCase="4" class="p-4">
+                <!-- <p-card>
+                    <div class="flex flex-column w-full">
+                        <div class="flex flex-column w-full gap-2">
+                            <div class="font-bold text-5xl flex justify-content-center">Confirma tus datos antes de
+                                enviar</div>
+                            <div class="text-xl flex justify-content-center text-500">Revisa cuidadosamente la
+                                información ingresada.
+                            </div>
+                        </div>
+                        <div class="p-fluid p-formgrid p-grid gap-2 flex w-full p-4">
+                            <div class="p-col-12 p-md-6 w-6">
+                                <p class="text-500 text-base"><strong>Nombres:</strong></p>
+                                <p class="text-700 text-base"><strong>{{ basicForm.value.nombrecompleto }}</strong></p>
+                                <p class="text-500 text-base"><strong>Fecha de Nacimiento:</strong></p>
+                                <p class="text-700 text-base"><strong>{{ personalForm.value.telefono }}</strong></p>
+                                <p class="text-500 text-base"><strong>Fecha de Nacimiento:</strong></p>
+                                <p class="text-700 text-base"><strong>{{ personalForm.value.fechaNacimiento | date
+                                        }}</strong></p>
+                                <p class="text-500 text-base"><strong>Correo Electrónico:</strong></p>
+                                <p class="text-700 text-base"><strong>{{ credentialsForm.value.email }}</strong></p>
+                                <p class="text-500 text-base"><strong>Teléfono de Contacto Alternativo:</strong></p>
+                                <p class="text-700 text-base"><strong>{{ credentialsForm.value.contactoTelefono
+                                        }}</strong></p>
+                            </div>
+                            <div class="p-col-12 p-md-6 w-6">
+                                <p class="text-500 text-base"><strong>Apellidos:</strong></p>
+                                <p class="text-700 text-base"><strong>{{ basicForm.value.nombrecompleto }}</strong></p>
+                                <p class="text-500 text-base"><strong>Dirección:</strong></p>
+                                <p class="text-700 text-base"><strong>{{ personalForm.value.direccion }}</strong></p>
+                                <p class="text-500 text-base"><strong>Ocupación:</strong></p>
+                                <p class="text-700 text-base"><strong>{{ personalForm.value.ocupacion }}</strong></p>
+                                <p class="text-500 text-base">
+                                    <strong>Contacto Alternativo:</strong>
+                                </p>
+                                <p class="text-700 text-base"><strong>{{ credentialsForm.value.contactoNombre
+                                        }}</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </p-card> -->
+
+                <div class="p-field p-col-12 flex justify-content-between mt-4 gap-4">
+                    <button pButton label="Atrás" [outlined]="true" severity="secondary" class="w-full"
+                        (click)="prev()"></button>
+                    <button pButton label="Finalizar Registro" class="p-button-warning p-button-sm w-full"
+                        (click)="finish()"></button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<p-dialog [modal]="true" [(visible)]="visible" [style]="{ width: '75rem' }">
+    <div class="flex flex-column gap-3">
+        <div class="flex justify-content-center text-base">
+            Estimada Empresa<b>&nbsp;{{ cliente }}</b>, sus datos se registraron correctamente, siendo su<b>&nbsp;Social
+                Security</b>:
+        </div>
+        <div class="flex justify-content-center lign-items-center gap-3 mb-3">
+            <form [formGroup]="socialsecurity" class="flex gap-4">
+                <input pInputText id="socialsecurity" formControlName="socialsecurity" [readOnly]="true" />
+                <p-button (onClick)="copy()" label="Copiar" severity="secondary" [text]="true" />
+            </form>
+        </div>
+        <div class="flex justify-content-center text-xs">
+            Gracias por ser parte de<strong> FiaoX.</strong>
+        </div>
+        <div class="p-field p-col-12 flex justify-content-between mt-4 gap-4">
+            <button pButton label="Iniciar Sesión" class="p-button-warning p-button-sm w-full"
+                [routerLink]="'/login'"></button>
+        </div>
+    </div>
+</p-dialog>

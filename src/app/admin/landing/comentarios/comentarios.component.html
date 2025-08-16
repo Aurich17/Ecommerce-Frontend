@@ -26,11 +26,11 @@
             <ng-template pTemplate="body" let-product>
                 <tr>
                     <td>{{product.id}}</td>
-                    <td>{{product.comentario}}</td>
-                    <td>{{product.habilitado}}</td>
-                    <td>{{product.cliente}}</td>
-                    <td>{{product.ocupacion}}</td>
-                    <td>{{product.creado}}</td>
+                    <td>{{product.comment}}</td>
+                    <td><p-tag [value]="product.enabled" [severity]="getSeverity(product.enabled)" /></td>
+                    <td>{{product.client_name}}</td>
+                    <td>{{product.occupation_text}}</td>
+                    <td>{{product.created_at}}</td>
                     <td>
                         <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" (onClick)="onEditPoppup()"/>
                         <p-button icon="pi pi-trash" [rounded]="true" [text]="true" (onClick)="onDeleteRow()"/>

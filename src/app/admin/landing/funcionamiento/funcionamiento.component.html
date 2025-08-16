@@ -25,10 +25,11 @@
             <ng-template pTemplate="body" let-product>
                 <tr>
                     <td>{{product.id}}</td>
-                    <td>{{product.icono}}</td>
-                    <td>{{product.descripcion}}</td>
+                    <td>{{product.icon}}</td>
+                    <td>{{product.description}}</td>
                     <td>
-                        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" (onClick)="onEditPoppup()" />
+                        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true"
+                            (onClick)="onEditPoppup(product)" />
                         <p-button icon="pi pi-trash" [rounded]="true" [text]="true" (onClick)="onDeleteRow()" />
                     </td>
                 </tr>
@@ -36,3 +37,20 @@
         </p-table>
     </div>
 </form>
+<p-dialog [header]="titulomantenimiento" [modal]="true" [(visible)]="visible"
+    [style]="{ width: '50rem', height: '28rem' }">
+    <form [formGroup]="funcionamientoform" class="w-full flex flex-column gap-4">
+        <div class="flex flex-column gap-3 w-full">
+            <label class="font-bold text-sm">Ícono</label>
+            <input pInputText formControlName="icono" class="w-full" [readonly]="!addRegister">
+        </div>
+        <div class="flex flex-column gap-3 w-full">
+            <label class="font-bold text-sm">Descripción</label>
+            <textarea rows="5" cols="30" class="w-full" pInputTextarea formControlName="descripcion">
+        </textarea>
+        </div>
+        <div class="w-full flex justify-content-end">
+            <p-button [label]="labelbtn" severity="warning" [loading]="loading" (onClick)="guardarData()" />
+        </div>
+    </form>
+</p-dialog>

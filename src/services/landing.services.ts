@@ -5,6 +5,8 @@ import { ciudadesResponse, paisesResponse, provinciasResponse, tiposResponse } f
 import { EncabezadoResponse } from '../app/admin/landing/encabezado/domain/response/encabezado.response';
 import { EncabezadoRequest } from '../app/admin/landing/encabezado/domain/request/encabezado.request';
 import { environment } from '../environments/environment';
+import { getLandingAudienceResponse } from '../app/admin/landing/quienes/domain/quienes.response';
+import { getLandingHowItWorksResponse } from '../app/admin/landing/funcionamiento/domain/funcionamiento.response';
 @Injectable({
   providedIn: 'root'
 })
@@ -21,6 +23,14 @@ export class LandingService {
 
   updateLandingEncabezado(encabezado: EncabezadoRequest): Observable<EncabezadoResponse> {
     return this.http.put<EncabezadoResponse>(`${this.apiUrl}/landing/encabezado`, encabezado);
+  }
+
+  getLandingAudience(): Observable<getLandingAudienceResponse> {
+    return this.http.get<getLandingAudienceResponse>(`${this.apiUrl}/landing/audiences`);
+  }
+
+  getLandingHowItWork(): Observable<getLandingHowItWorksResponse> {
+    return this.http.get<getLandingHowItWorksResponse>(`${this.apiUrl}/landing/how-it-works`);
   }
 
 }

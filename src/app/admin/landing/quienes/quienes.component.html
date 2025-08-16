@@ -3,7 +3,7 @@
         <div class="text-lg font-bold">Sección: ¿Quiénes pueden usar?</div>
         <div class="flex gap-2">
             <p-button icon="pi pi-plus" iconPos="right" label="Agregar Entidad" severity="warning"
-                (onClick)="agregarEntidad()" styleClass="text-sm"/>
+                (onClick)="agregarEntidad()" styleClass="text-sm" />
             <p-button icon="pi pi-file-excel" styleClass="text-sm" iconPos="left" label="Excel" severity="success"
                 (onClick)="exportExcel()" />
             <p-button icon="pi pi-file-o" styleClass="text-sm" iconPos="left" label="Csv" (onClick)="exportCsv()" />
@@ -26,11 +26,12 @@
             <ng-template pTemplate="body" let-product>
                 <tr>
                     <td>{{product.id}}</td>
-                    <td>{{product.icono}}</td>
-                    <td>{{product.entidad}}</td>
-                    <td>{{product.descripcion}}</td>
+                    <td>{{product.icon}}</td>
+                    <td>{{product.entity}}</td>
+                    <td>{{product.description}}</td>
                     <td>
-                        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" (onClick)="onEditPoppup()" />
+                        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true"
+                            (onClick)="onEditPoppup(product)" />
                         <p-button icon="pi pi-trash" [rounded]="true" [text]="true" (onClick)="onDeleteRow()" />
                     </td>
                 </tr>
@@ -38,3 +39,28 @@
         </p-table>
     </div>
 </form>
+<p-dialog [header]="titulomantenimiento" [modal]="true" [(visible)]="visible"
+    [style]="{ width: '50rem', height: '28rem' }">
+    <form [formGroup]="quienesform" class="w-full flex flex-column gap-4">
+        <div class="w-full flex gap-3">
+            <div class="flex flex-column gap-3 w-6">
+                <label class="font-bold text-sm">Ícono</label>
+                <input pInputText formControlName="icono" class="w-full" [readonly]="!addRegister">
+            </div>
+            <div class="flex flex-column gap-3 w-6">
+                <label class="font-bold text-sm">Entidad</label>
+                <input pInputText formControlName="entidad" class="w-full" [readonly]="!addRegister">
+                <!-- <p-dropdown formControlName="entidad" [options]="listaEntidad" optionLabel="label" optionValue="value"
+                    styleClass="w-full" appendTo="body" [disabled]="!addRegister" /> -->
+            </div>
+        </div>
+        <div class="flex flex-column gap-3 w-full">
+            <label class="font-bold text-sm">Descripción</label>
+            <textarea rows="5" cols="30" class="w-full" pInputTextarea formControlName="descripcion">
+        </textarea>
+        </div>
+        <div class="w-full flex justify-content-end">
+            <p-button [label]="labelbtn" severity="warning" [loading]="loading" (onClick)="guardarData()" />
+        </div>
+    </form>
+</p-dialog>

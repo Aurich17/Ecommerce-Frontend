@@ -4,16 +4,24 @@ import { PanelMenuModule } from 'primeng/panelmenu';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
+import { MenubarModule } from 'primeng/menubar';
+import { AvatarModule } from 'primeng/avatar';
+import { AvatarGroupModule } from 'primeng/avatargroup';
+
 @Component({
   selector: 'app-principal',
   standalone: true,
-  imports: [PanelMenuModule,CommonModule,CardModule],
+  imports: [PanelMenuModule,CommonModule,CardModule,MenubarModule,AvatarModule,AvatarGroupModule],
   templateUrl: './principal.component.html',
   styleUrl: './principal.component.css'
 })
 export class PrincipalComponent {
   constructor(private router: Router) {}
-  items: MenuItem[] | undefined;
+  items: MenuItem[] | undefined
+  verMenu: boolean = false
+  itemsMenuBar: MenuItem[] = [
+    {label: 'Menú', icon: 'pi pi-bars', command: () => {this.verMenu = !this.verMenu}}
+  ];
   selectedContent: string = 'Bienvenido';
   ngOnInit() {
     this.items = [
