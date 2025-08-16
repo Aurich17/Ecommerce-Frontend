@@ -104,7 +104,7 @@
 
                 <div class="pb-2">
                   <p-fileUpload
-                    mode="advanced"
+                    mode="basic"
                     [auto]="false"
                     [customUpload]="true"
                     [showUploadButton]="false"
@@ -129,7 +129,7 @@
                 <div class="font-bold pb-3">Foto reverso del DNI</div>
                 <div class="pb-2">
                   <p-fileUpload
-                    mode="advanced"
+                    mode="basic"
                     [auto]="false"
                     [customUpload]="true"
                     [showUploadButton]="false"
@@ -266,7 +266,7 @@
       Gracias por ser parte de<strong> FiaoX.</strong>
     </div>
     <div class="p-field p-col-12 flex justify-content-between mt-4 gap-4">
-      <button pButton label="Iniciar Sesión" class="p-button-warning p-button-sm w-full"></button>
+      <button pButton label="Iniciar Sesión"  class="p-button-warning p-button-sm w-full" [routerLink]="'/login'"></button>
     </div>
   </div>
 </p-dialog>

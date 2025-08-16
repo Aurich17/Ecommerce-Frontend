@@ -18,37 +18,16 @@ export class CuerpoComponent {
   preguntasTable: any[] = [];
   clonedTableC: { [s: string]: any } = {};
   clonedTableP: { [s: string]: any } = {};
-  onRowEditInitC(tableC: any) {
-    this.clonedTableC[tableC.id as string] = { ...tableC };
-  }
-
-  onRowEditSaveC(tableC: any) {
+  onEditPoppupP(){
 
   }
-
-  onRowEditCancelC(tableC: any, index: number) {
-    this.caracteristicasTable[index] = this.clonedTableC[tableC.id as string];
-    delete this.clonedTableC[tableC.id as string];
-  }
-
-  onRowEditDeleteC(tableC: any, index: number){
+  onDeleteRowP(){
 
   }
-
-  onRowEditInitP(tableP: any) {
-    this.clonedTableP[tableP.id as string] = { ...tableP };
-  }
-
-  onRowEditSaveP(tableP: any) {
+  onEditPoppupC(){
 
   }
-
-  onRowEditCancelP(tableP: any, index: number) {
-    this.preguntasTable[index] = this.clonedTableP[tableP.id as string];
-    delete this.clonedTableP[tableP.id as string];
-  }
-
-  onRowEditDeleteP(tableC: any, index: number){
-
+  onDeleteRowC(){
+    
   }
 }

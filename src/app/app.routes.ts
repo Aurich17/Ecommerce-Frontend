@@ -11,6 +11,18 @@ import { EncabezadoComponent } from './admin/landing/encabezado/encabezado.compo
 import { FuncionamientoComponent } from './admin/landing/funcionamiento/funcionamiento.component';
 import { PiePaginaComponent } from './admin/landing/pie-pagina/pie-pagina.component';
 import { QuienesComponent } from './admin/landing/quienes/quienes.component';
+import { CategoriasComponent } from './admin/mantenimiento/categorias/categorias.component';
+import { SolicitudesComponent } from './admin/mantenimiento/solicitudes/solicitudes.component';
+import { ValoresComponent } from './admin/mantenimiento/valores/valores.component';
+import { InsigniasComponent } from './admin/mantenimiento/insignias/insignias.component';
+import { MonedasComponent } from './admin/mantenimiento/monedas/monedas.component';
+import { OcupacionesComponent } from './admin/mantenimiento/ocupaciones/ocupaciones.component';
+import { ProductosComponent } from './admin/mantenimiento/productos/productos.component';
+import { PuntosComponent } from './admin/mantenimiento/puntos/puntos.component';
+import { UsuariosComponent } from './admin/accesos/usuarios/usuarios.component';
+import { RolesComponent } from './admin/accesos/roles/roles.component';
+import { ModulosComponent } from './admin/accesos/modulos/modulos.component';
+import { PermisosrolComponent } from './admin/accesos/permisosrol/permisosrol.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -30,12 +42,24 @@ export const routes: Routes = [
     path: 'principal',
     component: PrincipalComponent,
     children: [
-      { path: 'comentarios', component: ComentariosComponent }, // selección
-      { path: 'cuerpo', component: CuerpoComponent },
-      { path: 'encabezado', component: EncabezadoComponent },
-      { path: 'funcionamiento', component: FuncionamientoComponent },
-      { path: 'piepagina', component: PiePaginaComponent },
-      { path: 'quienes', component: QuienesComponent }
+      { path: 'landing/comentarios', component: ComentariosComponent }, // selección
+      { path: 'landing/cuerpo', component: CuerpoComponent },
+      { path: 'landing/encabezado', component: EncabezadoComponent },
+      { path: 'landing/funcionamiento', component: FuncionamientoComponent },
+      { path: 'landing/piepagina', component: PiePaginaComponent },
+      { path: 'landing/quienes', component: QuienesComponent },
+      { path: 'mant/categorias', component: CategoriasComponent },
+      { path: 'mant/insignias', component: InsigniasComponent },
+      { path: 'mant/monedas', component: MonedasComponent },
+      { path: 'mant/ocupaciones', component: OcupacionesComponent },
+      { path: 'mant/productos', component: ProductosComponent },
+      { path: 'mant/puntos', component: PuntosComponent },
+      { path: 'mant/solicitudes', component: SolicitudesComponent },
+      { path: 'mant/valores', component: ValoresComponent },
+      { path: 'accesos/roles', component: RolesComponent },
+      { path: 'accesos/usuarios', component: UsuariosComponent },
+      { path: 'accesos/modulos', component: ModulosComponent },
+      { path: 'accesos/permisosrol', component: PermisosrolComponent }
     ]
   }
 

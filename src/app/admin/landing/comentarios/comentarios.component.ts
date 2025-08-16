@@ -24,20 +24,10 @@ export class ComentariosComponent {
   exportPdf() {
 
   }
-  onRowEditInit(table: any) {
-    this.clonedTable[table.id as string] = { ...table };
-  }
-
-  onRowEditSave(table: any) {
+  onEditPoppup(){
 
   }
-
-  onRowEditCancel(table: any, index: number) {
-    this.comentariosTable[index] = this.clonedTable[table.id as string];
-    delete this.clonedTable[table.id as string];
-  }
-
-  onRowEditDelete(table: any, index: number) {
-
+  onDeleteRow(){
+    
   }
 }
