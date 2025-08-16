@@ -21,7 +21,7 @@ import { DividerModule } from 'primeng/divider';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { CardModule } from 'primeng/card';
-import { registerClienteRequest } from '../domain/request/register.request';
+import { RegisterClienteRequest } from '../domain/request/register.request';
 import { finalize } from 'rxjs/operators';
 import { DialogModule } from 'primeng/dialog';
 import { LoginRequest } from '../../login/domain/request/login.request';
@@ -31,8 +31,6 @@ import { ImagekitClient } from '../../../../services/imagekit.service';
 
 
 type IntlTelOptions = NonNullable<Parameters<typeof intlTelInput>[1]>;
-
-
 @Component({
   selector: 'app-cliente',
   standalone: true,
@@ -60,6 +58,22 @@ type IntlTelOptions = NonNullable<Parameters<typeof intlTelInput>[1]>;
   providers: [MessageService]
 })
 export class ClienteComponent implements AfterViewInit {
+
+
+
+  //RELLENA CATALOGOS
+  // crea estos diccionarios una sola vez cuando cargas catálogos
+  private mapPAI: Record<number, string> = {}; // { 15: '001', ... }
+  private mapREG: Record<number, string> = {};
+  private mapMUN: Record<number, string> = {};
+  private mapOCU: Record<number, string> = {};
+  private mapGEN: Record<number, string> = {};
+  private tipoCod = (tab: 'PAI'|'REG'|'MUN'|'OCU'|'GEN', id?: number) => {
+    const map = tab==='PAI'?this.mapPAI:tab==='REG'?this.mapREG:tab==='MUN'?this.mapMUN:tab==='OCU'?this.mapOCU:this.mapGEN;
+    return id != null ? map[id] : undefined;
+  };
+  private toDateOnly = (d: Date | string) => (d instanceof Date ? d : new Date(d)).toISOString().slice(0,10);
+
   private ik = inject(ImagekitClient);
   @ViewChild('phoneInput', { static: true }) phoneInput!: ElementRef<HTMLInputElement>;
   private iti: any;
@@ -221,6 +235,12 @@ export class ClienteComponent implements AfterViewInit {
     this.activeIndex = Math.max(this.activeIndex - 1, 0);
   }
 
+
+
+  //PARA REGISTRAR ISMA
+
+
+
   loading = false;
   social_security: string = '';
   cliente: string = '';
@@ -236,52 +256,48 @@ export class ClienteComponent implements AfterViewInit {
       const personal = this.personalForm.value;
       const credentials = this.credentialsForm.value;
 
-      const payload: registerClienteRequest = {
+      // 👇 cambios mínimos: *_cod, fecha string y dni_reverso_url
+      const payload = {
         nombres: personal.nombres || '',
         apellidos: personal.apellidos || '',
         telefono: personal.telefono || '',
-        fecha_nac: personal.fechaNacimiento || new Date('1990-01-01'),
+        fecha_nac: this.toDateOnly(personal.fechaNacimiento || '1990-01-01'),
         direccion: personal.direccion || '',
-        pais_id: personal.pais || 0,
-        provincia_id: personal.provincia || 0,
-        ciudad_id: personal.ciudad || 0,
-        ocupacion_id: personal.ocupacion || 0,
-        genero_id: personal.genero || 0,
-        selfie_url: selfieUrl,     // 🔹 ya viene de ImageKit
-        dni_url: dniUrl,           // 🔹 ya viene de ImageKit
+
+        pais_cod:      this.tipoCod('PAI', personal?.pais ?? undefined) ?? '001',
+        provincia_cod: this.tipoCod('REG', personal?.provincia ?? undefined) ?? '001',
+        ciudad_cod:    this.tipoCod('MUN', personal?.ciudad ?? undefined) ?? '001',
+        ocupacion_cod: this.tipoCod('OCU', personal?.ocupacion ?? undefined) ?? '001',
+        genero_cod:    this.tipoCod('GEN', personal?.genero ?? undefined) ?? '001',
+
+        selfie_url: selfieUrl,
+        dni_reverso_url: dniUrl,          // ⬅️ renombrado para la API
+
         email: credentials.email || '',
         password: credentials.password || '',
+
         alt_nombre: credentials.contactoNombre || '',
         alt_telefono: credentials.contactoTelefono || '',
-      };
+      } as const;
 
       this.apiService.registerClient(payload)
         .pipe(finalize(() => (this.loading = false)))
         .subscribe({
           next: (res) => {
             if (res.social_security) {
-              // ✅ Toast éxito
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Guardado',
-                detail: 'El encabezado se actualizó correctamente.',
-                life: 2500,
-              });
-
-              // const e164 = this.iti?.getNumber() ?? '';
+              this.messageService.add({ severity:'success', summary:'Guardado', detail:'Cliente registrado.', life:2500 });
               this.visible = true;
-              this.social_security = res.social_security || '';
-              this.cliente = `${this.personalForm.value.nombres} ${this.personalForm.value.apellidos}` || ''
-
+              this.social_security = res.social_security;
+              this.cliente = `${personal.nombres} ${personal.apellidos}`.trim();
               this.socialsecurity.get('socialsecurity')?.setValue(this.social_security);
             }
           },
           error: (err) => {
-            console.error('Error al actualizar encabezado:', err);
+            console.error('Error al registrar cliente:', err);
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: `No se pudo registrar cliente.${err?.error?.message || ''}`,
+              detail: `No se pudo registrar cliente. ${err?.error?.message || ''}`,
               life: 3500,
             });
           },

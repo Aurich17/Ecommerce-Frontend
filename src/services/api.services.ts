@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { BehaviorSubject, catchError, Observable, of, shareReplay, tap, throwError } from 'rxjs';
-import { ciudadesResponse, paisesResponse, provinciasResponse, registerClienteResponse, tiposResponse } from '../app/auth/register/domain/response/register.response';
-import { registerClienteRequest } from '../app/auth/register/domain/request/register.request';
+import { BehaviorSubject, catchError, map, Observable, of, shareReplay, tap, throwError } from 'rxjs';
+import { ciudadesResponse, paisesResponse, provinciasResponse, RegisterClienteResponse, tiposResponse } from '../app/auth/register/domain/response/register.response';
+import { RegisterClienteRequest } from '../app/auth/register/domain/request/register.request';
 import { environment } from '../environments/environment';
+import { RequestTipos } from '../app/tipos/request/tipos.request';
+import { ResponseTipos, Tipo } from '../app/tipos/reponse/tipos.response';
 @Injectable({
   providedIn: 'root'
 })
@@ -115,7 +117,13 @@ export class ApiService {
   //   return this.http.post<any>(`${this.apiUrl}/api/usuario/newUser`, request);
   // }
 
-  registerClient(encabezado: registerClienteRequest): Observable<registerClienteResponse> {
-    return this.http.post<registerClienteResponse>(`${this.apiUrl}/clientes/registro-completo`, encabezado);
+  registerClient(encabezado: RegisterClienteRequest): Observable<RegisterClienteResponse> {
+    return this.http.post<RegisterClienteResponse>(`${this.apiUrl}/clientes/registro-completo`, encabezado);
+  }
+
+  obtenerTipos(req: RequestTipos): Observable<Tipo[]> {
+    return this.http
+      .post<ResponseTipos>(`${this.apiUrl}/tipos`, req)
+      .pipe(map(r => r.data)); // ajusta si tu API responde distinto
   }
 }

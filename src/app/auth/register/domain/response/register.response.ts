@@ -23,6 +23,7 @@ export interface tiposResponse {
   descripcion: string
 }
 
-export interface registerClienteResponse {
-  social_security: string
+export interface RegisterClienteResponse {
+  social_security: string;
+  user_id: string;          // útil en el front
 }
