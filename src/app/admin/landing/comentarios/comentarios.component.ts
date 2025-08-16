@@ -9,24 +9,66 @@ import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { MessageService } from 'primeng/api';
+import { LandingService } from '../../../../services/landing.services';
+import { Router } from '@angular/router';
+import { CalendarModule } from 'primeng/calendar';
+
 
 @Component({
   selector: 'app-comentarios',
   standalone: true,
-  imports: [ReactiveFormsModule, ButtonModule, TableModule, FormsModule,TagModule,DialogModule, DropdownModule, InputTextModule, InputTextareaModule],
+  imports: [ReactiveFormsModule, ButtonModule, TableModule, FormsModule, TagModule, DialogModule, DropdownModule, InputTextModule, InputTextareaModule, CalendarModule],
   templateUrl: './comentarios.component.html',
   styleUrl: './comentarios.component.css',
   providers: [MessageService],
 })
 export class ComentariosComponent {
+  constructor(
+    private apiService: LandingService,
+    private router: Router,
+    private messageService: MessageService
+  ) { }
   visible: boolean = false
   titulomantenimiento: string = 'Registrar Item'
   labelbtn: string = 'Guardar'
   loading: boolean = false
   addRegister: boolean = false
   comentariosTable: any[] = [];
-  comentariosform = new FormGroup({})
+  listaOcupacion: any[] = [];
+  listaEstado: any[] = [
+    { label: 'Si', value: true },
+    { label: 'No', value: false }
+  ];
+  comentariosform = new FormGroup({
+    cliente: new FormControl(null, null),
+    creacion: new FormControl<Date | null>(null),
+    comentario: new FormControl(null, null),
+    estado: new FormControl(null, null),
+  })
   clonedTable: { [s: string]: any } = {};
+  ngOnInit() {
+    this.getAudiencia();
+  }
+
+  getAudiencia() {
+    this.apiService.getLandingTestimonials().subscribe({
+      next: (data) => {
+        console.log('data', data)
+        this.comentariosTable = data.data.items.map(item => {
+          const fecha = new Date(item.created_at);
+          const day = fecha.getDate().toString().padStart(2, '0');
+          const month = (fecha.getMonth() + 1).toString().padStart(2, '0');
+          const year = fecha.getFullYear();
+
+          return {
+            ...item,
+            creacion: `${day}/${month}/${year}`
+          };
+        })
+      },
+      error: (err) => console.error('Error fetching encabezado:', err),
+    });
+  }
   exportExcel() {
 
   }
@@ -36,11 +78,20 @@ export class ComentariosComponent {
   exportPdf() {
 
   }
-  onEditPoppup(){
-
+  onEditPoppup(row: any) {
+    this.visible = true
+    this.titulomantenimiento = 'Actualizar Audiencia'
+    this.addRegister = false
+    this.comentariosform.reset()
+    if (row) {
+      this.comentariosform.get('cliente')?.setValue(row.client_name);
+      this.comentariosform.get('comentario')?.setValue(row.comment);
+      this.comentariosform.get('creacion')?.setValue(new Date(row.created_at));
+      this.comentariosform.get('estado')?.setValue(row.enabled);
+    }
   }
-  onDeleteRow(){
-    
+  onDeleteRow() {
+
   }
   getSeverity(status: boolean) {
     switch (status) {
@@ -51,5 +102,9 @@ export class ComentariosComponent {
       default:
         return 'secondary';
     }
+  }
+  guardarData() {
+    this.labelbtn = 'Guardando'
+    this.loading = true
   }
 }

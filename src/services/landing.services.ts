@@ -7,6 +7,7 @@ import { EncabezadoRequest } from '../app/admin/landing/encabezado/domain/reques
 import { environment } from '../environments/environment';
 import { getLandingAudienceResponse } from '../app/admin/landing/quienes/domain/quienes.response';
 import { getLandingHowItWorksResponse } from '../app/admin/landing/funcionamiento/domain/funcionamiento.response';
+import { FooterResponse } from '../app/admin/landing/pie-pagina/domain/pie-pagina.response';
 @Injectable({
   providedIn: 'root'
 })
@@ -31,6 +32,14 @@ export class LandingService {
 
   getLandingHowItWork(): Observable<getLandingHowItWorksResponse> {
     return this.http.get<getLandingHowItWorksResponse>(`${this.apiUrl}/landing/how-it-works`);
+  }
+
+  getLandingTestimonials(): Observable<getLandingHowItWorksResponse> {
+    return this.http.get<getLandingHowItWorksResponse>(`${this.apiUrl}/landing/testimonials`);
+  }
+
+  getLandingFooter(): Observable<FooterResponse> {
+    return this.http.get<FooterResponse>(`${this.apiUrl}/landing/footer`);
   }
 
 }

@@ -37,10 +37,10 @@ export class FuncionamientoComponent {
     descripcion: new FormControl(null, null),
   });
   ngOnInit() {
-    this.getAudiencia();
+    this.getLandingHowItWork();
   }
 
-  getAudiencia() {
+  getLandingHowItWork() {
     this.apiService.getLandingHowItWork().subscribe({
       next: (data) => {
         console.log('data', data)
