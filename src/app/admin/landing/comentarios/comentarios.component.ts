@@ -47,10 +47,10 @@ export class ComentariosComponent {
   })
   clonedTable: { [s: string]: any } = {};
   ngOnInit() {
-    this.getAudiencia();
+    this.getTestimonials();
   }
 
-  getAudiencia() {
+  getTestimonials() {
     this.apiService.getLandingTestimonials().subscribe({
       next: (data) => {
         console.log('data', data)
