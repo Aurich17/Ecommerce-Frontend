@@ -1,16 +1,15 @@
-export type TabTipo = 'PAIS' | 'PROVINCIA' | 'MUNICIPIO';
+export type TabTipo = 'PAIS' | 'PROVINCIA' | 'MUNICIPIO' | 'OCU' | 'GEN';
 
 export interface Tipo {
   id: number;
   nombre: string;
 }
 
-export interface RequestTipos {
-  tab: TabTipo;
-  parentId?: number;
-}
+export type RequestTipos =
+  | { tab: 'PAIS' | 'OCU' | 'GEN' }
+  | { tab: 'PROVINCIA' | 'MUNICIPIO'; parentId: number };
 
 export interface ResponseTipos {
-  data: Tipo[];      // adapta a tu JSON real
-  message?: string;  // opcional
+  data: Tipo[];
+  message?: string;
 }
