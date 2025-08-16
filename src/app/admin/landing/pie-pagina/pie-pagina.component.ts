@@ -4,6 +4,10 @@ import { AccordionModule } from 'primeng/accordion';
 import { CommonModule } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
+import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { LandingService } from '../../../../services/landing.services';
+import { FooterResponse, ItemsFooter } from './domain/pie-pagina.response';
 
 @Component({
   selector: 'app-pie-pagina',
@@ -13,15 +17,42 @@ import { ButtonModule } from 'primeng/button';
   styleUrl: './pie-pagina.component.css'
 })
 export class PiePaginaComponent {
+  constructor(
+    private apiService: LandingService,
+    private router: Router
+  ) { }
+  loading = false;
+  footerLanding?: ItemsFooter;
   piepaginaform = new FormGroup({
-    correo: new FormControl(null),
-    telefono: new FormControl(null),
-    titulo: new FormControl(null),
-    descripcion: new FormControl(null),
-    descripcionizq: new FormControl(null),
-    copyright: new FormControl(null)
+    correo: new FormControl<string>(''),
+    telefono: new FormControl<string>(''),
+    titulo: new FormControl<string>(''),
+    descripcion: new FormControl<string>(''),
+    descripcionizq: new FormControl<string>(''),
+    copyright: new FormControl<string>('')
   });
 
+  ngOnInit() {
+    this.getFooter();
+  }
+
+  getFooter() {
+    this.apiService.getLandingFooter().subscribe({
+      next: (data) => {
+        this.piepaginaform.patchValue({
+          correo: data.data.contact_email ?? '',
+          telefono: data.data.contact_phone ?? '',
+          titulo: data.data.footer_title ?? '',
+          descripcion: data.data.footer_desc ?? '',
+          descripcionizq: data.data.footer_left_desc ?? '',
+          copyright: data.data.footer_copy ?? '',
+        });
+      },
+      error: (err) => console.error('Error fetching encabezado:', err),
+    });
+  }
+
   guardarCambios() {
+    
   }
 }
