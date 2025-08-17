@@ -78,7 +78,7 @@ export class QuienesComponent {
       this.quienesform.get('descripcion')?.setValue(row.description);
     }
   }
-  onDeleteRow() {
+  onDeleteRow(id: number) {
 
   }
   guardarData(){

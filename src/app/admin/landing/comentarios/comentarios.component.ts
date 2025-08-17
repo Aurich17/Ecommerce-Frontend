@@ -90,7 +90,7 @@ export class ComentariosComponent {
       this.comentariosform.get('estado')?.setValue(row.enabled);
     }
   }
-  onDeleteRow() {
+  onDeleteRow(id: number) {
 
   }
   getSeverity(status: boolean) {

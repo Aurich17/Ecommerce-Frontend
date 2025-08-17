@@ -92,7 +92,7 @@ export class UsuariosComponent {
       this.poppupgroup.get('estado')?.setValue(row.estado);
     }
   }
-  onDeleteRow() {
+  onDeleteRow(id: number) {
 
   }
   actualizarCliente() {

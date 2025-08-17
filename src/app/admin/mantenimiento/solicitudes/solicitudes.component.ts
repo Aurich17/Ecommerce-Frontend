@@ -73,7 +73,7 @@ export class SolicitudesComponent {
       this.poppupgroup.get('estado')?.setValue(row.estado);
     }
   }
-  onDeleteRow() {
+  onDeleteRow(id: number) {
 
   }
   getSeverity(status: string) {
