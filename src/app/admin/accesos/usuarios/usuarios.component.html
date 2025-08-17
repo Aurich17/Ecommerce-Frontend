@@ -40,13 +40,13 @@
             <ng-template pTemplate="body" let-product>
                 <tr>
                     <td>{{product.id}}</td>
-                    <td>{{product.nombrecompleto}}</td>
+                    <td>{{product.fullname}}</td>
                     <td>{{product.email}}</td>
-                    <td>{{product.telefono}}</td>
-                    <td>{{product.socialsecurity}}</td>
-                    <td><p-tag [value]="product.estado" [severity]="getSeverity(product.estado)" /></td>
-                    <td>{{product.rol}}</td>
-                    <td><p-tag [value]="product.comentarios" [severity]="getSeverityC(product.comentarios)" /></td>
+                    <td>{{product.phone}}</td>
+                    <td>{{product.socialSecurity}}</td>
+                    <td><p-tag [value]="product.status" [severity]="getSeverity(product.status)" /></td>
+                    <td>{{product.rol?.desc}}</td>
+                    <td>{{product.comment}}</td>
                     <td>
                         <p-button icon="pi pi-pencil" [rounded]="true" [text]="true"
                             (onClick)="onEditPoppup(product)" />

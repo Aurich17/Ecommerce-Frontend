@@ -9,6 +9,9 @@ import { getLandingAudienceResponse } from '../app/admin/landing/quienes/domain/
 import { getLandingHowItWorksResponse } from '../app/admin/landing/funcionamiento/domain/funcionamiento.response';
 import { FooterResponse } from '../app/admin/landing/pie-pagina/domain/pie-pagina.response';
 import { getLandingFAQResponse, getLandingFeaturesResponse } from '../app/admin/landing/cuerpo/domain/cuerpo.response';
+import { getMantTiposResponse } from '../app/admin/accesos/roles/domain/roles.response';
+import { getMantUsuariosRequest } from '../app/admin/accesos/usuarios/domain/usuarios.request';
+import { getMantUsuariosResponse } from '../app/admin/accesos/usuarios/domain/usuarios.response';
 @Injectable({
   providedIn: 'root'
 })
@@ -16,7 +19,7 @@ export class LandingService {
   private apiUrl = environment.urlApi;
   // private apiUrl = 'https://ecommerce-backend-na5u.onrender.com/api'; // URL de tu API
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
 
   getLandingEncabezado(): Observable<EncabezadoResponse> {
@@ -49,6 +52,10 @@ export class LandingService {
 
   getLandingFeatures(): Observable<getLandingFeaturesResponse> {
     return this.http.get<getLandingFeaturesResponse>(`${this.apiUrl}/landing/features`);
+  }
+
+  getMantUsuarios(params: getMantUsuariosRequest): Observable<getMantUsuariosResponse> {
+    return this.http.post<getMantUsuariosResponse>(`${this.apiUrl}/users`, { params });
   }
 
 }
