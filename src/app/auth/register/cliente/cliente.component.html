@@ -54,14 +54,14 @@
           <!-- PROVINCIA -->
           <div class="field col-12 md:col-4">
             <label class="font-bold" for="provincia">Provincia / Estado</label>
-            <p-dropdown inputId="provincia" [options]="filteredProvincias" optionLabel="nombre" optionValue="id"
+            <p-dropdown inputId="provincia" [options]="listProvincias" optionLabel="nombre" optionValue="id"
               formControlName="provincia" [filter]="true" [showClear]="true" appendTo="body">
             </p-dropdown>
           </div>
           <!-- CIUDAD -->
           <div class="field col-12 md:col-4">
             <label class="font-bold" for="ciudad">Ciudad / Municipio</label>
-            <p-dropdown inputId="ciudad" [options]="filteredCiudades" optionLabel="nombre" optionValue="id"
+            <p-dropdown inputId="ciudad" [options]="listMunicipios" optionLabel="nombre" optionValue="id"
               formControlName="ciudad" [filter]="true" [showClear]="true" appendTo="body">
             </p-dropdown>
           </div>

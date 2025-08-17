@@ -20,7 +20,6 @@ import { DividerModule } from 'primeng/divider';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { CardModule } from 'primeng/card';
-import { registerClienteRequest } from '../domain/request/register.request';
 import { finalize } from 'rxjs/operators';
 import { DialogModule } from 'primeng/dialog';
 import { LoginRequest } from '../../login/domain/request/login.request';
