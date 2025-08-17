@@ -65,23 +65,23 @@ export class UsuariosComponent {
       limit: [],
     };
 
-    this.apiService.getMantUsuarios(requestParams).subscribe({
-      next: (data) => {
-        console.log('data', data);
-        this.usuariosTable = data.data.items.map(item => {
-          const fecha = new Date(item.createdAt);
-          const day = fecha.getDate().toString().padStart(2, '0');
-          const month = (fecha.getMonth() + 1).toString().padStart(2, '0');
-          const year = fecha.getFullYear();
+    // this.apiService.getMantUsuarios(requestParams).subscribe({
+    //   next: (data) => {
+    //     console.log('data', data);
+    //     this.usuariosTable = data.data.items.map(item => {
+    //       const fecha = new Date(item.createdAt);
+    //       const day = fecha.getDate().toString().padStart(2, '0');
+    //       const month = (fecha.getMonth() + 1).toString().padStart(2, '0');
+    //       const year = fecha.getFullYear();
 
-          return {
-            ...item,
-            creacion: `${day}/${month}/${year}`
-          };
-        });
-      },
-      error: (err) => console.error('Error fetching usuarios:', err),
-    });
+    //       return {
+    //         ...item,
+    //         creacion: `${day}/${month}/${year}`
+    //       };
+    //     });
+    //   },
+    //   error: (err) => console.error('Error fetching usuarios:', err),
+    // });
   }
   agregarUsuario() {
 

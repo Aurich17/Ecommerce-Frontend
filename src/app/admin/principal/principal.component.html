@@ -1,17 +1,17 @@
 <div class="w-full h-full flex">
-    <div *ngIf="verMenu" class="h-full" style="width: 10%;">
+    <div *ngIf="verMenu" class="h-full" style="width: 15%;">
         <div class="text-xl p-4">Fiaox Market</div>
         <p-panelMenu [model]="items" styleClass="flex flex-column h-full gap-4">
             <ng-template pTemplate="item" let-item>
                 <ng-container *ngIf="item.route; else urlRef">
-                    <a [routerLink]="item.route" class="flex align-items-center 
+                    <a [routerLink]="item.route" class="flex align-items-center
                     cursor-pointer text-color px-3 py-2">
                         <span [class]="item.icon"></span>
                         <span class="ml-2 text-color">{{ item.label }}</span>
                     </a>
                 </ng-container>
                 <ng-template #urlRef>
-                    <a *ngIf="item.url; else noLink" [href]="item.url" class="flex align-items-center 
+                    <a *ngIf="item.url; else noLink" [href]="item.url" class="flex align-items-center
                     cursor-pointer text-color px-3 py-2">
                         <span [class]="item.icon"></span>
                         <span class="ml-2">{{ item.label }}</span>

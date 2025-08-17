@@ -38,6 +38,9 @@ export class QuienesComponent {
     private messageService: MessageService
   ) {}
   quienesTable: itemsLandingAudience[] = [];
+  quienesLanding: itemsLandingAudience[] = [];
+  loadingAud = false;
+  errorAud = ''
   visible: boolean = false;
   titulomantenimiento: string = 'Registrar Audiencia';
   labelbtn: string = 'Guardar';

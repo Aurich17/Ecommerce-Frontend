@@ -8,6 +8,7 @@ import { ApiService } from '../../services/api.services';
 import { LandingService } from '../../services/landing.services';
 import { EncabezadoResponse } from '../admin/landing/encabezado/domain/response/encabezado.response';
 import { ImagekitClient } from '../../services/imagekit.service';
+import { getLandingAudienceResponse } from '../admin/landing/quienes/domain/quienes.response';
 
 type UploadItem = {
   file: File; progress: number; url?: string; thumb?: string; error?: string;
@@ -23,6 +24,7 @@ export class LandingComponent {
   uploads: UploadItem[] = [];
   showMobileMenu = false;
   encabezadoLanding?: EncabezadoResponse;
+  quienesLanding?: any;
 
   constructor(private apiService: LandingService, private router: Router,private ik: ImagekitClient){}
   ngOnInit(){
@@ -80,6 +82,16 @@ export class LandingComponent {
         this.encabezadoLanding = { ...data, updated_at: new Date(data.updated_at) };
       },
       error: (err) => console.error('Error fetching encabezado:', err),
+    });
+  }
+
+  getAudiencia() {
+    this.apiService.getLandingAudience().subscribe({
+      next: (data) => {
+        console.log('data', data);
+        this.quienesLanding = data.data.items
+      },
+      error: (err: unknown) => console.error('Error fetching encabezado:', err),
     });
   }
 

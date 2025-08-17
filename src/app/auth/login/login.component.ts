@@ -51,8 +51,8 @@ export class LoginComponent implements OnInit {
     .subscribe({
       next: (res) => {
         console.log('INGRESA')
-        this.session.setFromLogin(res);
         this.router.navigateByUrl('/principal', { replaceUrl: true });
+        this.session.setFromLogin(res);
       },
       error: (err: HttpErrorResponse) => {
         this.errorMsg = err?.error?.message
