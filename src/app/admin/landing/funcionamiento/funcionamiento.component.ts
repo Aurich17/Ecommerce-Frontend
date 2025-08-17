@@ -10,6 +10,7 @@ import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { HowItWorksRequest } from '../encabezado/domain/request/encabezado.request';
 
 @Component({
   selector: 'app-funcionamiento',
@@ -25,6 +26,7 @@ export class FuncionamientoComponent {
     private router: Router,
     private messageService: MessageService
   ) { }
+  currentId!:number;
   visible: boolean = false
   titulomantenimiento: string = 'Registrar Item'
   labelbtn: string = 'Guardar'
@@ -69,6 +71,7 @@ export class FuncionamientoComponent {
     this.visible = true
     this.titulomantenimiento = 'Actualizar Audiencia'
     this.addRegister = false
+    this.currentId = row.id
     this.funcionamientoform.reset()
     if (row) {
       this.funcionamientoform.get('icono')?.setValue(row.icon);
@@ -79,7 +82,26 @@ export class FuncionamientoComponent {
 
   }
   guardarData(){
-    this.labelbtn = 'Guardando'
-    this.loading = true
+    this.labelbtn = 'Guardando';
+    this.loading = true;
+
+    const f = this.funcionamientoform.value;
+
+    const request:HowItWorksRequest  = {
+      icon: f.icono ?? '', // si lo capturas en el form; si no, pásalo vacío o elimínalo si tu backend no lo requiere
+      description: f.descripcion ?? '',
+      step_order:  1,
+      enabled: true,
+    };
+
+    this.apiService
+      .updateLandingHowItWord(this.currentId, request)
+      .subscribe({
+        next: ({ data }) => {
+          this.getLandingHowItWork();
+          this.visible = false;
+        },
+        error: (err) => console.error('Error al actualizar testimonial:', err),
+      });
   }
 }

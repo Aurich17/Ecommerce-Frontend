@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, catchError, Observable, of, shareReplay, tap, throwError } from 'rxjs';
 import { ciudadesResponse, paisesResponse, provinciasResponse, tiposResponse } from '../app/auth/register/domain/response/register.response';
 import { EncabezadoResponse } from '../app/admin/landing/encabezado/domain/response/encabezado.response';
-import { EncabezadoRequest } from '../app/admin/landing/encabezado/domain/request/encabezado.request';
+import { AudienceRequest, EncabezadoRequest, FaqRequest, FeaturesRequest, FooterRequest, HowItWorksRequest, TestimonialsRequest } from '../app/admin/landing/encabezado/domain/request/encabezado.request';
 import { environment } from '../environments/environment';
 import { getLandingAudienceResponse } from '../app/admin/landing/quienes/domain/quienes.response';
 import { getLandingHowItWorksResponse } from '../app/admin/landing/funcionamiento/domain/funcionamiento.response';
@@ -31,24 +31,48 @@ export class LandingService {
     return this.http.get<getLandingAudienceResponse>(`${this.apiUrl}/landing/audiences`);
   }
 
+  updateLandingAudience(id: number, payload: AudienceRequest): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/landing/audiences/${id}`, payload);
+  }
+
   getLandingHowItWork(): Observable<getLandingHowItWorksResponse> {
     return this.http.get<getLandingHowItWorksResponse>(`${this.apiUrl}/landing/how-it-works`);
+  }
+
+  updateLandingHowItWord(id: number, encabezado: HowItWorksRequest): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/landing/how-it-works/${id}`, encabezado);
   }
 
   getLandingTestimonials(): Observable<getLandingHowItWorksResponse> {
     return this.http.get<getLandingHowItWorksResponse>(`${this.apiUrl}/landing/testimonials`);
   }
 
+  updateLandingTestimonials(id: number, encabezado: TestimonialsRequest): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/landing/testimonials/${id}`, encabezado);
+  }
+
   getLandingFooter(): Observable<FooterResponse> {
     return this.http.get<FooterResponse>(`${this.apiUrl}/landing/footer`);
+  }
+
+  updateLandingFooter(id: number, encabezado: FooterRequest): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/landing/footer/${id}`, encabezado);
   }
 
   getLandingFAQ(): Observable<getLandingFAQResponse> {
     return this.http.get<getLandingFAQResponse>(`${this.apiUrl}/landing/faq`);
   }
 
+  updateLandingFAQ(id: number, encabezado: FaqRequest): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/landing/faq/${id}`, encabezado);
+  }
+
   getLandingFeatures(): Observable<getLandingFeaturesResponse> {
     return this.http.get<getLandingFeaturesResponse>(`${this.apiUrl}/landing/features`);
+  }
+
+  updateLandingFeatures(id: number, encabezado: FeaturesRequest): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/landing/features/${id}`, encabezado);
   }
 
 }

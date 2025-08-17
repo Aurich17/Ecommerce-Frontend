@@ -12,6 +12,7 @@ import { MessageService } from 'primeng/api';
 import { LandingService } from '../../../../services/landing.services';
 import { Router } from '@angular/router';
 import { CalendarModule } from 'primeng/calendar';
+import { TestimonialsRequest } from '../encabezado/domain/request/encabezado.request';
 
 
 @Component({
@@ -28,6 +29,7 @@ export class ComentariosComponent {
     private router: Router,
     private messageService: MessageService
   ) { }
+  currentId!:number
   visible: boolean = false
   titulomantenimiento: string = 'Registrar Item'
   labelbtn: string = 'Guardar'
@@ -84,12 +86,41 @@ export class ComentariosComponent {
     this.addRegister = false
     this.comentariosform.reset()
     if (row) {
+      this.currentId = row.id
       this.comentariosform.get('cliente')?.setValue(row.client_name);
       this.comentariosform.get('comentario')?.setValue(row.comment);
       this.comentariosform.get('creacion')?.setValue(new Date(row.created_at));
       this.comentariosform.get('estado')?.setValue(row.enabled);
     }
   }
+
+  saveTestimonial() {
+    this.labelbtn = 'Guardando'
+    this.loading = true
+    if (!this.currentId) return;
+    if (this.comentariosform.invalid) return;
+
+    const f = this.comentariosform.value;
+
+    const request: TestimonialsRequest = {
+      comment: f.comentario ?? '',
+      userId: 'ee4aacb9-1a95-42cb-bb30-2d817353446e',                   // si lo capturas en el form; si no, pásalo vacío o elimínalo si tu backend no lo requiere
+      clientName: f.cliente ?? '',
+      occupationText: "Ingeniero de Software",
+      occupationTab: 'OCU',                     // fijo según tu modelo de TIPOS
+      occupationCod: '001',      // '001' etc. (si usas catálogos)
+      enabled: !!f.estado,
+    };
+
+    this.apiService.updateLandingTestimonials(this.currentId, request).subscribe({
+      next: ({ data }) => {
+        this.getTestimonials();
+        this.visible = false;
+      },
+      error: (err) => console.error('Error al actualizar testimonial:', err),
+    });
+  }
+
   onDeleteRow() {
 
   }

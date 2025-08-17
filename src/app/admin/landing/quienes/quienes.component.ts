@@ -11,12 +11,22 @@ import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { AudienceRequest } from '../encabezado/domain/request/encabezado.request';
 
 
 @Component({
   selector: 'app-quienes',
   standalone: true,
-  imports: [ReactiveFormsModule, ButtonModule, TableModule, FormsModule,DialogModule,DropdownModule,InputTextModule,InputTextareaModule],
+  imports: [
+    ReactiveFormsModule,
+    ButtonModule,
+    TableModule,
+    FormsModule,
+    DialogModule,
+    DropdownModule,
+    InputTextModule,
+    InputTextareaModule,
+  ],
   templateUrl: './quienes.component.html',
   styleUrl: './quienes.component.css',
   providers: [MessageService],
@@ -26,19 +36,20 @@ export class QuienesComponent {
     private apiService: LandingService,
     private router: Router,
     private messageService: MessageService
-  ) { }
-  quienesTable: itemsLandingAudience[] = []
-  visible: boolean = false
-  titulomantenimiento: string = 'Registrar Audiencia'
-  labelbtn: string = 'Guardar'
-  loading: boolean = false
+  ) {}
+  quienesTable: itemsLandingAudience[] = [];
+  visible: boolean = false;
+  titulomantenimiento: string = 'Registrar Audiencia';
+  labelbtn: string = 'Guardar';
+  loading: boolean = false;
   clonedTable: { [s: string]: any } = {};
-  listaEntidad: any[] = []
-  addRegister: boolean = false
+  listaEntidad: any[] = [];
+  currentId!:number
+  addRegister: boolean = false;
   quienesform = new FormGroup({
-    icono: new FormControl(null,null),
-    entidad: new FormControl(null,null),
-    descripcion: new FormControl(null,null),
+    icono: new FormControl(null, null),
+    entidad: new FormControl(null, null),
+    descripcion: new FormControl(null, null),
   });
   ngOnInit() {
     this.getAudiencia();
@@ -46,43 +57,57 @@ export class QuienesComponent {
   getAudiencia() {
     this.apiService.getLandingAudience().subscribe({
       next: (data) => {
-        console.log('data',data)
-        this.quienesTable = data.data.items
+        console.log('data', data);
+        this.quienesTable = data.data.items;
       },
       error: (err) => console.error('Error fetching encabezado:', err),
     });
   }
   agregarEntidad() {
-    this.visible = true
-    this.titulomantenimiento = 'Registrar Audiencia'
-    this.addRegister = true
-    this.quienesform.reset()
+    this.visible = true;
+    this.titulomantenimiento = 'Registrar Audiencia';
+    this.addRegister = true;
+    this.quienesform.reset();
   }
-  exportExcel() {
-
-  }
-  exportCsv() {
-
-  }
-  exportPdf() {
-
-  }
+  exportExcel() {}
+  exportCsv() {}
+  exportPdf() {}
   onEditPoppup(row: any) {
-    this.visible = true
-    this.titulomantenimiento = 'Actualizar Audiencia'
-    this.addRegister = false
-    this.quienesform.reset()
-    if(row){
+    this.visible = true;
+    this.titulomantenimiento = 'Actualizar Audiencia';
+    this.addRegister = false;
+    this.currentId = row.id;
+    this.quienesform.reset();
+    if (row) {
       this.quienesform.get('icono')?.setValue(row.icon);
       this.quienesform.get('entidad')?.setValue(row.entity);
       this.quienesform.get('descripcion')?.setValue(row.description);
     }
   }
-  onDeleteRow() {
+  onDeleteRow() {}
+  guardarData() {
+    console.log('HACE CLICK')
+    this.labelbtn = 'Guardando';
+    this.loading = true;
 
-  }
-  guardarData(){
-    this.labelbtn = 'Guardando'
-    this.loading = true
+    const f = this.quienesform.value;
+
+    const request:AudienceRequest  = {
+      icon: f.icono ?? '',
+      entity: f.entidad ?? '', // si lo capturas en el form; si no, pásalo vacío o elimínalo si tu backend no lo requiere
+      description: f.descripcion ?? '',
+      position:  1,
+      enabled: true,
+    };
+
+    this.apiService
+      .updateLandingAudience(this.currentId, request)
+      .subscribe({
+        next: ({ data }) => {
+          this.getAudiencia();
+          this.visible = false;
+        },
+        error: (err) => console.error('Error al actualizar testimonial:', err),
+      });
   }
 }

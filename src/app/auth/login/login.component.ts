@@ -45,18 +45,19 @@ export class LoginComponent implements OnInit {
     const req: LoginRequest = this.loginForm.getRawValue() as LoginRequest;
 
     this.auth.login(req)
-  .pipe(
-    finalize(() => (this.loading = false))
-  )
-  .subscribe({
-    next: (res) => {
-      this.session.setFromLogin(res);
-      this.router.navigate(['principal']);
-    },
-    error: (err: HttpErrorResponse) => {
-      this.errorMsg = err?.error?.message
-        || (err.status === 0 ? 'No se pudo conectar con el servidor' : 'Credenciales inválidas');
-    }
-  });
+    .pipe(
+      finalize(() => (this.loading = false))
+    )
+    .subscribe({
+      next: (res) => {
+        console.log('INGRESA')
+        this.session.setFromLogin(res);
+        this.router.navigateByUrl('/principal', { replaceUrl: true });
+      },
+      error: (err: HttpErrorResponse) => {
+        this.errorMsg = err?.error?.message
+          || (err.status === 0 ? 'No se pudo conectar con el servidor' : 'Credenciales inválidas');
+      }
+    });
   }
 }
