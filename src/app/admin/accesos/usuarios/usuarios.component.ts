@@ -9,6 +9,9 @@ import { SelectButtonChangeEvent, SelectButtonModule } from 'primeng/selectbutto
 import { CommonModule } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
+import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { LandingService } from '../../../../services/landing.services';
 
 @Component({
   selector: 'app-usuarios',
@@ -18,6 +21,10 @@ import { DropdownModule } from 'primeng/dropdown';
   styleUrl: './usuarios.component.css'
 })
 export class UsuariosComponent {
+  constructor(
+    private apiService: LandingService,
+    private router: Router
+  ) { }
   visible: boolean = false;
   loading: boolean = false;
   labelbtn: string = 'Actualizar'
@@ -33,11 +40,7 @@ export class UsuariosComponent {
     { label: 'Si', value: '1' },
     { label: 'No', value: '2' }
   ];
-  usuariosTable: any[] = [
-    {id: '1', nombre: 'Gabriela', apellido: 'Canova', nombrecompleto: 'Gabriela Canova', email: 'prueba@gmail.com', telefono: '999999999',
-      socialsecurity: '123-444', estado: 'Habilitado', rol: 'Cliente', comentarios: 'Si'
-    }
-  ]
+  usuariosTable: any[] = []
   usuariosform = new FormGroup({
     nombreapellidocod: new FormControl(null, null),
     selectfiltro: new FormControl('usscliente', null),
@@ -49,6 +52,37 @@ export class UsuariosComponent {
     estado: new FormControl(null, null),
     comentarios: new FormControl(null, null),
   });
+  ngOnInit() {
+    this.getUssers();
+  }
+
+  getUssers() {
+    const requestParams = {
+      q: '',
+      roleCod: '',
+      estCod: [],
+      page: [],
+      limit: [],
+    };
+
+    this.apiService.getMantUsuarios(requestParams).subscribe({
+      next: (data) => {
+        console.log('data', data);
+        this.usuariosTable = data.data.items.map(item => {
+          const fecha = new Date(item.createdAt);
+          const day = fecha.getDate().toString().padStart(2, '0');
+          const month = (fecha.getMonth() + 1).toString().padStart(2, '0');
+          const year = fecha.getFullYear();
+
+          return {
+            ...item,
+            creacion: `${day}/${month}/${year}`
+          };
+        });
+      },
+      error: (err) => console.error('Error fetching usuarios:', err),
+    });
+  }
   agregarUsuario() {
 
   }
@@ -63,9 +97,9 @@ export class UsuariosComponent {
   }
   getSeverity(status: string) {
     switch (status) {
-      case 'Habilitado':
+      case 'habilitado':
         return 'success';
-      case 'Deshabilitado':
+      case 'deshabilitado':
         return 'danger';
       default:
         return 'secondary';
@@ -92,7 +126,7 @@ export class UsuariosComponent {
       this.poppupgroup.get('estado')?.setValue(row.estado);
     }
   }
-  onDeleteRow() {
+  onDeleteRow(id: number) {
 
   }
   actualizarCliente() {

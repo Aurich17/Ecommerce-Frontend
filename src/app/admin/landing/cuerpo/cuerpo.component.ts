@@ -98,13 +98,13 @@ export class CuerpoComponent {
   onEditPoppup(row: any, tipo: string) {
     this.visible = true
     this.cuerpoform.reset()
-    if (tipo === 'C') {
+    if (tipo === 'C') { //FEATURES
       this.titulomantenimiento = 'Editar Característica'
       this.isfeature = true
       this.cuerpoform.get('icono')?.setValue(row.icono);
       this.cuerpoform.get('titulo')?.setValue(row.titulo);
       this.cuerpoform.get('descripcion')?.setValue(row.descripcion);
-    } else {
+    } else { //FAQ
       this.titulomantenimiento = 'Editar Preguntas Frecuentes'
       this.isfeature = false
       this.cuerpoform.get('pregunta')?.setValue(row.pregunta);
@@ -113,17 +113,21 @@ export class CuerpoComponent {
     this.cuerpoform.get('orden')?.setValue(row.orden);
     this.cuerpoform.get('estado')?.setValue(row.activo);
   }
-  onDeleteRow(row: any, tipo: string) {
-
+  onDeleteRow(id: number, tipo: string) {
+    if (tipo === 'C') {
+      //FEATURES
+    } else {
+      //FAQ
+    }
   }
 
   addRow(tipo: string) {
     this.visible = true
     this.cuerpoform.reset()
-    if (tipo === 'C') {
+    if (tipo === 'C') { //FEATURES
       this.titulomantenimiento = 'Registrar Característica'
       this.isfeature = true
-    } else {
+    } else { //FAQ
       this.titulomantenimiento = 'Registrar Preguntas Frecuentes'
       this.isfeature = false
     }

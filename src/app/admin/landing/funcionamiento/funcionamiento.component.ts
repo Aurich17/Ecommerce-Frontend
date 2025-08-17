@@ -78,7 +78,7 @@ export class FuncionamientoComponent {
       this.funcionamientoform.get('descripcion')?.setValue(row.description);
     }
   }
-  onDeleteRow() {
+  onDeleteRow(id: number) {
 
   }
   guardarData(){
