@@ -1,0 +1,113 @@
+<!-- catalog.component.html -->
+<p-toast></p-toast>
+
+<!-- Header reutilizable si lo necesitas -->
+<div class="header flex align-items-center justify-content-between">
+  <div class="logo-and-search flex align-items-center gap-3">
+    <span class="app-logo">FiaoX Market</span>
+    <input pInputText class="search" type="text"
+           placeholder="Buscar productos o empresas en el sistema" [(ngModel)]="q">
+  </div>
+  <div class="actions flex align-items-center gap-3">
+    <button pButton type="button" label="Marketplace" class="p-button-rounded p-button-text"></button>
+    <button pButton icon="pi pi-shopping-cart" (click)="cartOpen = true"></button>
+    <i class="pi pi-user text-2xl"></i>
+  </div>
+</div>
+
+<h2 class="title">Explora nuestros productos</h2>
+
+<div class="grid">
+  <!-- Sidebar de filtros -->
+  <div class="col-12 md:col-3">
+    <div class="filters p-3">
+      <label>Buscar</label>
+      <input pInputText class="w-full mb-3" placeholder="Ej. laptop, teléfono..." [(ngModel)]="q">
+
+      <label>Categoría</label>
+      <p-dropdown class="w-full mb-3" [options]="categories" [(ngModel)]="category"></p-dropdown>
+
+      <label>Ordenar por</label>
+      <p-dropdown class="w-full mb-3" [options]="['Relevancia','Menor precio','Mayor precio']"
+                  [(ngModel)]="orderBy"></p-dropdown>
+
+      <label>Rango de precios ($)</label>
+      <div class="flex gap-2 mb-2">
+        <input pInputText style="width:50px" [(ngModel)]="range[0]">
+        <input pInputText style="width:50px" [(ngModel)]="range[1]">
+      </div>
+      <p-slider [(ngModel)]="range" [min]="minPrice" [max]="maxPrice" [range]="true"></p-slider>
+
+      <div class="mt-3 flex align-items-center gap-2">
+        <p-checkbox [(ngModel)]="onlyDiscount" binary="true"></p-checkbox>
+        <label>Solo productos con descuento</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grid de productos -->
+  <div class="col-12 md:col-9">
+    <div class="grid">
+      <div class="col-12 sm:col-6 lg:col-4" *ngFor="let p of list">
+        <p-card [styleClass]="'product-card flex flex-column'">
+          <img [src]="p.image" alt="" class="product-img" />
+          <div class="flex-1 flex flex-column">
+            <div class="name">{{ p.name }}</div>
+            <div class="price">
+              $ {{ p.price.toFixed(2) }}
+              <span *ngIf="p.discount" class="discount">Descuento: {{p.discount}}%</span>
+            </div>
+
+            <a class="details"><i class="pi pi-search"></i> Ver detalles</a>
+
+            <div class="qty-row">
+              <!-- <button pButton icon="pi pi-minus" (click)="qtyById[p.id]=qtyById[p.id] > 1 ? qtyById[p.id]-1 : 1"></button>
+              <p-inputNumber [showButtons]="false" [(ngModel)]="qtyById[p.id]" [min]="1"></p-inputNumber>
+              <button pButton icon="pi pi-plus" (click)="qtyById[p.id]=qtyById[p.id]+1"></button> -->
+            </div>
+
+            <button *ngIf="!isInCart(p)" pButton class="w-full add-btn"
+                    icon="pi pi-shopping-bag" label="Agregar al carrito"
+                    (click)="add(p)"></button>
+            <button *ngIf="isInCart(p)" pButton class="w-full p-button-outlined p-button-danger mt-2"
+                    icon="pi pi-times-circle" label="Remover del carrito"
+                    (click)="removeFromCart(p)"></button>
+          </div>
+        </p-card>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sidebar Carrito -->
+<p-sidebar [(visible)]="cartOpen" position="right" [modal]="true" [showCloseIcon]="true" styleClass="cart">
+  <h3>Carrito de Compras</h3>
+  <ng-container *ngIf="cart.length; else emptyCart">
+    <div class="cart-item" *ngFor="let ci of cart">
+      <img [src]="ci.product.image" alt="">
+      <div class="info">
+        <div class="title">{{ci.product.name}}</div>
+        <div class="sub">$ {{ci.product.price.toFixed(2)}}</div>
+      </div>
+      <div class="qty">
+        <button pButton icon="pi pi-minus" (click)="dec(ci)"></button>
+        <p-inputNumber [(ngModel)]="ci.qty" [min]="1"></p-inputNumber>
+        <button pButton icon="pi pi-plus" (click)="inc(ci)"></button>
+      </div>
+      <button pButton icon="pi pi-times" class="p-button-text p-button-danger" (click)="delete(ci)"></button>
+    </div>
+
+    <p-divider></p-divider>
+    <div class="cart-footer">
+      <div class="total">Total: <strong>$ {{ total.toFixed(2) }}</strong></div>
+      <div class="actions">
+        <button pButton icon="pi pi-trash" label="Limpiar" class="p-button-text" (click)="clear()"></button>
+        <button pButton label="Solicitar" (click)="submitOrder()"></button>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #emptyCart>
+    <p>Tu carrito está vacío.</p>
+  </ng-template>
+</p-sidebar>

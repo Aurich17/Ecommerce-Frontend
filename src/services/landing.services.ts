@@ -74,9 +74,9 @@ export class LandingService {
     return this.http.get<getLandingFeaturesResponse>(`${this.apiUrl}/landing/features`);
   }
 
-  // getMantUsuarios(params: getMantUsuariosRequest): Observable<getMantUsuariosResponse> {
-  //   return this.http.post<getMantUsuariosResponse>(`${this.apiUrl}/users`, { params });
-  // }
+  getMantUsuarios(params: getMantUsuariosRequest): Observable<getMantUsuariosResponse> {
+    return this.http.post<getMantUsuariosResponse>(`${this.apiUrl}/users`, { params });
+  }
 
   updateLandingFeatures(id: number, encabezado: FeaturesRequest): Observable<any> {
     return this.http.patch<any>(`${this.apiUrl}/landing/features/${id}`, encabezado);

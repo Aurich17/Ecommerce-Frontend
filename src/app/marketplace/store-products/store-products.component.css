@@ -1,0 +1,27 @@
+/* catalog.component.scss */
+.header { background:#e9eff7; border-radius:12px; padding:.6rem .8rem; margin-bottom:1rem; }
+.app-logo { font-weight:800; color:#ff6a00; font-size:1.25rem; }
+.search { width:28rem; }
+
+.title { margin:1.5rem 0 1rem; font-size:1.6rem; font-weight:800; }
+
+.filters { border:1px solid #e6e6e6; border-radius:12px; background:#fff; }
+
+.product-card { min-height: 430px; box-shadow:0 8px 24px rgba(0,0,0,.06); border-radius:16px; }
+.product-img { width:100%; height:180px; object-fit:cover; border-radius:12px; }
+.name { margin:.5rem 0 .25rem; font-weight:700; }
+.price { color:#ff7a00; font-weight:700; margin-bottom:.25rem; }
+.discount { color:#6b7280; font-weight:600; margin-left:.5rem; font-size:.875rem; }
+.details { display:inline-flex; align-items:center; gap:.35rem; color:#6b7280; margin:.25rem 0 0.5rem; font-size:.9rem; }
+
+.qty-row { display:flex; align-items:center; gap:.5rem; margin:.4rem 0 .8rem; }
+.add-btn { background:#d81b60; border:none; } /* rosa/magenta como captura */
+
+.cart .p-sidebar { width: 420px; }
+.cart-item { display:grid; grid-template-columns: 64px 1fr auto auto; gap:.75rem; align-items:center; padding:.5rem; border:1px solid #eee; border-radius:10px; margin-bottom:.5rem;}
+.cart-item img { width:64px; height:64px; object-fit:cover; border-radius:8px; }
+.cart-item .title { font-weight:700; }
+.cart-item .sub { color:#6b7280; }
+
+.cart-footer { display:flex; align-items:center; justify-content:space-between; }
+.total { font-size:1.1rem; }

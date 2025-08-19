@@ -23,6 +23,8 @@ import { UsuariosComponent } from './admin/accesos/usuarios/usuarios.component';
 import { RolesComponent } from './admin/accesos/roles/roles.component';
 import { ModulosComponent } from './admin/accesos/modulos/modulos.component';
 import { PermisosrolComponent } from './admin/accesos/permisosrol/permisosrol.component';
+import { MarketplaceComponent } from './marketplace/marketplace.component';
+import { StoreProductsComponent } from './marketplace/store-products/store-products.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -59,7 +61,9 @@ export const routes: Routes = [
       { path: 'accesos/roles', component: RolesComponent },
       { path: 'accesos/usuarios', component: UsuariosComponent },
       { path: 'accesos/modulos', component: ModulosComponent },
-      { path: 'accesos/permisosrol', component: PermisosrolComponent }
+      { path: 'accesos/permisosrol', component: PermisosrolComponent },
+      { path: 'marketplace', component: MarketplaceComponent },
+      { path: 'store-products', component:StoreProductsComponent}
     ]
   }
 
