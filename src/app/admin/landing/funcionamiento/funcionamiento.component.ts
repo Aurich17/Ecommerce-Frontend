@@ -48,7 +48,7 @@ export class FuncionamientoComponent {
         console.log('data', data)
         this.funcionamientoTable = data.data.items
       },
-      error: (err) => console.error('Error fetching encabezado:', err),
+      error: (err) => console.error('Error fetching howitwork:', err),
     });
   }
 

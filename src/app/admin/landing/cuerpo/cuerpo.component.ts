@@ -73,7 +73,7 @@ export class CuerpoComponent {
           };
         })
       },
-      error: (err) => console.error('Error fetching encabezado:', err),
+      error: (err) => console.error('Error fetching faq:', err),
     });
   }
   getFeatures() {
@@ -92,7 +92,7 @@ export class CuerpoComponent {
           };
         })
       },
-      error: (err) => console.error('Error fetching encabezado:', err),
+      error: (err) => console.error('Error fetching features:', err),
     });
   }
   onEditPoppup(row: any, tipo: string) {

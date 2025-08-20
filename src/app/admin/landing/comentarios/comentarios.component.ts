@@ -68,7 +68,7 @@ export class ComentariosComponent {
           };
         })
       },
-      error: (err) => console.error('Error fetching encabezado:', err),
+      error: (err) => console.error('Error fetching testimonios:', err),
     });
   }
   exportExcel() {

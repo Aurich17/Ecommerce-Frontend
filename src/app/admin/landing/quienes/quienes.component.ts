@@ -63,7 +63,7 @@ export class QuienesComponent {
         console.log('data', data);
         this.quienesTable = data.data.items;
       },
-      error: (err) => console.error('Error fetching encabezado:', err),
+      error: (err) => console.error('Error fetching audiencia:', err),
     });
   }
   agregarEntidad() {

@@ -16,7 +16,7 @@ type UploadItem = {
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [ButtonModule,CardModule,CarouselModule,AccordionModule,RouterModule],
+  imports: [ButtonModule, CardModule, CarouselModule, AccordionModule, RouterModule],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 })
@@ -24,11 +24,23 @@ export class LandingComponent {
   uploads: UploadItem[] = [];
   showMobileMenu = false;
   encabezadoLanding?: EncabezadoResponse;
-  quienesLanding?: any;
+  quienesLanding?: any [] = []
+  comentariosLanding: any[] = []
+  preguntasLanding: any[] = []
+  caracteristicasLanding: any[] = []
+  funcionamientoLanding: any[] = []
+  footerLanding?: any;
 
-  constructor(private apiService: LandingService, private router: Router,private ik: ImagekitClient){}
-  ngOnInit(){
+  constructor(private apiService: LandingService, private router: Router, private ik: ImagekitClient) { }
+  ngOnInit() {
     this.getEncabezado()
+    this.getAudiencia();
+    this.getTestimonials();
+    this.getFAQ();
+    this.getFeatures();
+    this.getLandingHowItWork();
+    this.getFooter();
+    
   }
 
   empresas = [
@@ -91,33 +103,119 @@ export class LandingComponent {
         console.log('data', data);
         this.quienesLanding = data.data.items
       },
-      error: (err: unknown) => console.error('Error fetching encabezado:', err),
+      error: (err: unknown) => console.error('Error fetching audiencia:', err),
+    });
+  }
+
+  getTestimonials() {
+    this.apiService.getLandingTestimonials().subscribe({
+      next: (data) => {
+        console.log('data', data)
+        this.comentariosLanding = data.data.items.map(item => {
+          const fecha = new Date(item.created_at);
+          const day = fecha.getDate().toString().padStart(2, '0');
+          const month = (fecha.getMonth() + 1).toString().padStart(2, '0');
+          const year = fecha.getFullYear();
+
+          return {
+            ...item,
+            creacion: `${day}/${month}/${year}`
+          };
+        })
+      },
+      error: (err) => console.error('Error fetching testimonios:', err),
+    });
+  }
+
+  getFAQ() {
+    this.apiService.getLandingFAQ().subscribe({
+      next: (data) => {
+        console.log('data', data)
+        this.preguntasLanding = data.data.items.map(item => {
+          const fecha = new Date(item.created_at);
+          const day = fecha.getDate().toString().padStart(2, '0');
+          const month = (fecha.getMonth() + 1).toString().padStart(2, '0');
+          const year = fecha.getFullYear();
+
+          return {
+            ...item,
+            creacion: `${day}/${month}/${year}`
+          };
+        })
+      },
+      error: (err) => console.error('Error fetching faq:', err),
+    });
+  }
+
+  getFeatures() {
+    this.apiService.getLandingFeatures().subscribe({
+      next: (data) => {
+        console.log('data', data)
+        this.caracteristicasLanding = data.data.items.map(item => {
+          const fecha = new Date(item.created_at);
+          const day = fecha.getDate().toString().padStart(2, '0');
+          const month = (fecha.getMonth() + 1).toString().padStart(2, '0');
+          const year = fecha.getFullYear();
+
+          return {
+            ...item,
+            creacion: `${day}/${month}/${year}`
+          };
+        })
+      },
+      error: (err) => console.error('Error fetching encabezado:', err),
+    });
+  }
+
+  getLandingHowItWork() {
+    this.apiService.getLandingHowItWork().subscribe({
+      next: (data) => {
+        console.log('data', data)
+        this.funcionamientoLanding = data.data.items
+      },
+      error: (err) => console.error('Error fetching howitwork:', err),
+    });
+  }
+
+  getFooter() {
+    this.apiService.getLandingFooter().subscribe({
+      next: (data) => {
+        this.footerLanding.patchValue({
+          correo: data.data.contact_email ?? '',
+          telefono: data.data.contact_phone ?? '',
+          titulo: data.data.footer_title ?? '',
+          descripcion: data.data.footer_desc ?? '',
+          descripcionizq: data.data.footer_left_desc ?? '',
+          copyright: data.data.footer_copy ?? '',
+        });
+      },
+      error: (err) => console.error('Error fetching footer:', err),
     });
   }
 
   async onPick(e: Event) {
-  const input = e.target as HTMLInputElement;
-  const files = Array.from(input.files ?? []);
-  if (!files.length) return;
+    const input = e.target as HTMLInputElement;
+    const files = Array.from(input.files ?? []);
+    if (!files.length) return;
 
-  for (const file of files) {
-    const item = { file, progress: 0 } as any;
-    this.uploads.unshift(item);
-    try {
-      const res:any = await this.ik.uploadAndSave(file, '/projectA', ['angular']);
-      // usa filePath para construir URL optimizada
-      item.url = this.ik.url({ path: res.filePath }, { w: 800, q: 80, f: 'auto' });
-      item.thumb = res.thumbnailUrl;
-      item.progress = 100;
-    } catch (err:any) {
-      item.error = err?.message ?? 'Error subiendo';
+    for (const file of files) {
+      const item = { file, progress: 0 } as any;
+      this.uploads.unshift(item);
+      try {
+        const res: any = await this.ik.uploadAndSave(file, '/projectA', ['angular']);
+        // usa filePath para construir URL optimizada
+        item.url = this.ik.url({ path: res.filePath }, { w: 800, q: 80, f: 'auto' });
+        item.thumb = res.thumbnailUrl;
+        item.progress = 100;
+      } catch (err: any) {
+        item.error = err?.message ?? 'Error subiendo';
+      }
     }
+    input.value = '';
   }
-  input.value = '';
-}
 
-go(id: string) {
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  this.showMobileMenu = false; // cierra el menú móvil al navegar
-}
+  go(id: string) {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    this.showMobileMenu = false; // cierra el menú móvil al navegar
+  }
 }

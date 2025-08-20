@@ -7,3 +7,46 @@
 a{
   font-size: 18px;
 }
+
+.grid-funcionamiento {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* exactamente 2 columnas */
+  gap: 1rem;
+  margin: 0 auto;
+  max-width: min(50%, 40%);
+}
+
+.card-funcionamiento {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-radius: 8px;
+  padding: 1rem;
+  min-height: max(100px, 10vh); /* altura uniforme */
+}
+
+:host ::ng-deep .p-carousel-item{
+  height: 100%;
+}
+
+::ng-deep .carcteristicascard .p-card{
+  border-left-width: 5px !important;
+  border-left-style: solid;
+  border-color: var(--yellow-500) !important;
+}
+
+::ng-deep .testimonio .p-carousel .p-card {
+  height: 18vh;
+  gap: 0.5rem;
+}
+
+
+
+/* En pantallas pequeñas (ej. móviles) → solo 1 columna */
+@media (max-width: 768px) {
+  .grid-funcionamiento {
+    grid-template-columns: 1fr;
+    max-width: 90%;
+  }
+
+}

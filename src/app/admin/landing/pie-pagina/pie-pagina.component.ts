@@ -48,7 +48,7 @@ export class PiePaginaComponent {
           copyright: data.data.footer_copy ?? '',
         });
       },
-      error: (err) => console.error('Error fetching encabezado:', err),
+      error: (err) => console.error('Error fetching footer:', err),
     });
   }
 
