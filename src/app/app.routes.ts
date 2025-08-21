@@ -30,7 +30,7 @@ import { ForgotpasswordComponent } from './auth/login/mant-login/forgotpassword/
 import { ResetpasswordComponent } from './auth/login/mant-login/resetpassword/resetpassword.component';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'login' },      // ⬅️ cambia esto
+  { path: '', pathMatch: 'full', redirectTo: 'login' }, // ⬅️ cambia esto
   { path: 'login', component: LoginComponent },
   { path: 'landing', component: LandingComponent },
   {
@@ -38,8 +38,8 @@ export const routes: Routes = [
     children: [
       { path: '', component: RegisterComponent }, // selección
       { path: 'cliente', component: ClienteComponent },
-      { path: 'empresa', component: EmpresaComponent }
-    ]
+      { path: 'empresa', component: EmpresaComponent },
+    ],
   },
   {
     path: 'principal',
@@ -66,10 +66,9 @@ export const routes: Routes = [
       { path: 'accesos/modulos', component: ModulosComponent },
       { path: 'accesos/permisosrol', component: PermisosrolComponent },
       { path: 'marketplace', component: MarketplaceComponent },
-      { path: 'store-products', component:StoreProductsComponent}
-    ]
+      { path: 'store-products', component: StoreProductsComponent },
+    ],
   },
   { path: 'forgotpassword', component: ForgotpasswordComponent },
-  { path: 'resetpassword', component: ResetpasswordComponent }
-
+  { path: 'resetpassword', component: ResetpasswordComponent },
 ];

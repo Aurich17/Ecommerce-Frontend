@@ -12,29 +12,42 @@ import { getLandingAudienceResponse } from '../admin/landing/quienes/domain/quie
 import { FormControl, FormGroup } from '@angular/forms';
 
 type UploadItem = {
-  file: File; progress: number; url?: string; thumb?: string; error?: string;
+  file: File;
+  progress: number;
+  url?: string;
+  thumb?: string;
+  error?: string;
 };
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [ButtonModule, CardModule, CarouselModule, AccordionModule, RouterModule],
+  imports: [
+    ButtonModule,
+    CardModule,
+    CarouselModule,
+    AccordionModule,
+    RouterModule,
+  ],
   templateUrl: './landing.component.html',
-  styleUrl: './landing.component.css'
+  styleUrl: './landing.component.css',
 })
 export class LandingComponent {
   uploads: UploadItem[] = [];
   showMobileMenu = false;
   encabezadoLanding?: EncabezadoResponse;
-  quienesLanding?: any [] = []
-  comentariosLanding: any[] = []
-  preguntasLanding: any[] = []
-  caracteristicasLanding: any[] = []
-  funcionamientoLanding: any[] = []
+  quienesLanding?: any[] = [];
+  comentariosLanding: any[] = [];
+  preguntasLanding: any[] = [];
+  caracteristicasLanding: any[] = [];
+  funcionamientoLanding: any[] = [];
   footerLanding!: FormGroup;
 
-  constructor(private apiService: LandingService, private router: Router, private ik: ImagekitClient) {}
+  constructor(
+    private apiService: LandingService,
+    private router: Router,
+    private ik: ImagekitClient
+  ) {}
   ngOnInit() {
-
     this.footerLanding = new FormGroup({
       correo: new FormControl(''),
       telefono: new FormControl(''),
@@ -44,65 +57,67 @@ export class LandingComponent {
       copyright: new FormControl(''),
     });
 
-    this.getEncabezado()
+    this.getEncabezado();
     this.getAudiencia();
     this.getTestimonials();
     this.getFAQ();
     this.getFeatures();
     this.getLandingHowItWork();
     this.getFooter();
-
   }
 
   empresas = [
     {
       nombre: 'Alexis Gamer',
-      logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnUyF77H4RFWR1h0IiKmeV3IGySppR1I3zkw&s'
+      logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnUyF77H4RFWR1h0IiKmeV3IGySppR1I3zkw&s',
     },
     {
       nombre: 'Compañía de test',
-      logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnUyF77H4RFWR1h0IiKmeV3IGySppR1I3zkw&s'
+      logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnUyF77H4RFWR1h0IiKmeV3IGySppR1I3zkw&s',
     },
     {
       nombre: 'Martin Cavero',
-      logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnUyF77H4RFWR1h0IiKmeV3IGySppR1I3zkw&s'
+      logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnUyF77H4RFWR1h0IiKmeV3IGySppR1I3zkw&s',
     },
     {
       nombre: 'TechBridge Inc.',
-      logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnUyF77H4RFWR1h0IiKmeV3IGySppR1I3zkw&s'
+      logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnUyF77H4RFWR1h0IiKmeV3IGySppR1I3zkw&s',
     },
     {
       nombre: 'London Market',
-      logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnUyF77H4RFWR1h0IiKmeV3IGySppR1I3zkw&s'
-    }
+      logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnUyF77H4RFWR1h0IiKmeV3IGySppR1I3zkw&s',
+    },
   ];
   testimonios = [
     {
       nombre: 'Frank Escobedo',
-      mensaje: 'Una plataforma de fácil uso.'
+      mensaje: 'Una plataforma de fácil uso.',
     },
     {
       nombre: 'Juan Esteban',
-      mensaje: 'Productos buenos y económicos.'
+      mensaje: 'Productos buenos y económicos.',
     },
     {
       nombre: 'Juliana Pérez',
-      mensaje: 'Pude comprar un excelente producto.'
+      mensaje: 'Pude comprar un excelente producto.',
     },
     {
       nombre: 'Carla Mendoza',
-      mensaje: 'El sistema de pagos en cuotas me ayudó muchísimo.'
+      mensaje: 'El sistema de pagos en cuotas me ayudó muchísimo.',
     },
     {
       nombre: 'Pedro Álvarez',
-      mensaje: 'Rápido, confiable y muy intuitivo.'
-    }
+      mensaje: 'Rápido, confiable y muy intuitivo.',
+    },
   ];
 
   getEncabezado() {
     this.apiService.getLandingEncabezado().subscribe({
       next: (data) => {
-        this.encabezadoLanding = { ...data, updated_at: new Date(data.updated_at) };
+        this.encabezadoLanding = {
+          ...data,
+          updated_at: new Date(data.updated_at),
+        };
       },
       error: (err) => console.error('Error fetching encabezado:', err),
     });
@@ -112,7 +127,7 @@ export class LandingComponent {
     this.apiService.getLandingAudience().subscribe({
       next: (data) => {
         console.log('data', data);
-        this.quienesLanding = data.data.items
+        this.quienesLanding = data.data.items;
       },
       error: (err: unknown) => console.error('Error fetching audiencia:', err),
     });
@@ -121,8 +136,8 @@ export class LandingComponent {
   getTestimonials() {
     this.apiService.getLandingTestimonials().subscribe({
       next: (data) => {
-        console.log('data', data)
-        this.comentariosLanding = data.data.items.map(item => {
+        console.log('data', data);
+        this.comentariosLanding = data.data.items.map((item) => {
           const fecha = new Date(item.created_at);
           const day = fecha.getDate().toString().padStart(2, '0');
           const month = (fecha.getMonth() + 1).toString().padStart(2, '0');
@@ -130,9 +145,9 @@ export class LandingComponent {
 
           return {
             ...item,
-            creacion: `${day}/${month}/${year}`
+            creacion: `${day}/${month}/${year}`,
           };
-        })
+        });
       },
       error: (err) => console.error('Error fetching testimonios:', err),
     });
@@ -141,8 +156,8 @@ export class LandingComponent {
   getFAQ() {
     this.apiService.getLandingFAQ().subscribe({
       next: (data) => {
-        console.log('data', data)
-        this.preguntasLanding = data.data.items.map(item => {
+        console.log('data', data);
+        this.preguntasLanding = data.data.items.map((item) => {
           const fecha = new Date(item.created_at);
           const day = fecha.getDate().toString().padStart(2, '0');
           const month = (fecha.getMonth() + 1).toString().padStart(2, '0');
@@ -150,9 +165,9 @@ export class LandingComponent {
 
           return {
             ...item,
-            creacion: `${day}/${month}/${year}`
+            creacion: `${day}/${month}/${year}`,
           };
-        })
+        });
       },
       error: (err) => console.error('Error fetching faq:', err),
     });
@@ -161,8 +176,8 @@ export class LandingComponent {
   getFeatures() {
     this.apiService.getLandingFeatures().subscribe({
       next: (data) => {
-        console.log('data', data)
-        this.caracteristicasLanding = data.data.items.map(item => {
+        console.log('data', data);
+        this.caracteristicasLanding = data.data.items.map((item) => {
           const fecha = new Date(item.created_at);
           const day = fecha.getDate().toString().padStart(2, '0');
           const month = (fecha.getMonth() + 1).toString().padStart(2, '0');
@@ -170,9 +185,9 @@ export class LandingComponent {
 
           return {
             ...item,
-            creacion: `${day}/${month}/${year}`
+            creacion: `${day}/${month}/${year}`,
           };
-        })
+        });
       },
       error: (err) => console.error('Error fetching encabezado:', err),
     });
@@ -181,8 +196,8 @@ export class LandingComponent {
   getLandingHowItWork() {
     this.apiService.getLandingHowItWork().subscribe({
       next: (data) => {
-        console.log('data', data)
-        this.funcionamientoLanding = data.data.items
+        console.log('data', data);
+        this.funcionamientoLanding = data.data.items;
       },
       error: (err) => console.error('Error fetching howitwork:', err),
     });
@@ -214,9 +229,14 @@ export class LandingComponent {
       const item = { file, progress: 0 } as any;
       this.uploads.unshift(item);
       try {
-        const res: any = await this.ik.uploadAndSave(file, '/projectA', ['angular']);
+        const res: any = await this.ik.uploadAndSave(file, '/projectA', [
+          'angular',
+        ]);
         // usa filePath para construir URL optimizada
-        item.url = this.ik.url({ path: res.filePath }, { w: 800, q: 80, f: 'auto' });
+        item.url = this.ik.url(
+          { path: res.filePath },
+          { w: 800, q: 80, f: 'auto' }
+        );
         item.thumb = res.thumbnailUrl;
         item.progress = 100;
       } catch (err: any) {
@@ -227,7 +247,9 @@ export class LandingComponent {
   }
 
   go(id: string) {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document
+      .getElementById(id)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     this.showMobileMenu = false; // cierra el menú móvil al navegar
   }
 }
