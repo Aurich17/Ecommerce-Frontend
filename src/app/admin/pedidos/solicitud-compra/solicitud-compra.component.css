@@ -1,0 +1,21 @@
+.cart-items {flex: 1; overflow-y: auto;}
+.cart-item { display:grid; gap:.75rem; align-items:center; padding:.5rem; border:1px solid #eee; border-radius:10px; margin-bottom:.5rem;}
+.cart-footer {
+  flex-shrink: 0;       /* evita que se colapse */
+  border-top: 1px solid #ddd; /* como un divider */
+  padding: 1rem 0.5rem;
+  background: #fff;     /* para que no se mezcle con el scroll */
+}
+.total { font-size:1.1rem; }
+.cart-container {
+  display: flex;
+  flex-direction: column;
+  height: 80%; /* ocupa todo el alto del contenedor padre */
+}
+::ng-deep .filtrobtn .p-button{
+    width: 50%;
+}
+
+::ng-deep .filtrobandeja .p-button{
+    width: auto;
+}

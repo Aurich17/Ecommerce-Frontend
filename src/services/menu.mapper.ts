@@ -34,6 +34,7 @@ const routeMap: Record<string, string> = {
   '¿Quiénes pueden usar?': '/principal/landing/quienes',
   '¿Cómo funciona?': '/principal/landing/funcionamiento',
   Comentarios: '/principal/landing/comentarios',
+  Pedidos: '/principal/pedidos/solicitud-compra',
 };
 
 export function mapApiMenuToPrime(apiMenu: ApiMenuItem[]): MenuItem[] {

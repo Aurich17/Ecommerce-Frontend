@@ -1,1 +1,73 @@
-<p>monedas works!</p>
+<form [formGroup]="monedasform" class="block p-fluid p-formgrid p-grid gap-2 p-4">
+    <div class="flex justify-content-between w-full">
+        <div class="text-lg font-bold">Productos</div>
+        <div class="flex gap-2">
+            <p-button icon="pi pi-plus" iconPos="right" label="Agregar Moneda" severity="warning"
+                (onClick)="agregarMoneda()" styleClass="text-sm" />
+            <p-button icon="pi pi-file-excel" styleClass="text-sm" iconPos="left" label="Excel" severity="success"
+                (onClick)="exportExcel()" />
+            <p-button icon="pi pi-file-o" styleClass="text-sm" iconPos="left" label="Csv" (onClick)="exportCsv()" />
+            <p-button icon="pi pi-file-pdf" styleClass="text-sm" iconPos="left" label="Pdf" severity="danger"
+                (onClick)="exportPdf()" />
+        </div>
+    </div>
+    <div class="pt-3">
+        <p-table [value]="monedasTable" class="w-full" dataKey="id" editMode="row">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="text-sm">ID</th>
+                    <th class="text-sm">Descripción</th>
+                    <th class="text-sm">Descripción Corta</th>
+                    <th class="text-sm">Símbolo</th>
+                    <th class="text-sm">Es Principal</th>
+                    <th class="text-sm">Acciones</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-product>
+                <tr>
+                    <td>{{product.id}}</td>
+                    <td>{{product.descripcion}}</td>
+                    <td>{{product.descripcioncorta}}</td>
+                    <td>$ {{product.simbolo}}</td>
+                    <td>{{product.status}}</td>
+                    <td>
+                        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true"
+                            (onClick)="onEditPoppup(product)" />
+                        <p-button icon="pi pi-trash" [rounded]="true" [text]="true"
+                            (onClick)="onDeleteRow(product.id)" />
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</form>
+<p-dialog [header]="titulomantenimiento" [modal]="true" [(visible)]="visible"
+    [style]="{ width: '50rem', height: '25rem' }">
+    <form [formGroup]="monedasform" class="w-full flex flex-column gap-4">
+        <div class="flex gap-3">
+            <div class="flex flex-column gap-3 w-6">
+                <label class="font-bold text-sm">Descripción Moneda</label>
+                <input pInputText formControlName="descripcion" class="w-full" [readonly]="!addRegister">
+            </div>
+            <div class="flex flex-column gap-3 w-6">
+                <label class="font-bold text-sm">Descripción Corta</label>
+                <input pInputText formControlName="descripcioncorta" class="w-full" [readonly]="!addRegister" />
+            </div>
+
+        </div>
+        <div class="flex w-full gap-3">
+            <div class="flex flex-column gap-3 w-6">
+                <label class="font-bold text-sm">Símbolo</label>
+                <input pInputText formControlName="simbolo" class="w-full" [readonly]="!addRegister" />
+            </div>
+            <div class="flex justify-content-center align-items-center gap-3 w-6">
+                <p-checkbox formControlName="city" value="New York" inputId="ny" />
+                <label for="ny">Es Principal</label>
+            </div>
+        </div>
+        <div class="w-full flex justify-content-end">
+            <p-button [label]="labelbtn" severity="warning" [loading]="loading" (onClick)="guardarData()" />
+        </div>
+    </form>
+</p-dialog>

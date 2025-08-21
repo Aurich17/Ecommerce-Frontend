@@ -2,9 +2,8 @@
   <div class="header flex align-items-center justify-content-between">
     <div class="logo-and-search flex align-items-center gap-3">
       <span class="app-logo">FiaoX Market</span>
-      <input pInputText class="search" type="text"
-             placeholder="Buscar productos o empresas en el sistema"
-             [(ngModel)]="searchTerm" (input)="onSearchChange()">
+      <input pInputText class="search" type="text" placeholder="Buscar productos o empresas en el sistema"
+        [(ngModel)]="searchTerm" (input)="onSearchChange()">
     </div>
 
     <div class="actions flex align-items-center gap-3">
@@ -20,66 +19,67 @@
   <div class="filters grid">
     <div class="col-12 md:col-3">
       <label class="filter-label">Provincia</label>
-      <p-dropdown [options]="provinces" [(ngModel)]="selectedProvince"
-                  (onChange)="onProvinceChange()"
-                  [showClear]="false" [editable]="false"
-                  optionLabel=""
-                  [style]="{width:'100%'}"></p-dropdown>
+      <p-dropdown [options]="provinces" [(ngModel)]="selectedProvince" (onChange)="onProvinceChange()"
+        [showClear]="false" [editable]="false" [style]="{width:'100%'}"></p-dropdown>
     </div>
 
     <div class="col-12 md:col-3">
       <label class="filter-label">Municipio</label>
-      <p-dropdown [options]="cities" [(ngModel)]="selectedCity"
-                  (onChange)="onCityChange()"
-                  [showClear]="false" [editable]="false"
-                  [style]="{width:'100%'}"></p-dropdown>
+      <p-dropdown [options]="cities" [(ngModel)]="selectedCity" (onChange)="onCityChange()" [showClear]="false"
+        [editable]="false" [style]="{width:'100%'}"></p-dropdown>
     </div>
 
     <div class="col-12 md:col-3 md:col-offset-3">
       <label class="filter-label">Buscar empresa</label>
-      <input pInputText type="text" placeholder="Buscar por nombre"
-             [(ngModel)]="searchTerm" (input)="onSearchChange()" class="w-full">
+      <input pInputText type="text" placeholder="Buscar por nombre" [(ngModel)]="searchTerm" (input)="onSearchChange()"
+        class="w-full">
     </div>
   </div>
 
   <!-- Cards -->
   <div class="grid">
-  <div class="col-12 md:col-4" *ngFor="let s of visibleStores">
-    <p-card [styleClass]="'store-card flex flex-column'">
-      <div class="card-content flex flex-column flex-1">
-        <div class="flex align-items-center gap-3 mb-2">
-          <p-avatar [label]="s.avatarText || s.name[0]" shape="circle" size="large"></p-avatar>
-          <div class="flex flex-column">
-            <div class="store-name">{{ s.name }}</div>
-            <small class="text-500">{{ s.welcome }}</small>
+    <div class="col-12 md:col-4" *ngFor="let s of visibleStores">
+      <p-card [styleClass]="'store-card flex flex-column'">
+        <div class="card-content flex flex-column flex-1">
+          <div class="flex align-items-center gap-3 mb-2">
+            <p-avatar [label]="s.avatarText || s.name[0]" shape="circle" size="large"></p-avatar>
+            <div class="flex flex-column gap-3">
+              <div class="store-name">{{ s.name }}</div>
+              <small class="text-500">{{ s.welcome }}</small>
+            </div>
+
           </div>
-          <div class="ml-auto qr-box flex align-items-center justify-content-center">
-            <i class="pi pi-qrcode text-2xl"></i>
+
+          <div class="flex gap-2 pt-4">
+            <div class="flex flex-column gap-2">
+              <div class="flex align-items-start gap-2 text-700 mb-1">
+                <i class="pi pi-map-marker"></i>
+                <span class="line-clamp">{{ s.address || '—' }}</span>
+              </div>
+
+              <div class="flex align-items-start gap-2 text-700 mb-3">
+                <i class="pi pi-user"></i>
+                <span>{{ s.representative || 'Sin representante' }}</span>
+              </div>
+            </div>
+            <div class="ml-auto w-4 qr-box flex align-items-center justify-content-center">
+              <i class="pi pi-qrcode text-2xl"></i>
+            </div>
           </div>
-        </div>
 
-        <div class="flex align-items-start gap-2 text-700 mb-1">
-          <i class="pi pi-map-marker"></i>
-          <span class="line-clamp">{{ s.address || '—' }}</span>
-        </div>
 
-        <div class="flex align-items-start gap-2 text-700 mb-3">
-          <i class="pi pi-user"></i>
-          <span>{{ s.representative || 'Sin representante' }}</span>
+          <div class="flex-1"></div> <!-- empuja el botón hacia abajo -->
+          <button pButton label="Ver productos" class="w-full mt-auto"
+            [routerLink]="'/principal/store-products'"></button>
         </div>
-
-        <div class="flex-1"></div> <!-- empuja el botón hacia abajo -->
-        <button pButton label="Ver productos" class="w-full mt-auto"
-                (click)="viewProducts(s)"></button>
-      </div>
-    </p-card>
+      </p-card>
+    </div>
   </div>
-</div>
 
   <!-- Paginación -->
   <div class="flex justify-content-center mt-3">
-    <p-paginator [rows]="rows" [totalRecords]="total"
-                 [rowsPerPageOptions]="[6,9,12]" (onPageChange)="onPageChange($event)">
+    <p-paginator [rows]="rows" [totalRecords]="total" [rowsPerPageOptions]="[6,9,12]"
+      (onPageChange)="onPageChange($event)">
     </p-paginator>
   </div>
 </div>

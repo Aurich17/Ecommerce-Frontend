@@ -12,6 +12,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { HowItWorksRequest } from '../encabezado/domain/request/encabezado.request';
 
+
 @Component({
   selector: 'app-funcionamiento',
   standalone: true,

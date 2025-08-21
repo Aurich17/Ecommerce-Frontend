@@ -14,12 +14,13 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { CartItem, Product } from '../domain/response/marketplace.response';
+import { MenubarModule } from "primeng/menubar";
 
 
 @Component({
   selector: 'app-store-products',
   standalone: true,
-  imports: [CommonModule, FormsModule, InputTextModule, DropdownModule, SliderModule, CheckboxModule, CardModule, ButtonModule, SidebarModule, DividerModule, InputNumberModule, ToastModule],
+  imports: [CommonModule, FormsModule, InputTextModule, DropdownModule, SliderModule, CheckboxModule, CardModule, ButtonModule, SidebarModule, DividerModule, InputNumberModule, ToastModule, MenubarModule],
   templateUrl: './store-products.component.html',
   providers: [MessageService],
   styleUrl: './store-products.component.css'
