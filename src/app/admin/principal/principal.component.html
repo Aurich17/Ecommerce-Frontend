@@ -79,7 +79,7 @@
   <div
     *ngIf="verMenu && !isDesktop"
     class="sidebar-overlay"
-    (click)="verMenu = false"
+    (click)="closeSidebar()"
   ></div>
 
   <!-- Columna derecha -->
@@ -88,15 +88,14 @@
       <!-- Botón hamburguesa (solo móvil) -->
       <ng-template pTemplate="start">
         <button
-          class="icon-btn lg:hidden"
+          class="icon-btn"
           type="button"
-          (click)="verMenu = true"
-          aria-label="Abrir menú"
+          (click)="toggleSidebar()"
+          [attr.aria-label]="verMenu ? 'Ocultar menú' : 'Mostrar menú'"
         >
-          <i class="pi pi-bars"></i>
+          <i [ngClass]="verMenu ? 'pi pi-chevron-left' : 'pi pi-bars'"></i>
         </button>
 
-        <!-- Marca compacta en desktop -->
         <span class="brand-inline hidden lg:flex ml-2">
           <span class="brand-text"
             >Fiaox <span class="gradient">Market</span></span

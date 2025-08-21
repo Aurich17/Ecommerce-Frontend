@@ -71,58 +71,44 @@
           <div class="field col-12 md:col-4">
             <label class="font-bold" for="pais">País</label>
             <p-dropdown
-              inputId="pais"
+              formControlName="pais"
               [options]="listPaises"
               optionLabel="desc"
               optionValue="cod"
-              formControlName="pais"
-              [filter]="true"
-              [showClear]="true"
-              appendTo="body"
               placeholder="Seleccione país"
-            >
-            </p-dropdown>
+            ></p-dropdown>
           </div>
 
           <!-- PROVINCIA -->
           <div class="field col-12 md:col-4">
             <label class="font-bold" for="provincia">Provincia / Estado</label>
             <p-dropdown
-              inputId="provincia"
-              [options]="listProvincias"
-              optionLabel="nombre"
-              optionValue="id"
               formControlName="provincia"
-              [filter]="true"
-              [showClear]="true"
-              appendTo="body"
-            >
-            </p-dropdown>
+              [options]="filteredProvincias"
+              optionLabel="desc"
+              optionValue="cod"
+              placeholder="Seleccione provincia/estado"
+            ></p-dropdown>
           </div>
           <!-- CIUDAD -->
           <div class="field col-12 md:col-4">
             <label class="font-bold" for="ciudad">Ciudad / Municipio</label>
             <p-dropdown
-              inputId="ciudad"
-              [options]="listMunicipios"
-              optionLabel="nombre"
-              optionValue="id"
               formControlName="ciudad"
-              [filter]="true"
-              [showClear]="true"
-              appendTo="body"
-            >
-            </p-dropdown>
+              [options]="filteredMunicipios"
+              optionLabel="desc"
+              optionValue="cod"
+              placeholder="Seleccione ciudad/municipio"
+            ></p-dropdown>
           </div>
 
           <!-- OCUPACION -->
           <div class="field col-12 md:col-6">
             <label class="font-bold" for="ocupacion">Ocupación</label>
             <p-dropdown
-              inputId="ocupacion"
               [options]="listOcupaciones"
-              optionLabel="descripcion"
-              optionValue="id"
+              optionLabel="desc"
+              optionValue="cod"
               formControlName="ocupacion"
               [filter]="true"
               [showClear]="true"
@@ -135,10 +121,9 @@
           <div class="field col-12 md:col-6">
             <label class="font-bold" for="genero">Género</label>
             <p-dropdown
-              inputId="genero"
               [options]="listGeneros"
-              optionLabel="descripcion"
-              optionValue="id"
+              optionLabel="desc"
+              optionValue="cod"
               formControlName="genero"
               [showClear]="true"
               appendTo="body"

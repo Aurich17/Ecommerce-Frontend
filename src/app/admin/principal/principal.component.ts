@@ -33,8 +33,9 @@ import { ViewChild } from '@angular/core';
 })
 export class PrincipalComponent {
   items: MenuItem[] = [];
-  verMenu = true;
+  // verMenu = true;
   isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+  verMenu = this.isDesktop;
 
   user = {
     org: 'Universidad Tecnologica del Peru',

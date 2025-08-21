@@ -35,8 +35,14 @@ import { DialogModule } from 'primeng/dialog';
 import { AuthService } from '../../../../services/auth.services';
 import { SessionService } from '../../../../services/session/session.service';
 import { ImagekitClient } from '../../../../services/imagekit.service';
-import { Tipo } from '../../../tipos/reponse/tipos.response'; // { id:number; nombre:string; codigo?:string; parentId?:number }
-import { ComentariosComponent } from '../../../admin/landing/comentarios/comentarios.component';
+
+// Tipo normalizado para usar SIEMPRE desc/cod
+type TipoUI = {
+  id?: number | string;
+  desc: string;
+  cod: string;
+  parent?: string;
+};
 
 type IntlTelOptions = NonNullable<Parameters<typeof intlTelInput>[1]>;
 
@@ -76,7 +82,7 @@ export class ClienteComponent implements OnInit, AfterViewInit {
   private session = inject(SessionService);
 
   constructor(
-    private api: ApiService, // único servicio para /tipos y registro
+    private api: ApiService,
     private router: Router,
     private messageService: MessageService
   ) {}
@@ -96,30 +102,63 @@ export class ClienteComponent implements OnInit, AfterViewInit {
   ];
   activeIndex = 0;
 
-  // ==== LISTAS ====
-  listPaises: Tipo[] = [];
-  listProvincias: Tipo[] = [];
-  listMunicipios: Tipo[] = [];
-  listOcupaciones: Tipo[] = [];
-  listGeneros: Tipo[] = [];
+  // ==== LISTAS (todas normalizadas a desc/cod) ====
+  listPaises: TipoUI[] = [];
+  listOcupaciones: TipoUI[] = [];
+  listGeneros: TipoUI[] = [];
+
+  allProvincias: TipoUI[] = []; // REG
+  allMunicipios: TipoUI[] = []; // MUN
+
+  filteredProvincias: TipoUI[] = [];
+  filteredMunicipios: TipoUI[] = [];
 
   // ==== LOADING FLAGS ====
   loadingPais = false;
   loadingProv = false;
   loadingMun = false;
 
+  //MOMENTANEO---------------------------------------
+  // países
+  PAISES = [
+    { cod: '001', desc: 'Perú' },
+    { cod: '002', desc: 'México' },
+  ];
+
+  // provincias / estados (campo parent = país.cod)
+  PROVINCIAS = [
+    { cod: '001', desc: 'Lima', parent: '001' }, // pertenece a Perú
+    { cod: '002', desc: 'Cusco', parent: '001' }, // pertenece a Perú
+    { cod: '003', desc: 'Jalisco', parent: '002' }, // pertenece a México
+    { cod: '004', desc: 'CDMX', parent: '002' }, // pertenece a México
+  ];
+
+  // municipios / ciudades (campo parent = provincia.cod)
+  MUNICIPIOS = [
+    { cod: '001', desc: 'Miraflores', parent: '001' }, // Lima
+    { cod: '002', desc: 'San Isidro', parent: '001' }, // Lima
+    { cod: '003', desc: 'Pisac', parent: '002' }, // Cusco
+    { cod: '004', desc: 'Guadalajara', parent: '003' }, // Jalisco
+    { cod: '005', desc: 'Zapopan', parent: '003' }, // Jalisco
+    { cod: '006', desc: 'Coyoacán', parent: '004' }, // CDMX
+  ];
+
   // ==== FORMULARIOS ====
+  // OJO: pais/provincia/ciudad ahora son string (guardan 'cod')
+  //      ocupacion/genero también, para optionValue="cod"
   personalForm = new FormGroup({
     nombres: new FormControl<string | null>('', Validators.required),
     apellidos: new FormControl<string | null>(null, Validators.required),
     telefono: new FormControl<string | null>(null),
     direccion: new FormControl<string | null>(null),
     fechaNacimiento: new FormControl<Date | null>(null),
-    pais: new FormControl<number | null>(null),
-    provincia: new FormControl<number | null>(null),
-    ciudad: new FormControl<number | null>(null),
-    ocupacion: new FormControl<number | null>(null),
-    genero: new FormControl<number | null>(null),
+
+    pais: new FormControl<string | null>(null),
+    provincia: new FormControl<string | null>(null),
+    ciudad: new FormControl<string | null>(null),
+
+    ocupacion: new FormControl<string | null>(null),
+    genero: new FormControl<string | null>(null),
   });
 
   docsForm = new FormGroup({
@@ -152,34 +191,32 @@ export class ClienteComponent implements OnInit, AfterViewInit {
 
   // ================= LIFECYCLE =================
   ngOnInit(): void {
-    // Cargar catálogos base
-    this.cargarPaises();
-    // this.cargarOcupaciones();
-    // this.cargarGeneros();
+    this.cargarOcupaciones();
+    this.cargarGeneros();
+    this.listPaises = this.PAISES;
+    this.allProvincias = this.PROVINCIAS;
+    this.allMunicipios = this.MUNICIPIOS;
 
-    // Cascada País -> Provincia
-    this.personalForm
-      .get('pais')!
-      .valueChanges.pipe(distinctUntilChanged())
-      .subscribe((paisId) => {
-        this.personalForm.patchValue(
-          { provincia: null, ciudad: null },
-          { emitEvent: false }
-        );
-        this.listMunicipios = [];
-        // if (paisId) this.cargarProvincias(paisId);
-        // else this.listProvincias = [];
-      });
+    // === listeners ===
+    this.personalForm.get('pais')!.valueChanges.subscribe((paisCod) => {
+      this.personalForm.patchValue(
+        { provincia: null, ciudad: null },
+        { emitEvent: false }
+      );
+      this.filteredMunicipios = [];
 
-    // Cascada Provincia -> Municipio
-    this.personalForm
-      .get('provincia')!
-      .valueChanges.pipe(distinctUntilChanged())
-      .subscribe((provinciaId) => {
-        this.personalForm.patchValue({ ciudad: null }, { emitEvent: false });
-        // if (provinciaId) this.cargarMunicipios(provinciaId);
-        // else this.listMunicipios = [];
-      });
+      this.filteredProvincias = paisCod
+        ? this.allProvincias.filter((p) => p.parent === paisCod)
+        : [];
+    });
+
+    this.personalForm.get('provincia')!.valueChanges.subscribe((provCod) => {
+      this.personalForm.patchValue({ ciudad: null }, { emitEvent: false });
+
+      this.filteredMunicipios = provCod
+        ? this.allMunicipios.filter((m) => m.parent === provCod)
+        : [];
+    });
   }
 
   ngAfterViewInit(): void {
@@ -254,7 +291,6 @@ export class ClienteComponent implements OnInit, AfterViewInit {
     this.docsForm.get('selfie')?.markAsDirty();
     this.docsForm.get('selfie')?.updateValueAndValidity();
   }
-
   onDniReversoSelect(e: any): void {
     const file = e.files?.[0];
     if (!file) return;
@@ -264,69 +300,91 @@ export class ClienteComponent implements OnInit, AfterViewInit {
     this.docsForm.get('dniReverso')?.updateValueAndValidity();
   }
 
-  // ================= CARGA CATALOGOS (via /tipos) =================
+  // ================= HELPERS =================
+  // Normaliza cualquier respuesta del backend a {desc, cod}
+  private normalize(list: any[]): TipoUI[] {
+    return (list ?? []).map((x) => ({
+      id: x.id ?? x.ID ?? x.cod ?? x.codigo ?? x.cod_tipo,
+      desc: x.desc ?? x.des_tipo ?? x.nombre ?? x.descripcion ?? '',
+      cod: x.cod ?? x.codigo ?? x.cod_tipo ?? '',
+      parent: x.parent ?? x.parent_id ?? x.parentCod ?? undefined, // <- añade esto
+    }));
+  }
+
+  // ================= CARGA CATALOGOS =================
   private cargarPaises(): void {
     this.loadingPais = true;
     this.api
       .obtenerTipos('PAI')
       .pipe(finalize(() => (this.loadingPais = false)))
       .subscribe({
-        next: (data) => (this.listPaises = data),
+        next: (data: any[]) => (this.listPaises = this.normalize(data)),
         error: () => (this.listPaises = []),
       });
   }
 
-  // private cargarProvincias(paisId: number): void {
-  //   this.loadingProv = true;
-  //   const req: { tab: 'PROVINCIA'; parentId: number } = {
-  //     tab: 'PROVINCIA',
-  //     parentId: paisId,
-  //   };
-  //   this.api
-  //     .obtenerTipos(req)
-  //     .pipe(finalize(() => (this.loadingProv = false)))
-  //     .subscribe({
-  //       next: (data) => {
-  //         this.listProvincias = data;
-  //       },
-  //       error: () => (this.listProvincias = []),
-  //     });
-  // }
+  // En tu DB es REG (estados/provincias)
+  private cargarProvincias(): void {
+    this.loadingProv = true;
+    this.api
+      .obtenerTipos('REG')
+      .pipe(finalize(() => (this.loadingProv = false)))
+      .subscribe({
+        next: (data: any[]) => {
+          this.allProvincias = this.normalize(data);
+          // Recalcular si ya hay país seleccionado
+          const paisCod = this.personalForm.value.pais;
+          if (paisCod) {
+            this.filteredProvincias = this.allProvincias.filter((p) =>
+              (p.cod ?? '').startsWith(paisCod + '-')
+            );
+            const provCtrl = this.personalForm.get('provincia')!;
+            this.filteredProvincias.length > 0
+              ? provCtrl.enable({ emitEvent: false })
+              : provCtrl.disable({ emitEvent: false });
+          }
+        },
+        error: () => (this.allProvincias = []),
+      });
+  }
 
-  // private cargarMunicipios(provinciaId: number): void {
-  //   this.loadingMun = true;
-  //   const req: { tab: 'MUNICIPIO'; parentId: number } = {
-  //     tab: 'MUNICIPIO',
-  //     parentId: provinciaId,
-  //   };
-  //   this.api
-  //     .obtenerTipos(req)
-  //     .pipe(finalize(() => (this.loadingMun = false)))
-  //     .subscribe({
-  //       next: (data) => {
-  //         this.listMunicipios = data;
-  //       },
-  //       error: () => (this.listMunicipios = []),
-  //     });
-  // }
+  private cargarMunicipios(): void {
+    this.loadingMun = true;
+    this.api
+      .obtenerTipos('MUN')
+      .pipe(finalize(() => (this.loadingMun = false)))
+      .subscribe({
+        next: (data: any[]) => {
+          this.allMunicipios = this.normalize(data);
+          // Recalcular si ya hay provincia seleccionada
+          const provCod = this.personalForm.value.provincia;
+          if (provCod) {
+            this.filteredMunicipios = this.allMunicipios.filter((m) =>
+              (m.cod ?? '').startsWith(provCod + '-')
+            );
+            const ciudadCtrl = this.personalForm.get('ciudad')!;
+            this.filteredMunicipios.length > 0
+              ? ciudadCtrl.enable({ emitEvent: false })
+              : ciudadCtrl.disable({ emitEvent: false });
+          }
+        },
+        error: () => (this.allMunicipios = []),
+      });
+  }
 
-  // private cargarOcupaciones(): void {
-  //   this.api.obtenerTipos({ tab: 'OCU' }).subscribe({
-  //     next: (data: Tipo[]) => {
-  //       this.listOcupaciones = data;
-  //     },
-  //     error: () => (this.listOcupaciones = []),
-  //   });
-  // }
+  private cargarOcupaciones(): void {
+    this.api.obtenerTipos('OCU').subscribe({
+      next: (data: any[]) => (this.listOcupaciones = this.normalize(data)),
+      error: () => (this.listOcupaciones = []),
+    });
+  }
 
-  // private cargarGeneros(): void {
-  //   this.api.obtenerTipos({ tab: 'GEN' }).subscribe({
-  //     next: (data: Tipo[]) => {
-  //       this.listGeneros = data;
-  //     },
-  //     error: () => (this.listGeneros = []),
-  //   });
-  // }
+  private cargarGeneros(): void {
+    this.api.obtenerTipos('GEN').subscribe({
+      next: (data: any[]) => (this.listGeneros = this.normalize(data)),
+      error: () => (this.listGeneros = []),
+    });
+  }
 
   // ================= REGISTRO =================
   async finish(): Promise<void> {
@@ -349,18 +407,17 @@ export class ClienteComponent implements OnInit, AfterViewInit {
         fecha_nac: this.toDateOnly(personal.fechaNacimiento || '1990-01-01'),
         direccion: personal.direccion || '',
 
-        pais_cod: String(this.personalForm.value.pais ?? ''),
-        provincia_cod: String(this.personalForm.value.provincia ?? ''),
-        ciudad_cod: String(this.personalForm.value.ciudad ?? ''),
-        ocupacion_cod: String(this.personalForm.value.ocupacion ?? ''),
-        genero_cod: String(this.personalForm.value.genero ?? ''),
+        // ahora son códigos (PE, PE-LIM, PE-LIM-150122, etc.)
+        pais_cod: String(personal.pais ?? ''),
+        provincia_cod: String(personal.provincia ?? ''),
+        ciudad_cod: String(personal.ciudad ?? ''),
+        ocupacion_cod: String(personal.ocupacion ?? ''),
+        genero_cod: String(personal.genero ?? ''),
 
         selfie_url: selfieUrl,
         dni_reverso_url: dniUrl,
-
         email: credentials.email || '',
         password: credentials.password || '',
-
         alt_nombre: credentials.contactoNombre || '',
         alt_telefono: credentials.contactoTelefono || '',
       } as const;
