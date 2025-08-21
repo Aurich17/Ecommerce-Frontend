@@ -26,6 +26,8 @@ import { PermisosrolComponent } from './admin/accesos/permisosrol/permisosrol.co
 import { MarketplaceComponent } from './marketplace/marketplace.component';
 import { StoreProductsComponent } from './marketplace/store-products/store-products.component';
 import { AuthGuard } from '../services/guard/auth.guard';
+import { ForgotpasswordComponent } from './auth/login/mant-login/forgotpassword/forgotpassword.component';
+import { ResetpasswordComponent } from './auth/login/mant-login/resetpassword/resetpassword.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -68,6 +70,8 @@ export const routes: Routes = [
       { path: 'marketplace', component: MarketplaceComponent },
       { path: 'store-products', component:StoreProductsComponent}
     ]
-  }
+  },
+  { path: 'forgotpassword', component: ForgotpasswordComponent },
+  { path: 'resetpassword', component: ResetpasswordComponent }
 
 ];

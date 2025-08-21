@@ -161,35 +161,70 @@
   </ng-template>
 </p-carousel>
 
-<footer class="py-6 px-4 mt-6 text-white" style="background-color: #0b132b !important;" id="contacto">
-  <div class="grid">
-    <div class="col-12 md:col-4">
-      <h3 class="text-3xl font-bold text-pink-500">FiaoX</h3>
-      <p>Una solución innovadora para el mercado cubano...</p>
-      <div class="flex gap-3 mt-3">
-        <i class="pi pi-facebook text-xl"></i>
-        <i class="pi pi-twitter text-xl"></i>
-        <i class="pi pi-instagram text-xl"></i>
-        <i class="pi pi-linkedin text-xl"></i>
+<footer style="background:#0b1d33; color:#fff;" class="p-4 ">
+  <div class="flex justify-content-between flex-wrap m-auto">
+
+    <!-- Logo y descripción -->
+    <div class="flex-1">
+      <h2 class="m-0 text-6xl flex justify-content-center" style="color:#ff6b00;">Fiao<span
+          style="color:#ff0066;">X</span></h2><!--Icono-->
+      <p class="line-height-3 pt-3 flex text-center ml-8 mr-8">
+        {{footerLanding?.data.footer_left_desc}}
+      </p>
+      <div class="flex justify-content-center text-sm pt-3 gap-4">
+        <a href="#" style="color:#fff;"><i class="pi pi-facebook"></i></a>
+        <a href="#" style="color:#fff;"><i class="pi pi-twitter"></i></a>
+        <a href="#" style="color:#fff;"><i class="pi pi-instagram"></i></a>
+        <a href="#" style="color:#fff;"><i class="pi pi-linkedin"></i></a>
+        <a href="#" style="color:#fff;"><i class="pi pi-youtube"></i></a>
+        <a href="#" style="color:#fff;"><i class="fas fa-rss"></i></a>
       </div>
     </div>
-    <div class="col-12 md:col-4 mt-4 md:mt-0">
-      <h4 class="font-bold">Contáctanosssss</h4>
-      <p>supportfiaox.com</p>
-      <p>15551234567</p>
-      <p class="mt-2">Atención al usuario: <i class="pi pi-envelope"></i></p>
-      <p>Departamento comercial: <i class="pi pi-whatsapp"></i></p>
+
+    <!-- Contacto -->
+    <div class="flex-1">
+      <h3 class="flex justify-content-center">{{footerLanding?.data.footer_title}}</h3>
+      <p class="flex justify-content-center">{{footerLanding?.data.footer_desc}}s</p>
+      <div class="flex gap-4 justify-content-center">
+        <a href="mailto:support@fiaox.com" class="p-2"
+          style="color:#fff; text-decoration:none; border:1px solid #494848; border-radius:8px;">{{footerLanding?.data.contact_email}}</a><br>
+        <a href="tel:15551234567" class="p-2"
+          style="color:#fff; text-decoration:none; border:1px solid #494848; border-radius:8px;">{{footerLanding?.data.contact_phone}}</a>
+      </div>
+      <div class="flex gap-4 justify-content-center">
+        <div>
+          <h4>Atención al usuario</h4>
+          <div class="flex gap-4 justify-content-center">
+            <a href="#" style="color:#fff; margin-right:10px;"><i class="pi pi-envelope"></i></a>
+            <a href="#" style="color:#fff;"><i class="pi pi-whatsapp"></i></a>
+          </div>
+        </div>
+        <div>
+          <h4>Departamento comercial</h4>
+          <div class="flex gap-4 justify-content-center">
+            <a href="#" style="color:#fff; margin-right:10px;"><i class="pi pi-envelope"></i></a>
+            <a href="#" style="color:#fff;"><i class="pi pi-whatsapp"></i></a>
+          </div>
+
+        </div>
+      </div>
     </div>
-    <div class="col-12 md:col-4 mt-4 md:mt-0">
-      <h4 class="font-bold">Términos y Condiciones</h4>
-      <ul class="list-none p-0">
-        <li><a class="text-white">Para Compradores</a></li>
-        <li><a class="text-white">Para Vendedores</a></li>
-        <li><a class="text-white">Registrarme Para Vender</a></li>
-        <li><a class="text-white">Contactar al Marketplace</a></li>
-        <li><a class="text-white">Ingreso Vendedores</a></li>
+
+    <!-- Términos y condiciones -->
+    <div class="flex-1 text-center">
+      <h3 class="text-center text-lg font-semibold mb-3">Términos y Condiciones</h3>
+      <ul class="list-disc list-inside text-left inline-block space-y-4">
+        <li><a href="#" class="text-white no-underline">Para Compradores</a></li>
+        <li><a href="#" class="text-white no-underline">Para Vendedores</a></li>
+        <li><a href="#" class="text-white no-underline">Registrarme Para Vender</a></li>
+        <li><a href="#" class="text-white no-underline">Contactar al Marketplace</a></li>
+        <li><a href="#" class="text-white no-underline">Ingreso Vendedores</a></li>
       </ul>
     </div>
   </div>
-  <div class="text-center mt-4 text-sm">© 2025 Fiaox. Todos los derechos reservados</div>
+
+  <!-- Derechos de autor -->
+  <div class="text-center pt-5 mt-4 text-xs" style="border-top:1px solid #333; color:#aaa;">
+    {{footerLanding?.data.footer_copy}}
+  </div>
 </footer>
