@@ -1,6 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
-import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+  inject,
+} from '@angular/core';
+import {
+  ReactiveFormsModule,
+  FormGroup,
+  FormControl,
+  Validators,
+} from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { MenuItem, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -48,15 +60,15 @@ type IntlTelOptions = NonNullable<Parameters<typeof intlTelInput>[1]>;
     InputIconModule,
     IconFieldModule,
     CardModule,
-    DialogModule
+    DialogModule,
   ],
   templateUrl: './cliente.component.html',
   styleUrls: ['./cliente.component.css'],
-  providers: [MessageService]
+  providers: [MessageService],
 })
 export class ClienteComponent implements OnInit, AfterViewInit {
-
-  private toDateOnly = (d: Date | string) => (d instanceof Date ? d : new Date(d)).toISOString().slice(0,10);
+  private toDateOnly = (d: Date | string) =>
+    (d instanceof Date ? d : new Date(d)).toISOString().slice(0, 10);
 
   // ==== INYECCIONES ====
   private ik = inject(ImagekitClient);
@@ -64,13 +76,14 @@ export class ClienteComponent implements OnInit, AfterViewInit {
   private session = inject(SessionService);
 
   constructor(
-    private api: ApiService,         // único servicio para /tipos y registro
+    private api: ApiService, // único servicio para /tipos y registro
     private router: Router,
     private messageService: MessageService
   ) {}
 
   // ==== PHONE INPUT ====
-  @ViewChild('phoneInput', { static: true }) phoneInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('phoneInput', { static: true })
+  phoneInput!: ElementRef<HTMLInputElement>;
   private iti: any;
 
   // ==== UI ====
@@ -79,7 +92,7 @@ export class ClienteComponent implements OnInit, AfterViewInit {
     { label: 'Información personal' },
     { label: 'Documentos' },
     { label: 'Credenciales' },
-    { label: 'Confirmación' }
+    { label: 'Confirmación' },
   ];
   activeIndex = 0;
 
@@ -106,23 +119,26 @@ export class ClienteComponent implements OnInit, AfterViewInit {
     provincia: new FormControl<number | null>(null),
     ciudad: new FormControl<number | null>(null),
     ocupacion: new FormControl<number | null>(null),
-    genero: new FormControl<number | null>(null)
+    genero: new FormControl<number | null>(null),
   });
 
   docsForm = new FormGroup({
     selfie: new FormControl<File | null>(null, Validators.required),
-    dniReverso: new FormControl<File | null>(null, Validators.required)
+    dniReverso: new FormControl<File | null>(null, Validators.required),
   });
 
   credentialsForm = new FormGroup({
-    email: new FormControl<string | null>(null, [Validators.required, Validators.email]),
+    email: new FormControl<string | null>(null, [
+      Validators.required,
+      Validators.email,
+    ]),
     password: new FormControl<string | null>(null, Validators.required),
     contactoNombre: new FormControl<string | null>(null),
-    contactoTelefono: new FormControl<string | null>(null)
+    contactoTelefono: new FormControl<string | null>(null),
   });
 
   socialsecurity = new FormGroup({
-    socialsecurity: new FormControl<string | null>('')
+    socialsecurity: new FormControl<string | null>(''),
   });
 
   // ==== ARCHIVOS ====
@@ -142,18 +158,23 @@ export class ClienteComponent implements OnInit, AfterViewInit {
     this.cargarGeneros();
 
     // Cascada País -> Provincia
-    this.personalForm.get('pais')!.valueChanges
-      .pipe(distinctUntilChanged())
+    this.personalForm
+      .get('pais')!
+      .valueChanges.pipe(distinctUntilChanged())
       .subscribe((paisId) => {
-        this.personalForm.patchValue({ provincia: null, ciudad: null }, { emitEvent: false });
+        this.personalForm.patchValue(
+          { provincia: null, ciudad: null },
+          { emitEvent: false }
+        );
         this.listMunicipios = [];
         if (paisId) this.cargarProvincias(paisId);
         else this.listProvincias = [];
       });
 
     // Cascada Provincia -> Municipio
-    this.personalForm.get('provincia')!.valueChanges
-      .pipe(distinctUntilChanged())
+    this.personalForm
+      .get('provincia')!
+      .valueChanges.pipe(distinctUntilChanged())
       .subscribe((provinciaId) => {
         this.personalForm.patchValue({ ciudad: null }, { emitEvent: false });
         if (provinciaId) this.cargarMunicipios(provinciaId);
@@ -176,7 +197,8 @@ export class ClienteComponent implements OnInit, AfterViewInit {
       const hasValue = (input.value || '').trim().length > 0;
       const valid = !hasValue || this.iti.isValidNumber();
       if (!valid) ctrl.setErrors({ phone: true });
-      else if (ctrl.hasError('phone')) ctrl.updateValueAndValidity({ onlySelf: true });
+      else if (ctrl.hasError('phone'))
+        ctrl.updateValueAndValidity({ onlySelf: true });
     };
 
     input.addEventListener('input', validate);
@@ -189,19 +211,31 @@ export class ClienteComponent implements OnInit, AfterViewInit {
     if (this.activeIndex === 0 && this.personalForm.invalid) {
       this.personalForm.markAllAsTouched();
       this.messageService.clear();
-      this.messageService.add({ severity: 'warn', summary: 'Campos Obligatorios', detail: 'Falta llenar campos.' });
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Campos Obligatorios',
+        detail: 'Falta llenar campos.',
+      });
       return;
     }
     if (this.activeIndex === 1 && this.docsForm.invalid) {
       this.docsForm.markAllAsTouched();
       this.messageService.clear();
-      this.messageService.add({ severity: 'warn', summary: 'Documentos Obligatorios', detail: 'No se han adjuntado todos los documentos necesarios.' });
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Documentos Obligatorios',
+        detail: 'No se han adjuntado todos los documentos necesarios.',
+      });
       return;
     }
     if (this.activeIndex === 2 && this.credentialsForm.invalid) {
       this.credentialsForm.markAllAsTouched();
       this.messageService.clear();
-      this.messageService.add({ severity: 'warn', summary: 'Credenciales Obligtorias', detail: 'Falta llenar campos.' });
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Credenciales Obligtorias',
+        detail: 'Falta llenar campos.',
+      });
       return;
     }
     this.activeIndex++;
@@ -233,54 +267,68 @@ export class ClienteComponent implements OnInit, AfterViewInit {
   // ================= CARGA CATALOGOS (via /tipos) =================
   private cargarPaises(): void {
     this.loadingPais = true;
-    this.api.obtenerTipos({ tab: 'PAI' })
+    this.api
+      .obtenerTipos({ tab: 'PAI' })
       .pipe(finalize(() => (this.loadingPais = false)))
       .subscribe({
         next: (data: Tipo[]) => {
-          console.log(data)
-          this.listPaises = data; },
-        error: () => (this.listPaises = [])
+          console.log('ESTOS SON LOS PAISES', data);
+          this.listPaises = data;
+        },
+        error: () => (this.listPaises = []),
       });
   }
 
+  private cargarProvincias(paisId: number): void {
+    this.loadingProv = true;
+    const req: { tab: 'PROVINCIA'; parentId: number } = {
+      tab: 'PROVINCIA',
+      parentId: paisId,
+    };
+    this.api
+      .obtenerTipos(req)
+      .pipe(finalize(() => (this.loadingProv = false)))
+      .subscribe({
+        next: (data) => {
+          this.listProvincias = data;
+        },
+        error: () => (this.listProvincias = []),
+      });
+  }
 
-private cargarProvincias(paisId: number): void {
-  this.loadingProv = true;
-  const req: { tab: 'PROVINCIA'; parentId: number } = { tab: 'PROVINCIA', parentId: paisId };
-  this.api.obtenerTipos(req)
-    .pipe(finalize(() => (this.loadingProv = false)))
-    .subscribe({
-      next: (data) => { this.listProvincias = data; },
-      error: () => (this.listProvincias = [])
-    });
-}
-
-private cargarMunicipios(provinciaId: number): void {
-  this.loadingMun = true;
-  const req: { tab: 'MUNICIPIO'; parentId: number } = { tab: 'MUNICIPIO', parentId: provinciaId };
-  this.api.obtenerTipos(req)
-    .pipe(finalize(() => (this.loadingMun = false)))
-    .subscribe({
-      next: (data) => { this.listMunicipios = data; },
-      error: () => (this.listMunicipios = [])
-    });
-}
-
+  private cargarMunicipios(provinciaId: number): void {
+    this.loadingMun = true;
+    const req: { tab: 'MUNICIPIO'; parentId: number } = {
+      tab: 'MUNICIPIO',
+      parentId: provinciaId,
+    };
+    this.api
+      .obtenerTipos(req)
+      .pipe(finalize(() => (this.loadingMun = false)))
+      .subscribe({
+        next: (data) => {
+          this.listMunicipios = data;
+        },
+        error: () => (this.listMunicipios = []),
+      });
+  }
 
   private cargarOcupaciones(): void {
-    this.api.obtenerTipos({ tab: 'OCU' })
-      .subscribe({
-        next: (data: Tipo[]) => { this.listOcupaciones = data; },
-        error: () => (this.listOcupaciones = [])
-      });
+    this.api.obtenerTipos({ tab: 'OCU' }).subscribe({
+      next: (data: Tipo[]) => {
+        this.listOcupaciones = data;
+      },
+      error: () => (this.listOcupaciones = []),
+    });
   }
 
   private cargarGeneros(): void {
-    this.api.obtenerTipos({ tab: 'GEN' })
-      .subscribe({
-        next: (data: Tipo[]) => { this.listGeneros = data; },
-        error: () => (this.listGeneros = [])
-      });
+    this.api.obtenerTipos({ tab: 'GEN' }).subscribe({
+      next: (data: Tipo[]) => {
+        this.listGeneros = data;
+      },
+      error: () => (this.listGeneros = []),
+    });
   }
 
   // ================= REGISTRO =================
@@ -288,7 +336,9 @@ private cargarMunicipios(provinciaId: number): void {
     this.loading = true;
     try {
       const [selfieUrl, dniUrl] = await Promise.all([
-        this.selfieFile ? this.uploadToIK(this.selfieFile) : Promise.resolve(''),
+        this.selfieFile
+          ? this.uploadToIK(this.selfieFile)
+          : Promise.resolve(''),
         this.dniFile ? this.uploadToIK(this.dniFile) : Promise.resolve(''),
       ]);
 
@@ -302,11 +352,11 @@ private cargarMunicipios(provinciaId: number): void {
         fecha_nac: this.toDateOnly(personal.fechaNacimiento || '1990-01-01'),
         direccion: personal.direccion || '',
 
-        pais_cod:      String(this.personalForm.value.pais ?? ''),
+        pais_cod: String(this.personalForm.value.pais ?? ''),
         provincia_cod: String(this.personalForm.value.provincia ?? ''),
-        ciudad_cod:    String(this.personalForm.value.ciudad ?? ''),
+        ciudad_cod: String(this.personalForm.value.ciudad ?? ''),
         ocupacion_cod: String(this.personalForm.value.ocupacion ?? ''),
-        genero_cod:    String(this.personalForm.value.genero ?? ''),
+        genero_cod: String(this.personalForm.value.genero ?? ''),
 
         selfie_url: selfieUrl,
         dni_reverso_url: dniUrl,
@@ -318,16 +368,26 @@ private cargarMunicipios(provinciaId: number): void {
         alt_telefono: credentials.contactoTelefono || '',
       } as const;
 
-      this.api.registerClient(payload)
+      this.api
+        .registerClient(payload)
         .pipe(finalize(() => (this.loading = false)))
         .subscribe({
           next: (res: any) => {
             if (res.social_security) {
-              this.messageService.add({ severity:'success', summary:'Guardado', detail:'Cliente registrado.', life:2500 });
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Guardado',
+                detail: 'Cliente registrado.',
+                life: 2500,
+              });
               this.visible = true;
               this.social_security = res.social_security;
-              this.cliente = `${personal.nombres || ''} ${personal.apellidos || ''}`.trim();
-              this.socialsecurity.get('socialsecurity')?.setValue(this.social_security);
+              this.cliente = `${personal.nombres || ''} ${
+                personal.apellidos || ''
+              }`.trim();
+              this.socialsecurity
+                .get('socialsecurity')
+                ?.setValue(this.social_security);
             }
           },
           error: (err) => {
@@ -335,12 +395,13 @@ private cargarMunicipios(provinciaId: number): void {
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: `No se pudo registrar cliente. ${err?.error?.message || ''}`,
+              detail: `No se pudo registrar cliente. ${
+                err?.error?.message || ''
+              }`,
               life: 3500,
             });
           },
         });
-
     } catch (err: any) {
       this.loading = false;
       this.messageService.add({
@@ -353,16 +414,33 @@ private cargarMunicipios(provinciaId: number): void {
   }
 
   private async uploadToIK(file: File): Promise<string> {
-    const res: any = await this.ik.uploadAndSave(file, '/clientes', ['registro']);
+    const res: any = await this.ik.uploadAndSave(file, '/clientes', [
+      'registro',
+    ]);
     return this.ik.url({ path: res.filePath }, { w: 1000, q: 80, f: 'auto' });
   }
 
   copy(): void {
     const value = this.socialsecurity.get('socialsecurity')?.value || '';
     if (!value) return;
-    navigator.clipboard.writeText(value)
-      .then(() => this.messageService.add({ severity: 'success', summary: 'Copiado', detail: 'Se ha copiado al portapapeles.', life: 2500 }))
-      .catch(() => this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo copiar.', life: 2500 }));
+    navigator.clipboard
+      .writeText(value)
+      .then(() =>
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Copiado',
+          detail: 'Se ha copiado al portapapeles.',
+          life: 2500,
+        })
+      )
+      .catch(() =>
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo copiar.',
+          life: 2500,
+        })
+      );
   }
 
   errorMsg = '';

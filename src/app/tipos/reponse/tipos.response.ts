@@ -1,8 +1,9 @@
 export type TabTipo = 'PAIS' | 'PROVINCIA' | 'MUNICIPIO' | 'OCU' | 'GEN';
 
 export interface Tipo {
-  id: number;
-  nombre: string;
+  tab: string;
+  cod: string;
+  desc: string;
 }
 
 export type RequestTipos =
