@@ -31,6 +31,15 @@
                 <input type="text" pInputText class="w-full text-sm" formControlName="copyright" id="copyright">
             </div>
 
+            <div class="field">
+                <label class="text-sm font-bold" for="nota">Logo</label>
+                <p-fileUpload mode="basic" [auto]="false" [customUpload]="true" [showUploadButton]="false"
+                    [showCancelButton]="false" name="logo" accept="image/*" maxFileSize="1000000" class="textoNegro"
+                    styleClass="border-dashed w-full surface-100 border-500" chooseLabel="Seleccionar Logo"
+                    (onSelect)="onSelfieSelect($event)">
+                </p-fileUpload>
+            </div>
+
             <p-button  styleClass="w-full" label="Guardar Cambios" (onClick)="guardarCambios()"/>
         </form>
     </p-accordionTab>

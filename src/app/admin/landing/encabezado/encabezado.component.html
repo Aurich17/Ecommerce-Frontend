@@ -4,40 +4,65 @@
         <form [formGroup]="encabezadoform" class="block p-fluid p-formgrid p-grid gap-2 p-4">
             <div class="field">
                 <label class="text-sm font-bold" for="titulo">Título principal</label>
-                <input type="text" pInputText class="w-full text-sm" formControlName="titulo" id="titulo" value="{{encabezadoLanding?.titulo_principal}}">
+                <input type="text" pInputText class="w-full text-sm" formControlName="titulo" id="titulo"
+                    value="{{encabezadoLanding?.titulo_principal}}">
             </div>
 
             <div class="field">
                 <label class="text-sm font-bold" for="subtitulo">Subtítulo</label>
-                <input type="text" pInputText class="w-full text-sm" formControlName="subtitulo" id="subtitulo" value="{{encabezadoLanding?.subtitulo}}">
+                <input type="text" pInputText class="w-full text-sm" formControlName="subtitulo" id="subtitulo"
+                    value="{{encabezadoLanding?.subtitulo}}">
             </div>
 
             <div class="field">
                 <label class="text-sm font-bold" for="parafrasis">Paráfrasis del encabezado</label>
-                <input type="text" pInputText class="w-full text-sm" formControlName="parafrasis" id="parafrasis" value="{{encabezadoLanding?.parrafo_encabezado}}">
+                <input type="text" pInputText class="w-full text-sm" formControlName="parafrasis" id="parafrasis"
+                    value="{{encabezadoLanding?.parrafo_encabezado}}">
             </div>
 
             <div class="field">
                 <label class="text-sm font-bold" for="tituloMP">Título del Marketplace</label>
-                <input type="text" pInputText class="w-full text-sm" formControlName="tituloMP" id="tituloMP" value="{{encabezadoLanding?.titulo_marketplace}}">
+                <input type="text" pInputText class="w-full text-sm" formControlName="tituloMP" id="tituloMP"
+                    value="{{encabezadoLanding?.titulo_marketplace}}">
             </div>
 
             <div class="field">
                 <label class="text-sm font-bold" for="subtituloMP">Subtítulo del Marketplace</label>
-                <input type="text" pInputText class="w-full text-sm" formControlName="subtituloMP" id="subtituloMP" value="{{encabezadoLanding?.subtitulo_marketplace}}">
+                <input type="text" pInputText class="w-full text-sm" formControlName="subtituloMP" id="subtituloMP"
+                    value="{{encabezadoLanding?.subtitulo_marketplace}}">
             </div>
 
             <div class="field">
                 <label class="text-sm font-bold" for="nota">Nota: ¿Cómo funciona?</label>
-                <input type="text" pInputText class="w-full text-sm" formControlName="nota" id="nota" value="{{encabezadoLanding?.nota}}">
+                <input type="text" pInputText class="w-full text-sm" formControlName="nota" id="nota"
+                    value="{{encabezadoLanding?.nota}}">
             </div>
 
-            <p-button
-              styleClass="w-full text-sm"
-              label="Guardar Cambios"
-              [loading]="loading"
-              (onClick)="guardarCambios()"
-            />
+            <div class="field">
+                <label class="text-sm font-bold" for="nota">Logo</label>
+                <p-fileUpload mode="basic" [auto]="false" [customUpload]="true" [showUploadButton]="false"
+                    [showCancelButton]="false" name="logo" accept="image/*" maxFileSize="1000000" class="textoNegro"
+                    styleClass="border-dashed w-full surface-100 border-500" chooseLabel="Seleccionar Logo"
+                    (onSelect)="onSelfieSelect($event)">
+                </p-fileUpload>
+            </div>
+
+            <div class="field">
+                <label class="text-sm font-bold" for="nota">Slider</label>
+                <p-fileUpload name="demo[]"
+                    (onUpload)="onUpload($event)" [multiple]="true" accept="image/*" maxFileSize="none">
+                    <ng-template pTemplate="content">
+                        <ul *ngIf="uploadedFiles.length">
+                            <li *ngFor="let file of uploadedFiles">
+                                {{ file.name }} - {{ file.size }} bytes
+                            </li>
+                        </ul>
+                    </ng-template>
+                </p-fileUpload>
+            </div>
+
+            <p-button styleClass="w-full text-sm" label="Guardar Cambios" [loading]="loading"
+                (onClick)="guardarCambios()" />
         </form>
     </p-accordionTab>
 </p-accordion>
