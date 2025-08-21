@@ -7,25 +7,39 @@
     </div>
 
     <!-- Botón hamburguesa para mobile -->
-    <button class="md:hidden p-button p-button-text p-0" (click)="showMobileMenu = !showMobileMenu">
+    <button
+      class="md:hidden p-button p-button-text p-0"
+      (click)="showMobileMenu = !showMobileMenu"
+    >
       <i class="pi pi-bars text-2xl text-900"></i>
     </button>
 
     <!-- Menú desktop -->
     <div class="hidden md:flex align-items-center gap-5">
       <div class="flex gap-4 text-sm text-800">
-        <a class="cursor-pointer" (click)="go('funcionalidad')">Funcionalidad</a>
-        <a class="cursor-pointer" (click)="go('caracteristicas')">Características</a>
+        <a class="cursor-pointer" (click)="go('funcionalidad')"
+          >Funcionalidad</a
+        >
+        <a class="cursor-pointer" (click)="go('caracteristicas')"
+          >Características</a
+        >
         <a class="cursor-pointer" (click)="go('testimonios')">Testimonios</a>
         <a class="cursor-pointer" (click)="go('faq')">Preguntas Frecuentes</a>
         <a class="cursor-pointer" (click)="go('contacto')">Contáctanos</a>
       </div>
 
       <div class="flex gap-2 ml-4">
-        <p-button label="Registrarse" styleClass="p-button-sm p-button-danger" [raised]="true"
-          [routerLink]="'/register'"></p-button>
-        <p-button label="Ingresar" styleClass="p-button-sm p-button-outlined p-button-warning"
-          [routerLink]="'/login'"></p-button>
+        <p-button
+          label="Registrarse"
+          styleClass="p-button-sm p-button-danger"
+          [raised]="true"
+          [routerLink]="'/register'"
+        ></p-button>
+        <p-button
+          label="Ingresar"
+          styleClass="p-button-sm p-button-outlined p-button-warning"
+          [routerLink]="'/login'"
+        ></p-button>
       </div>
     </div>
   </div>
@@ -33,198 +47,313 @@
   <!-- Menú colapsable móvil -->
   <div *ngIf="showMobileMenu" class="md:hidden mt-3">
     <div class="flex flex-column gap-2 text-sm text-800">
-      <a class="cursor-pointer p-2 hover:bg-gray-100 border-round" (click)="go('funcionalidad')">Funcionalidad</a>
-      <a class="cursor-pointer p-2 hover:bg-gray-100 border-round" (click)="go('caracteristicas')">Características</a>
-      <a class="cursor-pointer p-2 hover:bg-gray-100 border-round" (click)="go('testimonios')">Testimonios</a>
-      <a class="cursor-pointer p-2 hover:bg-gray-100 border-round" (click)="go('faq')">Preguntas Frecuentes</a>
-      <a class="cursor-pointer p-2 hover:bg-gray-100 border-round" (click)="go('contacto')">Contáctanos</a>
+      <a
+        class="cursor-pointer p-2 hover:bg-gray-100 border-round"
+        (click)="go('funcionalidad')"
+        >Funcionalidad</a
+      >
+      <a
+        class="cursor-pointer p-2 hover:bg-gray-100 border-round"
+        (click)="go('caracteristicas')"
+        >Características</a
+      >
+      <a
+        class="cursor-pointer p-2 hover:bg-gray-100 border-round"
+        (click)="go('testimonios')"
+        >Testimonios</a
+      >
+      <a
+        class="cursor-pointer p-2 hover:bg-gray-100 border-round"
+        (click)="go('faq')"
+        >Preguntas Frecuentes</a
+      >
+      <a
+        class="cursor-pointer p-2 hover:bg-gray-100 border-round"
+        (click)="go('contacto')"
+        >Contáctanos</a
+      >
     </div>
 
     <div class="flex flex-column gap-2 mt-3">
-      <p-button label="Registrarse" styleClass="p-button-sm p-button-danger w-full" [raised]="true"
-        [routerLink]="'/register'"></p-button>
-      <p-button label="Ingresar" styleClass="p-button-sm p-button-outlined p-button-warning w-full"
-        [routerLink]="'/login'"></p-button>
+      <p-button
+        label="Registrarse"
+        styleClass="p-button-sm p-button-danger w-full"
+        [raised]="true"
+        [routerLink]="'/register'"
+      ></p-button>
+      <p-button
+        label="Ingresar"
+        styleClass="p-button-sm p-button-outlined p-button-warning w-full"
+        [routerLink]="'/login'"
+      ></p-button>
     </div>
   </div>
 </header>
 
-<!-- <input type="file" (change)="onPick($event)" multiple accept="image/*" />
-<div *ngFor="let i of uploads">
-  <div>{{ i.file.name }} — {{ i.progress }}%</div>
-  <img *ngIf="i.url" [src]="i.url" alt="preview" style="max-width:240px" />
-  <div *ngIf="i.error" style="color:red">{{ i.error }}</div>
-</div> -->
 <!-- Cuerpo -->
 <div class="flex justify-content-center mt-5 px-3">
-  <div class="surface-0 border-round-2xl shadow-3 p-4 text-center w-full md:w-10 lg:w-10"
-    style="background: url('../../assets/fondo_ciudad.jpg') center/cover no-repeat;">
-    <h2 class="text-2xl md:text-4xl text-0 font-bold mb-3">{{encabezadoLanding?.titulo_principal}}</h2>
+  <div
+    class="surface-0 border-round-2xl shadow-3 p-4 text-center w-full md:w-10 lg:w-10"
+    style="
+      background: url('../../assets/fondo_ciudad.jpg') center/cover no-repeat;
+    "
+  >
+    <h2 class="text-2xl md:text-4xl text-0 font-bold mb-3">
+      {{ encabezadoLanding?.titulo_principal }}
+    </h2>
     <p class="text-0 text-md md:text-lg font-medium mb-2">
-      {{encabezadoLanding?.subtitulo}}
+      {{ encabezadoLanding?.subtitulo }}
     </p>
     <p class="text-0 text-sm mb-4">
-      {{encabezadoLanding?.parrafo_encabezado}}
+      {{ encabezadoLanding?.parrafo_encabezado }}
     </p>
     <div class="flex flex-column md:flex-row justify-content-center gap-3">
-      <p-button label="Registrar cliente" styleClass="p-button-sm button-white" [raised]="true"
-        [routerLink]="'/register/cliente'"></p-button>
-      <p-button label="Registrar empresa" styleClass="p-button-outlined p-button-white p-button-sm"
-        [routerLink]="'/register/empresa'"></p-button>
+      <p-button
+        label="Registrar cliente"
+        styleClass="p-button-sm button-white"
+        [raised]="true"
+        [routerLink]="'/register/cliente'"
+      ></p-button>
+      <p-button
+        label="Registrar empresa"
+        styleClass="p-button-outlined p-button-white p-button-sm"
+        [routerLink]="'/register/empresa'"
+      ></p-button>
     </div>
   </div>
 </div>
 
-<h3 class="text-center text-2xl font-bold mt-6" id="quienes">¿Quiénes pueden usarlo?</h3>
+<h3 class="text-center text-2xl font-bold mt-6" id="quienes">
+  ¿Quiénes pueden usarlo?
+</h3>
 
 <div class="flex justify-content-center flex-wrap gap-4 mt-4 px-3">
-  <p-card class="w-full md:w-20rem text-center" *ngFor="let item of quienesLanding; let i = index">
+  <p-card
+    class="w-full md:w-20rem text-center"
+    *ngFor="let item of quienesLanding; let i = index"
+  >
     <div class="text-orange-500 text-4xl mb-2">
-      <i class="pi pi-{{item.icon}}"></i>
+      <i class="pi pi-{{ item.icon }}"></i>
     </div>
-    <div class="font-bold p-3">{{item.entity}}</div>
+    <div class="font-bold p-3">{{ item.entity }}</div>
     <div class="text-sm line-height-4">
-      {{item.description}}
+      {{ item.description }}
     </div>
   </p-card>
-
-  <!-- <p-card class="w-full md:w-20rem text-center">
-    <div class="text-orange-500 text-4xl mb-2">
-      <i class="pi pi-user"></i>
-    </div>
-    <h4 class="mb-1">Clientes FIAOX</h4>
-    <p class="text-sm">
-      Puedes solicitar productos de tiendas registradas, pagar en cuotas y construir tu reputación.
-    </p>
-  </p-card> -->
 </div>
 
-<h3 class="text-center text-2xl font-bold mt-6 mb-4" id="funcionalidad">¿Cómo funciona?</h3>
+<h3 class="text-center text-2xl font-bold mt-6 mb-4" id="funcionalidad">
+  ¿Cómo funciona?
+</h3>
 
 <div class="grid-funcionamiento">
-  <div class="card-funcionamiento" *ngFor="let item of funcionamientoLanding; let i = index">
+  <div
+    class="card-funcionamiento"
+    *ngFor="let item of funcionamientoLanding; let i = index"
+  >
     <i class="pi pi-check text-orange-500 text-xl"></i>
-    <span>{{item.step_order}}. {{item.description}}</span>
+    <span>{{ item.step_order }}. {{ item.description }}</span>
   </div>
 </div>
 
-<h3 class="text-center text-2xl font-bold mt-6" id="caracteristicas">Características</h3>
+<h3 class="text-center text-2xl font-bold mt-6" id="caracteristicas">
+  Características
+</h3>
 
 <div class="grid mt-4 justify-content-center px-3">
-  <p-card class="col-12 md:col-5 m-2 carcteristicascard" *ngFor="let item of caracteristicasLanding; let i = index">
-    <h4 class="mb-1">{{item.titulo}}</h4>
-    <p class="text-sm">{{item.descripcion}}</p>
+  <p-card
+    class="col-12 md:col-5 m-2 carcteristicascard"
+    *ngFor="let item of caracteristicasLanding; let i = index"
+  >
+    <h4 class="mb-1">{{ item.titulo }}</h4>
+    <p class="text-sm">{{ item.descripcion }}</p>
   </p-card>
 </div>
 
-<h3 class="text-center text-2xl font-bold mt-6" id="testimonios">Testimonios</h3>
+<h3 class="text-center text-2xl font-bold mt-6" id="testimonios">
+  Testimonios
+</h3>
 
-<p-carousel [value]="testimonios" [numVisible]="3" [numScroll]="1" [responsiveOptions]="[
+<p-carousel
+  [value]="testimonios"
+  [numVisible]="3"
+  [numScroll]="1"
+  [responsiveOptions]="[
     { breakpoint: '1024px', numVisible: 2, numScroll: 1 },
     { breakpoint: '768px', numVisible: 1, numScroll: 1 }
-  ]" [circular]="true" [autoplayInterval]="3000" class="flex-none testimonio">
-
+  ]"
+  [circular]="true"
+  [autoplayInterval]="3000"
+  class="flex-none testimonio"
+>
   <ng-template let-item pTemplate="item">
-    <div class="flex gap-4">
-      <p-card class="w-full">
-        <p class="italic">"{{ item.mensaje }}"</p>
-        <div class="mt-2 font-medium">{{ item.nombre }}</div>
-      </p-card>
-    </div>
-  </ng-template>
+    <p-card class="w-full testimonial-card">
+      <div class="t-row">
+        <!-- Avatar del usuario -->
+        <p-avatar class="t-avatar" shape="circle" size="large"></p-avatar>
 
+        <!-- Contenido -->
+        <div class="t-content">
+          <blockquote class="t-text">“{{ item.mensaje }}”</blockquote>
+          <div class="t-author">{{ item.nombre }}</div>
+        </div>
+      </div>
+    </p-card>
+  </ng-template>
 </p-carousel>
 
-
-<h3 class="text-center text-2xl font-bold mt-6 mb-4" id="faq">Preguntas Frecuentes</h3>
+<h3 class="text-center text-2xl font-bold mt-6 mb-4" id="faq">
+  Preguntas Frecuentes
+</h3>
 
 <p-accordion [multiple]="true" class="w-full md:w-8 mx-auto px-2">
   <p-accordionTab [header]="tab.pregunta" *ngFor="let tab of preguntasLanding">
     <p>
-      {{tab.respuesta}}
+      {{ tab.respuesta }}
     </p>
   </p-accordionTab>
 </p-accordion>
 
-<h3 class="text-center text-2xl font-bold mt-6" id="empresas">Empresas que usan FIAOX</h3>
+<h3 class="text-center text-2xl font-bold mt-6" id="empresas">
+  Empresas que usan FIAOX
+</h3>
 
-<p-carousel [value]="empresas" [numVisible]="4" [numScroll]="1" [responsiveOptions]="[
+<p-carousel
+  [value]="empresas"
+  [numVisible]="4"
+  [numScroll]="1"
+  [responsiveOptions]="[
     { breakpoint: '1024px', numVisible: 3, numScroll: 1 },
     { breakpoint: '768px', numVisible: 2, numScroll: 1 },
     { breakpoint: '560px', numVisible: 1, numScroll: 1 }
-  ]" [circular]="true" [autoplayInterval]="3000">
+  ]"
+  [circular]="true"
+  [autoplayInterval]="3000"
+>
   <ng-template let-empresa pTemplate="item">
     <p-card class="text-center">
-      <img [src]="empresa.logo" alt="Logo" class="mb-2" width="100" height="100" />
+      <img
+        [src]="empresa.logo"
+        alt="Logo"
+        class="mb-2"
+        width="100"
+        height="100"
+      />
       <p>{{ empresa.nombre }}</p>
     </p-card>
   </ng-template>
 </p-carousel>
 
-<footer style="background:#0b1d33; color:#fff;" class="p-4 ">
+<footer style="background: #0b1d33; color: #fff" class="p-4">
   <div class="flex justify-content-between flex-wrap m-auto">
-
     <!-- Logo y descripción -->
     <div class="flex-1">
-      <h2 class="m-0 text-6xl flex justify-content-center" style="color:#ff6b00;">Fiao<span
-          style="color:#ff0066;">X</span></h2><!--Icono-->
+      <h2
+        class="m-0 text-6xl flex justify-content-center"
+        style="color: #ff6b00"
+      >
+        Fiao<span style="color: #ff0066">X</span>
+      </h2>
+      <!--Icono-->
       <p class="line-height-3 pt-3 flex text-center ml-8 mr-8">
-        {{footerLanding?.data.footer_left_desc}}
+        {{ footerLanding?.data.footer_left_desc }}
       </p>
       <div class="flex justify-content-center text-sm pt-3 gap-4">
-        <a href="#" style="color:#fff;"><i class="pi pi-facebook"></i></a>
-        <a href="#" style="color:#fff;"><i class="pi pi-twitter"></i></a>
-        <a href="#" style="color:#fff;"><i class="pi pi-instagram"></i></a>
-        <a href="#" style="color:#fff;"><i class="pi pi-linkedin"></i></a>
-        <a href="#" style="color:#fff;"><i class="pi pi-youtube"></i></a>
-        <a href="#" style="color:#fff;"><i class="fas fa-rss"></i></a>
+        <a href="#" style="color: #fff"><i class="pi pi-facebook"></i></a>
+        <a href="#" style="color: #fff"><i class="pi pi-twitter"></i></a>
+        <a href="#" style="color: #fff"><i class="pi pi-instagram"></i></a>
+        <a href="#" style="color: #fff"><i class="pi pi-linkedin"></i></a>
+        <a href="#" style="color: #fff"><i class="pi pi-youtube"></i></a>
+        <a href="#" style="color: #fff"><i class="fas fa-rss"></i></a>
       </div>
     </div>
 
     <!-- Contacto -->
     <div class="flex-1">
-      <h3 class="flex justify-content-center">{{footerLanding?.data.footer_title}}</h3>
-      <p class="flex justify-content-center">{{footerLanding?.data.footer_desc}}s</p>
+      <h3 class="flex justify-content-center">
+        {{ footerLanding?.data.footer_title }}
+      </h3>
+      <p class="flex justify-content-center">
+        {{ footerLanding?.data.footer_desc }}s
+      </p>
       <div class="flex gap-4 justify-content-center">
-        <a href="mailto:support@fiaox.com" class="p-2"
-          style="color:#fff; text-decoration:none; border:1px solid #494848; border-radius:8px;">{{footerLanding?.data.contact_email}}</a><br>
-        <a href="tel:15551234567" class="p-2"
-          style="color:#fff; text-decoration:none; border:1px solid #494848; border-radius:8px;">{{footerLanding?.data.contact_phone}}</a>
+        <a
+          href="mailto:support@fiaox.com"
+          class="p-2"
+          style="
+            color: #fff;
+            text-decoration: none;
+            border: 1px solid #494848;
+            border-radius: 8px;
+          "
+          >{{ footerLanding?.data.contact_email }}</a
+        ><br />
+        <a
+          href="tel:15551234567"
+          class="p-2"
+          style="
+            color: #fff;
+            text-decoration: none;
+            border: 1px solid #494848;
+            border-radius: 8px;
+          "
+          >{{ footerLanding?.data.contact_phone }}</a
+        >
       </div>
       <div class="flex gap-4 justify-content-center">
         <div>
           <h4>Atención al usuario</h4>
           <div class="flex gap-4 justify-content-center">
-            <a href="#" style="color:#fff; margin-right:10px;"><i class="pi pi-envelope"></i></a>
-            <a href="#" style="color:#fff;"><i class="pi pi-whatsapp"></i></a>
+            <a href="#" style="color: #fff; margin-right: 10px"
+              ><i class="pi pi-envelope"></i
+            ></a>
+            <a href="#" style="color: #fff"><i class="pi pi-whatsapp"></i></a>
           </div>
         </div>
         <div>
           <h4>Departamento comercial</h4>
           <div class="flex gap-4 justify-content-center">
-            <a href="#" style="color:#fff; margin-right:10px;"><i class="pi pi-envelope"></i></a>
-            <a href="#" style="color:#fff;"><i class="pi pi-whatsapp"></i></a>
+            <a href="#" style="color: #fff; margin-right: 10px"
+              ><i class="pi pi-envelope"></i
+            ></a>
+            <a href="#" style="color: #fff"><i class="pi pi-whatsapp"></i></a>
           </div>
-
         </div>
       </div>
     </div>
 
     <!-- Términos y condiciones -->
     <div class="flex-1 text-center">
-      <h3 class="text-center text-lg font-semibold mb-3">Términos y Condiciones</h3>
+      <h3 class="text-center text-lg font-semibold mb-3">
+        Términos y Condiciones
+      </h3>
       <ul class="list-disc list-inside text-left inline-block space-y-4">
-        <li><a href="#" class="text-white no-underline">Para Compradores</a></li>
+        <li>
+          <a href="#" class="text-white no-underline">Para Compradores</a>
+        </li>
         <li><a href="#" class="text-white no-underline">Para Vendedores</a></li>
-        <li><a href="#" class="text-white no-underline">Registrarme Para Vender</a></li>
-        <li><a href="#" class="text-white no-underline">Contactar al Marketplace</a></li>
-        <li><a href="#" class="text-white no-underline">Ingreso Vendedores</a></li>
+        <li>
+          <a href="#" class="text-white no-underline"
+            >Registrarme Para Vender</a
+          >
+        </li>
+        <li>
+          <a href="#" class="text-white no-underline"
+            >Contactar al Marketplace</a
+          >
+        </li>
+        <li>
+          <a href="#" class="text-white no-underline">Ingreso Vendedores</a>
+        </li>
       </ul>
     </div>
   </div>
 
   <!-- Derechos de autor -->
-  <div class="text-center pt-5 mt-4 text-xs" style="border-top:1px solid #333; color:#aaa;">
-    {{footerLanding?.data.footer_copy}}
+  <div
+    class="text-center pt-5 mt-4 text-xs"
+    style="border-top: 1px solid #333; color: #aaa"
+  >
+    {{ footerLanding?.data.footer_copy }}
   </div>
 </footer>

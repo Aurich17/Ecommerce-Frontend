@@ -1,36 +1,65 @@
-<div class="flex h-screen">
-  <!-- Sidebar fijo -->
+<div class="flex h-screen bg-app">
+  <!-- Sidebar fijo / drawer -->
   <div
-    *ngIf="verMenu"
-    class="w-15rem h-full border-right-1 surface-border overflow-auto"
+    *ngIf="verMenu || isDesktop"
+    class="sidebar"
+    [class.open]="verMenu && !isDesktop"
   >
-    <div class="text-xl p-4">Fiaox Market</div>
+    <!-- Marca -->
+    <div class="brand flex align-items-center justify-content-between p-4">
+      <span class="brand-text">Fiaox <span class="gradient">Market</span></span>
 
-    <p-panelMenu [model]="items" styleClass="flex flex-column h-full gap-4">
+      <!-- Botón cerrar en móvil -->
+      <button
+        class="icon-btn lg:hidden"
+        type="button"
+        (click)="verMenu = false"
+        aria-label="Cerrar menú"
+      >
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <!-- PanelMenu -->
+    <p-panelMenu [model]="items" styleClass="pmenu-modern">
       <ng-template pTemplate="item" let-item>
+        <!-- RouterLink -->
         <ng-container *ngIf="item.route; else urlRef">
           <a
+            pRipple
             [routerLink]="item.route"
-            class="flex align-items-center cursor-pointer text-color px-3 py-2"
+            routerLinkActive="active"
+            class="p-menuitem-link flex align-items-center text-color px-3 py-2"
           >
-            <span [class]="item.icon"></span>
-            <span class="ml-2 text-color">{{ item.label }}</span>
+            <i [class]="item.icon"></i>
+            <span class="ml-2">{{ item.label }}</span>
+
+            <!-- badge opcional -->
+            <span *ngIf="item.badge" class="menu-badge ml-auto">{{
+              item.badge
+            }}</span>
           </a>
         </ng-container>
+
+        <!-- URL externa -->
         <ng-template #urlRef>
           <a
             *ngIf="item.url; else noLink"
+            pRipple
             [href]="item.url"
-            class="flex align-items-center cursor-pointer text-color px-3 py-2"
+            target="_blank"
+            rel="noopener"
+            class="p-menuitem-link flex align-items-center text-color px-3 py-2"
           >
-            <span [class]="item.icon"></span>
+            <i [class]="item.icon"></i>
             <span class="ml-2">{{ item.label }}</span>
+            <i class="pi pi-external-link text-500 ml-auto text-xs"></i>
           </a>
+
+          <!-- Título sin enlace (sección) -->
           <ng-template #noLink>
-            <span
-              class="flex align-items-center cursor-pointer text-color px-3 py-2"
-            >
-              <span [class]="item.icon"></span>
+            <span class="menu-section flex align-items-center px-3 py-2">
+              <i [class]="item.icon"></i>
               <span class="ml-2">{{ item.label }}</span>
               <i
                 *ngIf="item.items"
@@ -41,29 +70,122 @@
         </ng-template>
       </ng-template>
     </p-panelMenu>
+
+    <!-- Separador y mini footer -->
+    <div class="mt-auto p-3 opacity-60 text-300 text-xs">v1.0 • © Fiaox</div>
   </div>
+
+  <!-- Overlay para el drawer móvil -->
+  <div
+    *ngIf="verMenu && !isDesktop"
+    class="sidebar-overlay"
+    (click)="verMenu = false"
+  ></div>
 
   <!-- Columna derecha -->
   <div class="flex-1 h-full flex flex-column min-h-0">
-    <p-menubar [model]="itemsMenuBar">
-      <ng-template pTemplate="item" let-item let-root="root">
+    <p-menubar class="menubar-glass">
+      <!-- Botón hamburguesa (solo móvil) -->
+      <ng-template pTemplate="start">
+        <button
+          class="icon-btn lg:hidden"
+          type="button"
+          (click)="verMenu = true"
+          aria-label="Abrir menú"
+        >
+          <i class="pi pi-bars"></i>
+        </button>
+
+        <!-- Marca compacta en desktop -->
+        <span class="brand-inline hidden lg:flex ml-2">
+          <span class="brand-text"
+            >Fiaox <span class="gradient">Market</span></span
+          >
+        </span>
+      </ng-template>
+
+      <!-- Acciones centradas (si las tienes en itemsMenuBar) -->
+      <ng-template pTemplate="item" let-item>
         <a pRipple class="flex align-items-center p-menuitem-link">
-          <span [class]="item.icon"></span>
+          <i [class]="item.icon"></i>
         </a>
       </ng-template>
+
+      <!-- Lado derecho -->
       <ng-template pTemplate="end">
         <div class="flex align-items-center gap-2">
-          <p-avatar
-            image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png"
-            shape="circle"
-          ></p-avatar>
+          <button class="icon-btn" type="button" aria-label="Buscar">
+            <i class="pi pi-search"></i>
+          </button>
+          <button class="icon-btn" type="button" aria-label="Notificaciones">
+            <i class="pi pi-bell"></i>
+            <span class="dot"></span>
+          </button>
+
+          <!-- Botón avatar: abre el panel -->
+          <button
+            class="avatar-btn"
+            type="button"
+            pRipple
+            (click)="userPanel.toggle($event)"
+            aria-haspopup="true"
+            aria-controls="userOverlay"
+          >
+            <p-avatar
+              [label]="userInitials"
+              [image]="userPhoto"
+              shape="circle"
+              size="large"
+            ></p-avatar>
+            <i class="pi pi-angle-down text-500"></i>
+          </button>
+
+          <!-- Overlay Panel de usuario -->
+          <p-overlayPanel
+            #userPanel
+            id="userOverlay"
+            [dismissable]="true"
+            [showCloseIcon]="false"
+            [baseZIndex]="1300"
+            styleClass="usercard-mini"
+          >
+            <div class="usercard-mini__body">
+              <div class="flex align-items-center gap-3">
+                <p-avatar
+                  [label]="userInitials"
+                  [image]="userPhoto"
+                  shape="circle"
+                  size="large"
+                ></p-avatar>
+
+                <div class="min-w-0">
+                  <div class="usercard-mini__name line-clamp-1">
+                    {{ user.displayName }}
+                  </div>
+                  <div class="usercard-mini__email line-clamp-1">
+                    {{ user.email }}
+                  </div>
+                </div>
+              </div>
+
+              <button
+                class="btn-logout"
+                type="button"
+                (click)="onSignOut(); userPanel.hide()"
+              >
+                <i class="pi pi-sign-out mr-2"></i> Cerrar sesión
+              </button>
+            </div>
+          </p-overlayPanel>
         </div>
       </ng-template>
     </p-menubar>
 
     <!-- Contenido con scroll -->
-    <div class="flex-1 overflow-auto p-4">
-      <router-outlet></router-outlet>
+    <div class="content-area flex-1 overflow-auto">
+      <div class="page-card">
+        <router-outlet></router-outlet>
+      </div>
     </div>
   </div>
 </div>

@@ -10,6 +10,7 @@ import { EncabezadoResponse } from '../admin/landing/encabezado/domain/response/
 import { ImagekitClient } from '../../services/imagekit.service';
 import { getLandingAudienceResponse } from '../admin/landing/quienes/domain/quienes.response';
 import { FormControl, FormGroup } from '@angular/forms';
+import { AvatarModule } from 'primeng/avatar';
 
 type UploadItem = {
   file: File;
@@ -27,6 +28,7 @@ type UploadItem = {
     CarouselModule,
     AccordionModule,
     RouterModule,
+    AvatarModule,
   ],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css',

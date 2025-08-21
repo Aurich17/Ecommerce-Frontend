@@ -4,7 +4,7 @@
   border: 1px solid #ccc !important;
 }
 
-a{
+a {
   font-size: 18px;
 }
 
@@ -25,11 +25,11 @@ a{
   min-height: max(100px, 10vh); /* altura uniforme */
 }
 
-:host ::ng-deep .p-carousel-item{
+:host ::ng-deep .p-carousel-item {
   height: 100%;
 }
 
-::ng-deep .carcteristicascard .p-card{
+::ng-deep .carcteristicascard .p-card {
   border-left-width: 5px !important;
   border-left-style: solid;
   border-color: var(--yellow-500) !important;
@@ -40,13 +40,105 @@ a{
   gap: 0.5rem;
 }
 
-
-
 /* En pantallas pequeñas (ej. móviles) → solo 1 columna */
 @media (max-width: 768px) {
   .grid-funcionamiento {
     grid-template-columns: 1fr;
     max-width: 90%;
   }
+}
 
+/* ===== Testimonial card con avatar lateral, sin desbordes ===== */
+.testimonio .testimonial-card {
+  border-radius: 16px !important;
+  background: #fff !important;
+  border: 1px solid #eef0f4 !important;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.06);
+  padding: 0.9rem 1rem !important;
+  overflow: hidden; /* <- evita que algo se “salga” visualmente */
+  height: 330px !important; /* <- deja que crezca según contenido */
+}
+
+.testimonio .testimonial-card .t-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+}
+
+/* avatar fijo */
+.testimonio .testimonial-card .t-avatar .p-avatar {
+  width: 48px;
+  height: 48px; /* tamaño estable */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  border: 2px solid #fff;
+  flex: 0 0 48px;
+}
+
+/* texto que puede colapsar correctamente */
+.testimonio .testimonial-card .t-content {
+  position: relative;
+  flex: 1;
+  min-width: 0; /* <- CLAVE para que el texto no rompa el layout */
+}
+
+/* wrapping seguro para palabras largas/URLs */
+.testimonio .testimonial-card .t-text {
+  margin: 0;
+  color: #2b3340;
+  font-size: 0.98rem;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  /* Si quieres limitar a N líneas, descomenta: */
+  /* display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; */
+}
+
+/* comilla decorativa dentro, sin empujar layout */
+.testimonio .testimonial-card .t-content::before {
+  content: "“";
+  position: absolute;
+  left: 0.05rem;
+  top: -0.85rem;
+  font-size: 60px;
+  line-height: 1;
+  background: linear-gradient(135deg, #ff0066, #ff6b00);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+.testimonio .testimonial-card .t-author {
+  margin-top: 0.55rem;
+  font-weight: 600;
+  color: #667085;
+}
+
+/* Garantiza que cada ítem del carrusel estire la tarjeta al 100% del espacio disponible */
+.testimonio .p-carousel .p-carousel-item {
+  display: flex;
+}
+.testimonio .p-carousel .p-carousel-item > * {
+  width: 100%;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .testimonio .testimonial-card {
+    padding: 0.85rem !important;
+  }
+  .testimonio .testimonial-card .t-row {
+    gap: 0.8rem;
+  }
+  .testimonio .testimonial-card .t-text {
+    font-size: 0.95rem;
+  }
+}
+
+/* Hover sutil (opcional) */
+.testimonio .testimonial-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
