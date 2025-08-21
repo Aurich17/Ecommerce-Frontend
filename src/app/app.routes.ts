@@ -30,7 +30,7 @@ import { ForgotpasswordComponent } from './auth/login/mant-login/forgotpassword/
 import { ResetpasswordComponent } from './auth/login/mant-login/resetpassword/resetpassword.component';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'login' },      // ⬅️ cambia esto
+  { path: '', pathMatch: 'full', redirectTo: 'landing' },      // ⬅️ cambia esto
   { path: 'login', component: LoginComponent },
   { path: 'landing', component: LandingComponent },
   {

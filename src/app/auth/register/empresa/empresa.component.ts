@@ -20,7 +20,7 @@ import { DividerModule } from 'primeng/divider';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { CardModule } from 'primeng/card';
-import { finalize } from 'rxjs/operators';
+import { finalize,distinctUntilChanged } from 'rxjs/operators';
 import { DialogModule } from 'primeng/dialog';
 import { LoginRequest } from '../../login/domain/request/login.request';
 import { AuthService } from '../../../../services/auth.services';
@@ -28,6 +28,7 @@ import { SessionService } from '../../../../services/session/session.service';
 import { ImagekitClient } from '../../../../services/imagekit.service';
 import { CommonModule } from '@angular/common';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { Tipo } from '../../../tipos/reponse/tipos.response';
 
 
 @Component({
@@ -67,33 +68,42 @@ export class EmpresaComponent {
     { label: 'Credenciales' },
     { label: 'Confirmación' }
   ];
-  listaTipoNegocio: any [] = []
-  listaCiudad: any [] = []
-  listaDepartamento: any [] = []
-  listaCargo: any [] = []
+  listaTipoNegocio: any[] = []
+  listaCiudad: any[] = []
+  listaDepartamento: any[] = []
+  listaCargo: any[] = []
+  listPaises: Tipo[] = [];
+  listProvincias: Tipo[] = [];
+  listMunicipios: Tipo[] = [];
+  loadingPais = false;
+  loadingProv = false;
+  loadingMun = false;
   activeIndex: number = 0;
   cliente: string = '';
   basicForm = new FormGroup({
-    nombrecompleto: new FormControl('', Validators.required),
-    tiponegocio: new FormControl(null, null),
-    fechafundacion: new FormControl(null, null),
-    numeroempleados: new FormControl(null)
+    nombrecompleto: new FormControl<string | null>('', Validators.required),
+    tiponegocio: new FormControl<number | null>(null),
+    fechafundacion: new FormControl<Date | null>(null),
+    numeroempleados: new FormControl<number | null>(null),
+    pais: new FormControl<number | null>(null),
+    provincia: new FormControl<number | null>(null),
+    ciudad: new FormControl<number | null>(null),
   });
 
   ubicacionForm = new FormGroup({
     direccionfiscal: new FormControl('', null),
     ciudad: new FormControl(null, null),
     departamento: new FormControl(null, null),
-    codigopostal: new FormControl(null,null),
-    sitioweb: new FormControl(null,null)
+    codigopostal: new FormControl(null, null),
+    sitioweb: new FormControl(null, null)
   });
 
   representanteForm = new FormGroup({
     nombrerepresentante: new FormControl('', null),
     cargo: new FormControl(null, null),
     telefono: new FormControl(null, null),
-    telefonoalt: new FormControl(null,null),
-    correo: new FormControl(null,null)
+    telefonoalt: new FormControl(null, null),
+    correo: new FormControl(null, null)
   });
 
   credencialesForm = new FormGroup({
@@ -104,6 +114,26 @@ export class EmpresaComponent {
   socialsecurity = new FormGroup({
     socialsecurity: new FormControl('')
   });
+
+  ngOnInit(): void {
+    this.cargarPaises();
+    this.basicForm.get('pais')!.valueChanges
+      .pipe(distinctUntilChanged())
+      .subscribe((paisId) => {
+        this.basicForm.patchValue({ provincia: null, ciudad: null }, { emitEvent: false });
+        if (paisId) this.cargarProvincias(paisId);
+        else this.listProvincias = [];
+      });
+
+    // Cascada Provincia -> Municipio
+    this.basicForm.get('provincia')!.valueChanges
+      .pipe(distinctUntilChanged())
+      .subscribe((provinciaId) => {
+        this.basicForm.patchValue({ ciudad: null }, { emitEvent: false });
+        if (provinciaId) this.cargarMunicipios(provinciaId);
+        else this.listMunicipios = [];
+      });
+  }
 
   next() {
     if (this.activeIndex === 0 && this.basicForm.invalid) {
@@ -137,7 +167,7 @@ export class EmpresaComponent {
     this.activeIndex = Math.max(this.activeIndex - 1, 0);
   }
 
-  async finish(){
+  async finish() {
     this.visible = true
   }
 
@@ -156,5 +186,41 @@ export class EmpresaComponent {
         life: 2500,
       });
     }
+  }
+
+  private cargarPaises(): void {
+    this.loadingPais = true;
+    this.apiService.obtenerTipos({ tab: 'PAI' })
+      .pipe(finalize(() => (this.loadingPais = false)))
+      .subscribe({
+        next: (data: Tipo[]) => {
+          console.log(data)
+          this.listPaises = data;
+        },
+        error: () => (this.listPaises = [])
+      });
+  }
+
+
+  private cargarProvincias(paisId: number): void {
+    this.loadingProv = true;
+    const req: { tab: 'PROVINCIA'; parentId: number } = { tab: 'PROVINCIA', parentId: paisId };
+    this.apiService.obtenerTipos(req)
+      .pipe(finalize(() => (this.loadingProv = false)))
+      .subscribe({
+        next: (data) => { this.listProvincias = data; },
+        error: () => (this.listProvincias = [])
+      });
+  }
+
+  private cargarMunicipios(provinciaId: number): void {
+    this.loadingMun = true;
+    const req: { tab: 'MUNICIPIO'; parentId: number } = { tab: 'MUNICIPIO', parentId: provinciaId };
+    this.apiService.obtenerTipos(req)
+      .pipe(finalize(() => (this.loadingMun = false)))
+      .subscribe({
+        next: (data) => { this.listMunicipios = data; },
+        error: () => (this.listMunicipios = [])
+      });
   }
 }

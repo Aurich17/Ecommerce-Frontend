@@ -37,6 +37,27 @@
                         <label class="font-bold" for="numeroempleados">Número de Empleados</label>
                         <p-inputNumber inputId="numeroempleados" formControlName="numeroempleados" />
                     </div>
+                    <div class="field col-12 md:col-4">
+                        <label class="font-bold" for="pais">País</label>
+                        <p-dropdown inputId="pais" [options]="listPaises" optionLabel="nombre" optionValue="id"
+                            formControlName="pais" [filter]="true" [showClear]="true" appendTo="body">
+                        </p-dropdown>
+                    </div>
+
+                    <!-- PROVINCIA -->
+                    <div class="field col-12 md:col-4">
+                        <label class="font-bold" for="provincia">Provincia / Estado</label>
+                        <p-dropdown inputId="provincia" [options]="listProvincias" optionLabel="nombre" optionValue="id"
+                            formControlName="provincia" [filter]="true" [showClear]="true" appendTo="body">
+                        </p-dropdown>
+                    </div>
+                    <!-- CIUDAD -->
+                    <div class="field col-12 md:col-4">
+                        <label class="font-bold" for="ciudad">Ciudad / Municipio</label>
+                        <p-dropdown inputId="ciudad" [options]="listMunicipios" optionLabel="nombre" optionValue="id"
+                            formControlName="ciudad" [filter]="true" [showClear]="true" appendTo="body">
+                        </p-dropdown>
+                    </div>
                 </div>
                 <!-- Botones -->
                 <div class="p-col-12 flex justify-content-between mt-3 gap-4">
@@ -125,7 +146,8 @@
                     </div>
                     <div class="field col-12">
                         <label class="font-bold" for="contrasenia">Contrasenia</label>
-                        <p-password formControlName="contrasenia" [feedback]="false" toggleMask="true" inputClass="w-full">
+                        <p-password formControlName="contrasenia" [feedback]="false" toggleMask="true"
+                            inputClass="w-full">
                             <ng-template pTemplate="lefticon">
                                 <i class="pi pi-lock"></i>
                             </ng-template>

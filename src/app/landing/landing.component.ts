@@ -30,7 +30,7 @@ export class LandingComponent {
   preguntasLanding: any[] = []
   caracteristicasLanding: any[] = []
   funcionamientoLanding: any[] = []
-  footerLanding!: FormGroup;
+  footerLanding: any;
 
   constructor(private apiService: LandingService, private router: Router, private ik: ImagekitClient) {}
   ngOnInit() {
@@ -191,15 +191,8 @@ export class LandingComponent {
   getFooter() {
     this.apiService.getLandingFooter().subscribe({
       next: (data) => {
-        if (!this.footerLanding) return; // defensivo
-        this.footerLanding.patchValue({
-          correo: data?.data?.contact_email ?? '',
-          telefono: data?.data?.contact_phone ?? '',
-          titulo: data?.data?.footer_title ?? '',
-          descripcion: data?.data?.footer_desc ?? '',
-          descripcionizq: data?.data?.footer_left_desc ?? '',
-          copyright: data?.data?.footer_copy ?? '',
-        });
+        // if (!this.footerLanding) return;
+        this.footerLanding = { ...data, updated_at: new Date(data.data.updated_at) };
       },
       error: (err) => console.error('Error fetching footer:', err),
     });
