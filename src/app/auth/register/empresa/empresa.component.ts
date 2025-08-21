@@ -82,6 +82,7 @@ export class EmpresaComponent {
   cliente: string = '';
   basicForm = new FormGroup({
     nombrecompleto: new FormControl<string | null>('', Validators.required),
+    ruc: new FormControl<string | null>('', Validators.required),
     tiponegocio: new FormControl<number | null>(null),
     fechafundacion: new FormControl<Date | null>(null),
     numeroempleados: new FormControl<number | null>(null),
