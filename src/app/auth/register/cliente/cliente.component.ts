@@ -154,8 +154,8 @@ export class ClienteComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     // Cargar catálogos base
     this.cargarPaises();
-    this.cargarOcupaciones();
-    this.cargarGeneros();
+    // this.cargarOcupaciones();
+    // this.cargarGeneros();
 
     // Cascada País -> Provincia
     this.personalForm
@@ -167,8 +167,8 @@ export class ClienteComponent implements OnInit, AfterViewInit {
           { emitEvent: false }
         );
         this.listMunicipios = [];
-        if (paisId) this.cargarProvincias(paisId);
-        else this.listProvincias = [];
+        // if (paisId) this.cargarProvincias(paisId);
+        // else this.listProvincias = [];
       });
 
     // Cascada Provincia -> Municipio
@@ -177,8 +177,8 @@ export class ClienteComponent implements OnInit, AfterViewInit {
       .valueChanges.pipe(distinctUntilChanged())
       .subscribe((provinciaId) => {
         this.personalForm.patchValue({ ciudad: null }, { emitEvent: false });
-        if (provinciaId) this.cargarMunicipios(provinciaId);
-        else this.listMunicipios = [];
+        // if (provinciaId) this.cargarMunicipios(provinciaId);
+        // else this.listMunicipios = [];
       });
   }
 
@@ -266,71 +266,67 @@ export class ClienteComponent implements OnInit, AfterViewInit {
 
   // ================= CARGA CATALOGOS (via /tipos) =================
   private cargarPaises(): void {
-    console.log('Cargando países...');
     this.loadingPais = true;
     this.api
-      .obtenerTipos({ tab: 'PAI' })
+      .obtenerTipos('PAI')
       .pipe(finalize(() => (this.loadingPais = false)))
       .subscribe({
-        next: (data: Tipo[]) => {
-          console.log('ESTOS SON LOS PAISES', data);
-          this.listPaises = data;
-        },
+        next: (data) => (this.listPaises = data),
         error: () => (this.listPaises = []),
       });
   }
 
-  private cargarProvincias(paisId: number): void {
-    this.loadingProv = true;
-    const req: { tab: 'PROVINCIA'; parentId: number } = {
-      tab: 'PROVINCIA',
-      parentId: paisId,
-    };
-    this.api
-      .obtenerTipos(req)
-      .pipe(finalize(() => (this.loadingProv = false)))
-      .subscribe({
-        next: (data) => {
-          this.listProvincias = data;
-        },
-        error: () => (this.listProvincias = []),
-      });
-  }
+  // private cargarProvincias(paisId: number): void {
+  //   this.loadingProv = true;
+  //   const req: { tab: 'PROVINCIA'; parentId: number } = {
+  //     tab: 'PROVINCIA',
+  //     parentId: paisId,
+  //   };
+  //   this.api
+  //     .obtenerTipos(req)
+  //     .pipe(finalize(() => (this.loadingProv = false)))
+  //     .subscribe({
+  //       next: (data) => {
+  //         this.listProvincias = data;
+  //       },
+  //       error: () => (this.listProvincias = []),
+  //     });
+  // }
 
-  private cargarMunicipios(provinciaId: number): void {
-    this.loadingMun = true;
-    const req: { tab: 'MUNICIPIO'; parentId: number } = {
-      tab: 'MUNICIPIO',
-      parentId: provinciaId,
-    };
-    this.api
-      .obtenerTipos(req)
-      .pipe(finalize(() => (this.loadingMun = false)))
-      .subscribe({
-        next: (data) => {
-          this.listMunicipios = data;
-        },
-        error: () => (this.listMunicipios = []),
-      });
-  }
+  // private cargarMunicipios(provinciaId: number): void {
+  //   this.loadingMun = true;
+  //   const req: { tab: 'MUNICIPIO'; parentId: number } = {
+  //     tab: 'MUNICIPIO',
+  //     parentId: provinciaId,
+  //   };
+  //   this.api
+  //     .obtenerTipos(req)
+  //     .pipe(finalize(() => (this.loadingMun = false)))
+  //     .subscribe({
+  //       next: (data) => {
+  //         this.listMunicipios = data;
+  //       },
+  //       error: () => (this.listMunicipios = []),
+  //     });
+  // }
 
-  private cargarOcupaciones(): void {
-    this.api.obtenerTipos({ tab: 'OCU' }).subscribe({
-      next: (data: Tipo[]) => {
-        this.listOcupaciones = data;
-      },
-      error: () => (this.listOcupaciones = []),
-    });
-  }
+  // private cargarOcupaciones(): void {
+  //   this.api.obtenerTipos({ tab: 'OCU' }).subscribe({
+  //     next: (data: Tipo[]) => {
+  //       this.listOcupaciones = data;
+  //     },
+  //     error: () => (this.listOcupaciones = []),
+  //   });
+  // }
 
-  private cargarGeneros(): void {
-    this.api.obtenerTipos({ tab: 'GEN' }).subscribe({
-      next: (data: Tipo[]) => {
-        this.listGeneros = data;
-      },
-      error: () => (this.listGeneros = []),
-    });
-  }
+  // private cargarGeneros(): void {
+  //   this.api.obtenerTipos({ tab: 'GEN' }).subscribe({
+  //     next: (data: Tipo[]) => {
+  //       this.listGeneros = data;
+  //     },
+  //     error: () => (this.listGeneros = []),
+  //   });
+  // }
 
   // ================= REGISTRO =================
   async finish(): Promise<void> {

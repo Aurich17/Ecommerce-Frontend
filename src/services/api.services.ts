@@ -38,9 +38,9 @@ export class ApiService {
     );
   }
 
-  obtenerTipos(req: RequestTipos): Observable<Tipo[]> {
+  obtenerTipos(tab: string): Observable<Tipo[]> {
     return this.http
-      .post<ResponseTipos>(`${this.apiUrl}/tipos`, req)
+      .get<ResponseTipos>(`${this.apiUrl}/tipos/${encodeURIComponent(tab)}`)
       .pipe(map((r) => r.data));
   }
 }
