@@ -28,11 +28,9 @@ import { StoreProductsComponent } from './marketplace/store-products/store-produ
 import { AuthGuard } from '../services/guard/auth.guard';
 
 export const routes: Routes = [
+  { path: '', pathMatch: 'full', redirectTo: 'login' },      // ⬅️ cambia esto
   { path: 'login', component: LoginComponent },
-  {
-    path: '',
-    component: LandingComponent
-  },
+  { path: 'landing', component: LandingComponent },
   {
     path: 'register',
     children: [

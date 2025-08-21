@@ -9,6 +9,7 @@ import { LandingService } from '../../services/landing.services';
 import { EncabezadoResponse } from '../admin/landing/encabezado/domain/response/encabezado.response';
 import { ImagekitClient } from '../../services/imagekit.service';
 import { getLandingAudienceResponse } from '../admin/landing/quienes/domain/quienes.response';
+import { FormControl, FormGroup } from '@angular/forms';
 
 type UploadItem = {
   file: File; progress: number; url?: string; thumb?: string; error?: string;
@@ -29,10 +30,20 @@ export class LandingComponent {
   preguntasLanding: any[] = []
   caracteristicasLanding: any[] = []
   funcionamientoLanding: any[] = []
-  footerLanding?: any;
+  footerLanding!: FormGroup;
 
-  constructor(private apiService: LandingService, private router: Router, private ik: ImagekitClient) { }
+  constructor(private apiService: LandingService, private router: Router, private ik: ImagekitClient) {}
   ngOnInit() {
+
+    this.footerLanding = new FormGroup({
+      correo: new FormControl(''),
+      telefono: new FormControl(''),
+      titulo: new FormControl(''),
+      descripcion: new FormControl(''),
+      descripcionizq: new FormControl(''),
+      copyright: new FormControl(''),
+    });
+
     this.getEncabezado()
     this.getAudiencia();
     this.getTestimonials();
@@ -40,7 +51,7 @@ export class LandingComponent {
     this.getFeatures();
     this.getLandingHowItWork();
     this.getFooter();
-    
+
   }
 
   empresas = [
@@ -180,13 +191,14 @@ export class LandingComponent {
   getFooter() {
     this.apiService.getLandingFooter().subscribe({
       next: (data) => {
+        if (!this.footerLanding) return; // defensivo
         this.footerLanding.patchValue({
-          correo: data.data.contact_email ?? '',
-          telefono: data.data.contact_phone ?? '',
-          titulo: data.data.footer_title ?? '',
-          descripcion: data.data.footer_desc ?? '',
-          descripcionizq: data.data.footer_left_desc ?? '',
-          copyright: data.data.footer_copy ?? '',
+          correo: data?.data?.contact_email ?? '',
+          telefono: data?.data?.contact_phone ?? '',
+          titulo: data?.data?.footer_title ?? '',
+          descripcion: data?.data?.footer_desc ?? '',
+          descripcionizq: data?.data?.footer_left_desc ?? '',
+          copyright: data?.data?.footer_copy ?? '',
         });
       },
       error: (err) => console.error('Error fetching footer:', err),

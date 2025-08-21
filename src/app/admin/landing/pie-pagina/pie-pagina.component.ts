@@ -34,6 +34,7 @@ export class PiePaginaComponent {
 
   ngOnInit() {
     this.getFooter();
+    alert('Esta sección es solo para pruebas, no se guardan los cambios');
   }
 
   getFooter() {
@@ -53,6 +54,6 @@ export class PiePaginaComponent {
   }
 
   guardarCambios() {
-    
+
   }
 }
