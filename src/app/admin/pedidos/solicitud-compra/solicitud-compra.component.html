@@ -1,0 +1,112 @@
+<form [formGroup]="solicitudform" class="block p-fluid p-formgrid p-grid gap-2 p-4">
+    <div class="flex justify-content-between">
+        <div class="text-lg font-bold">Solicitudes de Compra</div>
+        <div class="flex gap-2">
+            <p-button icon="pi pi-file-excel" styleClass="text-sm" iconPos="left" label="Excel" severity="success"
+                (onClick)="exportExcel()" />
+            <p-button icon="pi pi-file-o" styleClass="text-sm" iconPos="left" label="Csv" (onClick)="exportCsv()" />
+            <p-button icon="pi pi-file-pdf" styleClass="text-sm" iconPos="left" label="Pdf" severity="danger"
+                (onClick)="exportPdf()" />
+        </div>
+    </div>
+    <div class="pt-3">
+        <p-table [value]="solicitudesTable" class="w-full" dataKey="id" editMode="row">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="text-sm">ID</th>
+                    <th class="text-sm">N° Orden</th>
+                    <th class="text-sm">Fecha de Emisión</th>
+                    <th class="text-sm">Fecha Entrega</th>
+                    <th class="text-sm">Estado</th>
+                    <th class="text-sm">Total</th>
+                    <th class="text-sm">Moneda</th>
+                    <th class="text-sm">Notas</th>
+                    <th class="text-sm">Creado El</th>
+                    <th class="text-sm">Acciones</th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-product>
+                <tr>
+                    <td>{{product.id}}</td>
+                    <td>{{product.numeroorden}}</td>
+                    <td>{{product.fechaemision}}</td>
+                    <td>{{product.fechaentrega}}</td>
+                    <td>{{product.estado}}</td>
+                    <td>{{product.total}}</td>
+                    <td>{{product.moneda}}</td>
+                    <td>{{product.notas}}</td>
+                    <td>{{product.create_at}}</td>
+                    <td>
+                        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true"
+                            (onClick)="onEditPoppup(product)" />
+                        <p-button icon="pi pi-trash" [rounded]="true" [text]="true"
+                            (onClick)="onDeleteRow(product.id)" />
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</form>
+<p-dialog header="Detalle de Orden" [modal]="true" [(visible)]="visible" [style]="{ width: '30rem', height: '28rem' }">
+    <div class="text-sm">
+        Visualiza los productos comprados y los datos del comprador
+    </div>
+    <div class="pt-4 w-full">
+        <form [formGroup]="solicitudform">
+            <div><p-selectButton [options]="stateOptions" formControlName="select" optionLabel="label"
+                    optionValue="value" (onChange)="mostrarSeccion($event)" styleClass="w-full" class="filtrobtn" />
+            </div>
+            <div *ngIf="infocliente" class="pt-4 w-full flex flex-column">
+                <div class="cart-container">
+                    <div class="cart-items">
+                        <div class="cart-item">
+                            <div><strong>ID Producto:</strong> </div>
+                            <div><strong>Cantidad:</strong> </div>
+                            <div><strong>Precio Unitario:</strong> </div>
+                            <div><strong>Subtotal:</strong> </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="!infocliente" class="pt-4 w-full flex flex-column cart-container">
+                <!-- <div class="cart-container"> -->
+                    <div class="cart-items">
+                        <div class="cart-item">
+                            <div><strong>Nombre:</strong> </div>
+                            <div><strong>Email:</strong> </div>
+                            <div><strong>Fecha de Emisión:</strong> </div>
+                            <div><strong>Fecha de Entrega:</strong> </div>
+                            <div><strong>Moneda:</strong> </div>
+                            <div><strong>Estado Actual:</strong> </div>
+                            <div class="p-field p-col-12 flex flex-column gap-3 w-full">
+                                <label class="font-bold text-sm">Actualizar Estado</label>
+                                <p-dropdown formControlName="estado" [options]="listaEstado" optionLabel="label"
+                                    optionValue="label" styleClass="w-full" appendTo="body" />
+                            </div>
+
+                            <div class="flex flex-column gap-3 w-full">
+                                <label class="font-bold text-sm">Notas</label>
+                                <textarea rows="5" cols="30" class="w-full" pInputTextarea
+                                    formControlName="nota"></textarea>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div>
+                            <div class="cart-footer">
+                                <div class="w-full flex justify-content-start">
+                                    <p-button [label]="labelbtn" severity="warning" [loading]="loading"
+                                        (onClick)="guardarData()" />
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+            <!-- </div> -->
+
+
+        </form>
+    </div>
+
+</p-dialog>

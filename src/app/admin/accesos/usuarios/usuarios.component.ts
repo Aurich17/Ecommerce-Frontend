@@ -12,11 +12,13 @@ import { DropdownModule } from 'primeng/dropdown';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { LandingService } from '../../../../services/landing.services';
+import { PasswordModule } from 'primeng/password';
+
 
 @Component({
   selector: 'app-usuarios',
   standalone: true,
-  imports: [ReactiveFormsModule, ButtonModule, TableModule, FormsModule, TagModule, DialogModule, SelectButtonModule, CommonModule, InputTextModule, DropdownModule],
+  imports: [PasswordModule, ReactiveFormsModule, ButtonModule, TableModule, FormsModule, TagModule, DialogModule, SelectButtonModule, CommonModule, InputTextModule, DropdownModule],
   templateUrl: './usuarios.component.html',
   styleUrl: './usuarios.component.css'
 })
@@ -51,6 +53,7 @@ export class UsuariosComponent {
     email: new FormControl(null, null),
     estado: new FormControl(null, null),
     comentarios: new FormControl(null, null),
+    password: new FormControl(null, null)
   });
   ngOnInit() {
     this.getUssers();
@@ -84,7 +87,7 @@ export class UsuariosComponent {
     // });
   }
   agregarUsuario() {
-
+    this.visible = true
   }
   exportExcel() {
 

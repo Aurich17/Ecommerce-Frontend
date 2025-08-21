@@ -1,0 +1,4 @@
+::ng-deep .textoNegro .p-button-label,
+::ng-deep .textoNegro .p-button-icon {
+  color: black !important;
+}

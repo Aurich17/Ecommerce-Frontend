@@ -12,11 +12,12 @@ import { LandingService } from "../../../../services/landing.services";
 import { EncabezadoRequest } from "./domain/request/encabezado.request";
 import { EncabezadoResponse } from "./domain/response/encabezado.response";
 import { RippleModule } from 'primeng/ripple';
+import { FileUploadEvent, FileUploadModule } from 'primeng/fileupload';
 
 @Component({
   selector: 'app-encabezado',
   standalone: true,
-  imports: [AccordionModule, CommonModule, ReactiveFormsModule, InputTextModule, ButtonModule, ToastModule,RippleModule],
+  imports: [AccordionModule, CommonModule, ReactiveFormsModule, InputTextModule, ButtonModule, ToastModule, RippleModule, FileUploadModule],
   providers: [MessageService],
   templateUrl: './encabezado.component.html',
   styleUrls: ['./encabezado.component.css'] // <- plural
@@ -33,12 +34,13 @@ export class EncabezadoComponent {
     subtituloMP: new FormControl<string>(''),
     nota: new FormControl<string>(''),
   });
-
+  logoFile?: File;
+  uploadedFiles: any[] = [];
   constructor(
     private apiService: LandingService,
     private router: Router,
     private messageService: MessageService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.getEncabezado();
@@ -82,7 +84,7 @@ export class EncabezadoComponent {
             severity: 'success',
             summary: 'Guardado',
             detail: 'El encabezado se actualizó correctamente.',
-            key:"tc",
+            key: "tc",
             life: 2500,
           });
           // Si NO quieres perder lo que está cargado, evita resetear:
@@ -99,5 +101,16 @@ export class EncabezadoComponent {
           });
         },
       });
+  }
+
+  onSelfieSelect(e: any): void {
+    const file = e.files?.[0];
+    if (!file) return;
+    this.logoFile = file;
+  }
+  onUpload(event: FileUploadEvent) {
+    for (let file of event.files) {
+      this.uploadedFiles.push(file);
+    }
   }
 }

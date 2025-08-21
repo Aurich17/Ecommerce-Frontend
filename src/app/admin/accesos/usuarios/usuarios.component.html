@@ -57,7 +57,7 @@
         </p-table>
     </div>
 </form>
-<p-dialog header="Editar Usuario" [modal]="true" [(visible)]="visible" [style]="{ width: '40rem', height: '42rem' }">
+<p-dialog header="Editar Usuario" [modal]="true" [(visible)]="visible" [style]="{ width: '40rem', height: '49rem' }">
     <div class="text-sm">
         Modifica la información del usuario seleccionado.
     </div>
@@ -73,7 +73,11 @@
             </div>
             <div class="p-field p-col-12 flex flex-column gap-3 w-full">
                 <label class="font-bold text-sm">Email</label>
-                <input pInputText formControlName="email" class="w-full" [readOnly]="true" />
+                <input pInputText formControlName="email" class="w-full"  />
+            </div>
+            <div class="p-field p-col-12 flex flex-column gap-3 w-full">
+                <label class="font-bold text-sm">Contraseña</label>
+                <p-password formControlName="password" [style]="{'width': '100%'}" [inputStyle]="{'width':'100%'}" [feedback]="false" [toggleMask]="true"/>
             </div>
             <div class="p-field p-col-12 flex flex-column gap-3 w-full">
                 <label class="font-bold text-sm">Estado</label>

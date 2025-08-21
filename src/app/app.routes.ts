@@ -28,6 +28,7 @@ import { StoreProductsComponent } from './marketplace/store-products/store-produ
 import { AuthGuard } from '../services/guard/auth.guard';
 import { ForgotpasswordComponent } from './auth/login/mant-login/forgotpassword/forgotpassword.component';
 import { ResetpasswordComponent } from './auth/login/mant-login/resetpassword/resetpassword.component';
+import { SolicitudCompraComponent } from './admin/pedidos/solicitud-compra/solicitud-compra.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'landing' }, // ⬅️ cambia esto
@@ -67,6 +68,7 @@ export const routes: Routes = [
       { path: 'accesos/permisosrol', component: PermisosrolComponent },
       { path: 'marketplace', component: MarketplaceComponent },
       { path: 'store-products', component: StoreProductsComponent },
+      { path: 'pedidos/solicitud-compra', component: SolicitudCompraComponent },
     ],
   },
   { path: 'forgotpassword', component: ForgotpasswordComponent },

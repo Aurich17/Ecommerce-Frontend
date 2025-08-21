@@ -8,11 +8,12 @@ import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { LandingService } from '../../../../services/landing.services';
 import { FooterResponse, ItemsFooter } from './domain/pie-pagina.response';
+import { FileUploadModule } from 'primeng/fileupload';
 
 @Component({
   selector: 'app-pie-pagina',
   standalone: true,
-  imports: [AccordionModule, CommonModule, ReactiveFormsModule, InputTextModule, ButtonModule],
+  imports: [AccordionModule, CommonModule, ReactiveFormsModule, InputTextModule, ButtonModule,FileUploadModule],
   templateUrl: './pie-pagina.component.html',
   styleUrl: './pie-pagina.component.css'
 })
@@ -21,6 +22,7 @@ export class PiePaginaComponent {
     private apiService: LandingService,
     private router: Router
   ) { }
+  logoFile?: File;
   loading = false;
   footerLanding?: ItemsFooter;
   piepaginaform = new FormGroup({
@@ -55,5 +57,11 @@ export class PiePaginaComponent {
 
   guardarCambios() {
 
+  }
+
+  onSelfieSelect(e: any): void {
+    const file = e.files?.[0];
+    if (!file) return;
+    this.logoFile = file;
   }
 }

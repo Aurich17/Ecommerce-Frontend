@@ -11,11 +11,12 @@ import { AvatarModule } from 'primeng/avatar';
 import { TagModule } from 'primeng/tag';
 import { PaginatorModule } from 'primeng/paginator';
 import { RippleModule } from 'primeng/ripple';
+import { MenubarModule } from "primeng/menubar";
 
 @Component({
   selector: 'app-marketplace',
   standalone: true,
-  imports: [RippleModule, PaginatorModule, TagModule, AvatarModule, ButtonModule, CardModule, InputTextModule, DropdownModule, CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [RippleModule, PaginatorModule, TagModule, AvatarModule, ButtonModule, CardModule, InputTextModule, DropdownModule, CommonModule, FormsModule, ReactiveFormsModule, MenubarModule],
   templateUrl: './marketplace.component.html',
   styleUrl: './marketplace.component.css'
 })
