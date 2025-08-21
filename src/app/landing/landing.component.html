@@ -2,8 +2,19 @@
   <!-- Contenedor principal -->
   <div class="flex justify-content-between align-items-center">
     <!-- Logo -->
-    <div class="text-pink-600 font-bold text-xl">
-      Fiaox <span class="text-900">Market</span>
+    <div class="flex align-items-center">
+      <img
+        *ngIf="encabezadoLanding?.logoUrl; else fallbackLogo"
+        [src]="encabezadoLanding?.logoUrl"
+        [alt]="encabezadoLanding?.logoName || 'Logo'"
+        class="logo-img"
+      />
+
+      <ng-template #fallbackLogo>
+        <div class="text-pink-600 font-bold text-xl">
+          Fiaox <span class="text-900">Market</span>
+        </div>
+      </ng-template>
     </div>
 
     <!-- Botón hamburguesa para mobile -->

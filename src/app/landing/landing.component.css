@@ -142,3 +142,13 @@ a {
   box-shadow: 0 14px 36px rgba(0, 0, 0, 0.08);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
+
+/* Tamaño estable del logo (desktop y mobile) */
+.logo-img {
+  height: 40px; /* alto fijo */
+  max-height: 48px; /* nunca mayor a 48px */
+  width: auto; /* respeta proporción */
+  max-width: 160px; /* evita logos muy anchos */
+  object-fit: contain; /* no recorta */
+  display: block;
+}

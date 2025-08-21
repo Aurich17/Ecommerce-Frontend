@@ -13,15 +13,19 @@ import { FileUploadModule } from 'primeng/fileupload';
 @Component({
   selector: 'app-pie-pagina',
   standalone: true,
-  imports: [AccordionModule, CommonModule, ReactiveFormsModule, InputTextModule, ButtonModule,FileUploadModule],
+  imports: [
+    AccordionModule,
+    CommonModule,
+    ReactiveFormsModule,
+    InputTextModule,
+    ButtonModule,
+    FileUploadModule,
+  ],
   templateUrl: './pie-pagina.component.html',
-  styleUrl: './pie-pagina.component.css'
+  styleUrl: './pie-pagina.component.css',
 })
 export class PiePaginaComponent {
-  constructor(
-    private apiService: LandingService,
-    private router: Router
-  ) { }
+  constructor(private apiService: LandingService, private router: Router) {}
   logoFile?: File;
   loading = false;
   footerLanding?: ItemsFooter;
@@ -31,12 +35,11 @@ export class PiePaginaComponent {
     titulo: new FormControl<string>(''),
     descripcion: new FormControl<string>(''),
     descripcionizq: new FormControl<string>(''),
-    copyright: new FormControl<string>('')
+    copyright: new FormControl<string>(''),
   });
 
   ngOnInit() {
     this.getFooter();
-    alert('Esta sección es solo para pruebas, no se guardan los cambios');
   }
 
   getFooter() {
@@ -55,9 +58,7 @@ export class PiePaginaComponent {
     });
   }
 
-  guardarCambios() {
-
-  }
+  guardarCambios() {}
 
   onSelfieSelect(e: any): void {
     const file = e.files?.[0];
