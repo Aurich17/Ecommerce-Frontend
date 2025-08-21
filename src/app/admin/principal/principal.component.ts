@@ -1,3 +1,4 @@
+// principal.component.ts
 import { Component } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { PanelMenuModule } from 'primeng/panelmenu';
@@ -7,6 +8,11 @@ import { CardModule } from 'primeng/card';
 import { MenubarModule } from 'primeng/menubar';
 import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
+// import { AuthStore } from '../auth/auth.store';
+// import { mapApiMenuToPrime } from '../auth/menu.mapper';
+import { take } from 'rxjs/operators';
+import { AuthStore } from '../../../services/auth.store';
+import { mapApiMenuToPrime } from '../../../services/menu.mapper';
 
 @Component({
   selector: 'app-principal',
@@ -16,67 +22,29 @@ import { AvatarGroupModule } from 'primeng/avatargroup';
   styleUrl: './principal.component.css'
 })
 export class PrincipalComponent {
-  constructor(private router: Router) {}
-  items: MenuItem[] | undefined
-  verMenu: boolean = false
+  constructor(private router: Router, private authStore: AuthStore) {}
+
+  items: MenuItem[] = [];
+  verMenu = false;
+
   itemsMenuBar: MenuItem[] = [
-    {label: 'Menú', icon: 'pi pi-bars', command: () => {this.verMenu = !this.verMenu}}
+    { label: 'Menú', icon: 'pi pi-bars', command: () => { this.verMenu = !this.verMenu; } }
   ];
-  selectedContent: string = 'Bienvenido';
+
   ngOnInit() {
-    this.items = [
-      {
-        label: 'Dashboard',
-        icon: 'pi pi-palette',
-        items: [
-        ]
-      },
-      {
-        label: 'Landing',
-        icon: 'pi pi-link',
-        items: [
-          { label: 'Encabezado', icon: 'pi pi-eraser', route: '/principal/landing/encabezado' },
-          { label: 'Cuerpo', icon: 'pi pi-heart', route: '/principal/landing/cuerpo' },
-          { label: 'Pie de página', icon: 'pi pi-heart', route: '/principal/landing/piepagina' },
-          { label: '¿Quiénes pueden usar?', icon: 'pi pi-heart', route: '/principal/landing/quienes' },
-          { label: '¿Cómo funciona?', icon: 'pi pi-heart', route: '/principal/landing/funcionamiento' },
-          { label: 'Comentarios', icon: 'pi pi-heart', route: '/principal/landing/comentarios' }
-        ]
-      },
-      {
-        label: 'Mantenimiento',
-        icon: 'pi pi-home',
-        items: [
-          { label: 'Productos', icon: 'pi pi-eraser', route: '/principal/mant/productos' },
-          { label: 'Categorías', icon: 'pi pi-heart', route: '/principal/mant/categorias' },
-          { label: 'Ocupaciones', icon: 'pi pi-heart', route: '/principal/mant/ocupaciones' },
-          { label: 'Monedas', icon: 'pi pi-heart', route: '/principal/mant/monedas' },
-          { label: 'Valores', icon: 'pi pi-heart', route: '/principal/mant/valores' },
-          { label: 'Puntos', icon: 'pi pi-heart', route: '/principal/mant/puntos' },
-          { label: 'Insignias', icon: 'pi pi-heart', route: '/principal/mant/insignias' },
-          { label: 'Solicitudes', icon: 'pi pi-heart', route: '/principal/mant/solicitudes' }
-        ]
-      },
-      {
-        label: 'Accesos',
-        icon: 'pi pi-home',
-        items: [
-          { label: 'Roles', icon: 'pi pi-eraser', route: '/principal/accesos/roles' },
-          { label: 'Usuarios', icon: 'pi pi-heart', route: '/principal/accesos/usuarios' },
-          { label: 'Módulos', icon: 'pi pi-heart', route: '/principal/accesos/modulos' }
-        ]
-      },
-      {
-        label: 'Seguridad',
-        icon: 'pi pi-home',
-        items: [
-        ]
-      },
-      {
-        label: 'Informes',
-        icon: 'pi pi-home',
-        route: '/configuration'
-      }
-    ];
+    // intentar restaurar sesión (por si recargas)
+    this.authStore.restore();
+
+    // Suscríbete al menú del store y mapea a Prime
+    this.authStore.menu$.pipe(take(1)).subscribe(state => {
+      const apiMenu = this.authStore.snapshot.menu;
+      this.items = mapApiMenuToPrime(apiMenu);
+    });
+
+    // Si deseas un fallback estático cuando no hay sesión/menú:
+    if (!this.items.length) {
+      // opcional: puedes dejar vacío o tu menú estático por defecto
+      this.items = [];
+    }
   }
 }

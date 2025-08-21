@@ -25,6 +25,7 @@ import { ModulosComponent } from './admin/accesos/modulos/modulos.component';
 import { PermisosrolComponent } from './admin/accesos/permisosrol/permisosrol.component';
 import { MarketplaceComponent } from './marketplace/marketplace.component';
 import { StoreProductsComponent } from './marketplace/store-products/store-products.component';
+import { AuthGuard } from '../services/guard/auth.guard';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -43,6 +44,8 @@ export const routes: Routes = [
   {
     path: 'principal',
     component: PrincipalComponent,
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
     children: [
       { path: 'landing/comentarios', component: ComentariosComponent }, // selección
       { path: 'landing/cuerpo', component: CuerpoComponent },

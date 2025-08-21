@@ -1,20 +1,24 @@
 import { Injectable } from '@angular/core';
 import { HttpClient} from '@angular/common/http';
-import { Observable} from 'rxjs';
+import { Observable, tap} from 'rxjs';
 import { LoginResponse } from '../app/auth/login/domain/response/login.response';
 import { LoginRequest } from '../app/auth/login/domain/request/login.request';
 import { environment } from '../environments/environment';
+import { AuthTokenStore } from './auth-token.store'
+import { Inject } from '@angular/core';
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private apiUrl = environment.urlApi;
   // private apiUrl = 'https://ecommerce-backend-na5u.onrender.com/api'; // URL de tu API
-
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, @Inject(AuthTokenStore) private store: AuthTokenStore) {}
 
   login(body: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, body);
+    return this.http
+      .post<LoginResponse>(`${this.apiUrl}/auth/login`, body)
+      .pipe(tap(res => this.store.setToken(res.token)));
   }
 
 }

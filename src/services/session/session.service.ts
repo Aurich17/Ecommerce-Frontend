@@ -9,8 +9,8 @@ export class SessionService {
 
   setFromLogin(res: LoginResponse) {
     localStorage.setItem(this.USER_KEY, JSON.stringify({
-      id: res.cliente.id,
-      email: res.cliente.email,
+      id: res.user.id,
+      email: res.user.email,
       rol: res.rol,
     }));
     if (res.token) {
