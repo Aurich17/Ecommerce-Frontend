@@ -266,6 +266,7 @@ export class ClienteComponent implements OnInit, AfterViewInit {
 
   // ================= CARGA CATALOGOS (via /tipos) =================
   private cargarPaises(): void {
+    console.log('Cargando países...');
     this.loadingPais = true;
     this.api
       .obtenerTipos({ tab: 'PAI' })

@@ -10,28 +10,30 @@ const iconMap: Record<string, string> = {
 // Mapea labels del API a rutas (exactos a tu router):
 const routeMap: Record<string, string> = {
   // Grupos
-  'Mantenimiento': '',
-  'Accesos': '',
-  'Landing': '',
+  Mantenimiento: '',
+  Accesos: '',
+  Landing: '',
+  Perfil: '',
+  Marketplace: '/principal/marketplace',
 
   // Hijos Mantenimiento
-  'Productos': '/principal/mant/productos',
-  'Solicitudes': '/principal/mant/solicitudes',
-  'Categorías': '/principal/mant/categorias',
-  'Monedas': '/principal/mant/monedas',
+  Productos: '/principal/mant/productos',
+  Solicitudes: '/principal/mant/solicitudes',
+  Categorías: '/principal/mant/categorias',
+  Monedas: '/principal/mant/monedas',
 
   // Hijos Accesos
-  'Roles': '/principal/accesos/roles',
-  'Usuarios': '/principal/accesos/usuarios',
-  'Módulos': '/principal/accesos/modulos',
+  Roles: '/principal/accesos/roles',
+  Usuarios: '/principal/accesos/usuarios',
+  Módulos: '/principal/accesos/modulos',
 
   // Hijos Landing (ojo con acentos y mayúsculas)
-  'Encabezado': '/principal/landing/encabezado',
-  'Cuerpo': '/principal/landing/cuerpo',
+  Encabezado: '/principal/landing/encabezado',
+  Cuerpo: '/principal/landing/cuerpo',
   'Pie de Página': '/principal/landing/piepagina',
   '¿Quiénes pueden usar?': '/principal/landing/quienes',
   '¿Cómo funciona?': '/principal/landing/funcionamiento',
-  'Comentarios': '/principal/landing/comentarios',
+  Comentarios: '/principal/landing/comentarios',
 };
 
 export function mapApiMenuToPrime(apiMenu: ApiMenuItem[]): MenuItem[] {
