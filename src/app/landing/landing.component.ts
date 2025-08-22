@@ -11,6 +11,10 @@ import { ImagekitClient } from '../../services/imagekit.service';
 import { getLandingAudienceResponse } from '../admin/landing/quienes/domain/quienes.response';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AvatarModule } from 'primeng/avatar';
+import { moveItemInArray, CdkDragDrop } from '@angular/cdk/drag-drop';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { GalleriaModule } from 'primeng/galleria';
+import { SliderDto } from '../admin/landing/slider/domain/slider.dto';
 
 type UploadItem = {
   file: File;
@@ -29,11 +33,15 @@ type UploadItem = {
     AccordionModule,
     RouterModule,
     AvatarModule,
+    DragDropModule,
+    GalleriaModule,
   ],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css',
 })
 export class LandingComponent {
+  slides: SliderDto[] = [];
+  loadingSlides = false;
   uploads: UploadItem[] = [];
   showMobileMenu = false;
   encabezadoLanding?: EncabezadoResponse;
@@ -50,6 +58,7 @@ export class LandingComponent {
     private ik: ImagekitClient
   ) {}
   ngOnInit() {
+    this.cargarSlider();
     this.footerLanding = new FormGroup({
       correo: new FormControl(''),
       telefono: new FormControl(''),
@@ -68,6 +77,16 @@ export class LandingComponent {
     this.getFooter();
   }
 
+  cargarSlider() {
+    this.loadingSlides = true;
+    this.apiService
+      .sliderList({ page: 1, limit: 50, status: 'true' })
+      .subscribe({
+        next: (res) => (this.slides = res?.data?.items ?? []),
+        error: (err) => console.error('Error slider:', err),
+        complete: () => (this.loadingSlides = false),
+      });
+  }
   empresas = [
     {
       nombre: 'Alexis Gamer',
@@ -249,5 +268,16 @@ export class LandingComponent {
       .getElementById(id)
       ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     this.showMobileMenu = false; // cierra el menú móvil al navegar
+  }
+
+  drop(event: CdkDragDrop<any[]>) {
+    moveItemInArray(
+      this.caracteristicasLanding,
+      event.previousIndex,
+      event.currentIndex
+    );
+
+    // TODO: si quieres persistir el orden, guarda this.caracteristicasLanding
+    // en tu backend/NestJS aquí.
   }
 }

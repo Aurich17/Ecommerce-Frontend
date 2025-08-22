@@ -152,3 +152,77 @@ a {
   object-fit: contain; /* no recorta */
   display: block;
 }
+
+/* Posiciona el “handle” arriba a la derecha */
+.drag-handle {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  border: none;
+  background: transparent;
+  cursor: grab;
+  padding: 0.25rem;
+  line-height: 1;
+}
+
+.cdk-drag-preview {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border-radius: 0.75rem;
+}
+
+.cdk-drag-animating {
+  transition: transform 200ms ease;
+}
+
+.carcteristicascard {
+  position: relative;
+  cursor: grab; /* mano para toda la tarjeta */
+  user-select: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Sombra/hover limpio y sutil */
+.carcteristicascard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.06);
+}
+
+/* Mientras arrastras */
+.cdk-dragging .carcteristicascard,
+.carcteristicascard.cdk-drag-dragging {
+  cursor: grabbing;
+}
+
+/* Borde izquierdo (tu estilo existente) */
+::ng-deep .carcteristicascard .p-card {
+  border-left-width: 5px !important;
+  border-left-style: solid;
+  border-color: var(--yellow-500) !important;
+  border-radius: 0.75rem;
+}
+
+/* Preview y placeholder coherentes */
+.drag-preview {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+  border-left: 5px solid var(--yellow-500);
+  border-radius: 0.75rem;
+  background: #fff;
+}
+
+.card-placeholder {
+  height: 100%;
+  min-height: 120px; /* ajusta a tu alto mínimo deseado */
+  border: 2px dashed #e5e7eb;
+  border-radius: 0.75rem;
+  background: #fafafa;
+}
+
+/* Animación suave al reordenar */
+.cdk-drag-animating {
+  transition: transform 200ms ease;
+}
+
+/* Asegura que cada ítem ocupe el ancho de la columna PrimeFlex */
+.grid .p-card {
+  width: 100%;
+}

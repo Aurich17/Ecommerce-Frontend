@@ -29,6 +29,7 @@ import { AuthGuard } from '../services/guard/auth.guard';
 import { ForgotpasswordComponent } from './auth/login/mant-login/forgotpassword/forgotpassword.component';
 import { ResetpasswordComponent } from './auth/login/mant-login/resetpassword/resetpassword.component';
 import { SolicitudCompraComponent } from './admin/pedidos/solicitud-compra/solicitud-compra.component';
+import { SliderComponent } from './admin/landing/slider/slider.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'landing' }, // ⬅️ cambia esto
@@ -54,6 +55,7 @@ export const routes: Routes = [
       { path: 'landing/funcionamiento', component: FuncionamientoComponent },
       { path: 'landing/piepagina', component: PiePaginaComponent },
       { path: 'landing/quienes', component: QuienesComponent },
+      { path: 'landing/slider', component: SliderComponent },
       { path: 'mant/categorias', component: CategoriasComponent },
       { path: 'mant/insignias', component: InsigniasComponent },
       { path: 'mant/monedas', component: MonedasComponent },

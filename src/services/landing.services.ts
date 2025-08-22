@@ -32,9 +32,19 @@ import {
 import { getMantTiposResponse } from '../app/admin/accesos/roles/domain/roles.response';
 import { getMantUsuariosRequest } from '../app/admin/accesos/usuarios/domain/usuarios.request';
 import { getMantUsuariosResponse } from '../app/admin/accesos/usuarios/domain/usuarios.response';
-import { FaqRequest, FeaturesRequest } from '../app/admin/landing/cuerpo/domain/cuerpo.request';
+import {
+  FaqRequest,
+  FeaturesRequest,
+} from '../app/admin/landing/cuerpo/domain/cuerpo.request';
 import { HowItWorksRequest } from '../app/admin/landing/funcionamiento/domain/funcionamiento.request';
 import { TestimonialsRequest } from '../app/admin/landing/comentarios/domain/comentarios.request';
+import {
+  ApiListResponse,
+  SliderDto,
+  ApiOneResponse,
+  SliderCreateDto,
+  SliderUpdateDto,
+} from '../app/admin/landing/slider/domain/slider.dto';
 @Injectable({
   providedIn: 'root',
 })
@@ -42,7 +52,7 @@ export class LandingService {
   private apiUrl = environment.urlApi;
   // private apiUrl = 'https://ecommerce-backend-na5u.onrender.com/api'; // URL de tu API
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getLandingEncabezado(): Observable<EncabezadoResponse> {
     return this.http.get<EncabezadoResponse>(
@@ -73,10 +83,7 @@ export class LandingService {
   }
 
   createdLandingAudience(payload: AudienceRequest): Observable<any> {
-    return this.http.post<any>(
-      `${this.apiUrl}/landing/audiences`,
-      payload
-    );
+    return this.http.post<any>(`${this.apiUrl}/landing/audiences`, payload);
   }
 
   deleteLandingAudience(id: number): Observable<any> {
@@ -100,10 +107,7 @@ export class LandingService {
   }
 
   createdLandingHowItWord(payload: HowItWorksRequest): Observable<any> {
-    return this.http.post<any>(
-      `${this.apiUrl}/landing/how-it-works`,
-      payload
-    );
+    return this.http.post<any>(`${this.apiUrl}/landing/how-it-works`, payload);
   }
 
   deleteLandingHowItWord(id: number): Observable<any> {
@@ -127,10 +131,7 @@ export class LandingService {
   }
 
   createdLandingTestimonials(payload: TestimonialsRequest): Observable<any> {
-    return this.http.post<any>(
-      `${this.apiUrl}/landing/testimonials`,
-      payload
-    );
+    return this.http.post<any>(`${this.apiUrl}/landing/testimonials`, payload);
   }
 
   deleteLandingTestimonials(id: number): Observable<any> {
@@ -157,10 +158,7 @@ export class LandingService {
   }
 
   createdLandingFAQ(payload: FaqRequest): Observable<any> {
-    return this.http.post<any>(
-      `${this.apiUrl}/landing/faq`,
-      payload
-    );
+    return this.http.post<any>(`${this.apiUrl}/landing/faq`, payload);
   }
 
   deleteLandingFAQ(id: number): Observable<any> {
@@ -181,10 +179,7 @@ export class LandingService {
   }
 
   createdLandingFeatures(payload: FeaturesRequest): Observable<any> {
-    return this.http.post<any>(
-      `${this.apiUrl}/landing/features`,
-      payload
-    );
+    return this.http.post<any>(`${this.apiUrl}/landing/features`, payload);
   }
 
   deleteLandingFeatures(id: number): Observable<any> {
@@ -197,5 +192,57 @@ export class LandingService {
     return this.http.post<getMantUsuariosResponse>(`${this.apiUrl}/users`, {
       params,
     });
+  }
+
+  // LIST
+  sliderList(params: {
+    page?: number;
+    limit?: number;
+    q?: string;
+    status?: string; // 'true' | 'false'
+  }): Observable<ApiListResponse<SliderDto>> {
+    let hp = new HttpParams();
+    if (params?.page != null) hp = hp.set('page', String(params.page));
+    if (params?.limit != null) hp = hp.set('limit', String(params.limit));
+    if (params?.q) hp = hp.set('q', params.q);
+    if (params?.status != null) hp = hp.set('status', params.status);
+
+    return this.http.get<ApiListResponse<SliderDto>>(
+      `${this.apiUrl}/landing/slider`,
+      { params: hp }
+    );
+  }
+
+  // GET ONE
+  sliderGet(id: number): Observable<ApiOneResponse<SliderDto>> {
+    return this.http.get<ApiOneResponse<SliderDto>>(
+      `${this.apiUrl}/landing/slider/${id}`
+    );
+  }
+
+  // CREATE
+  sliderCreate(body: SliderCreateDto): Observable<ApiOneResponse<SliderDto>> {
+    return this.http.post<ApiOneResponse<SliderDto>>(
+      `${this.apiUrl}/landing/slider`,
+      body
+    );
+  }
+
+  // UPDATE
+  sliderUpdate(
+    id: number,
+    body: SliderUpdateDto
+  ): Observable<ApiOneResponse<SliderDto>> {
+    return this.http.patch<ApiOneResponse<SliderDto>>(
+      `${this.apiUrl}/landing/slider/${id}`,
+      body
+    );
+  }
+
+  // DELETE
+  sliderDelete(id: number): Observable<{ success: boolean; data: true }> {
+    return this.http.delete<{ success: boolean; data: true }>(
+      `${this.apiUrl}/landing/slider/${id}`
+    );
   }
 }

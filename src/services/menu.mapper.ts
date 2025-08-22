@@ -35,6 +35,7 @@ const routeMap: Record<string, string> = {
   '¿Cómo funciona?': '/principal/landing/funcionamiento',
   Comentarios: '/principal/landing/comentarios',
   Pedidos: '/principal/pedidos/solicitud-compra',
+  Slider: '/principal/landing/slider',
 };
 
 export function mapApiMenuToPrime(apiMenu: ApiMenuItem[]): MenuItem[] {

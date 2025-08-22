@@ -102,37 +102,120 @@
 </header>
 
 <!-- Cuerpo -->
-<div class="flex justify-content-center mt-5 px-3">
-  <div
-    class="surface-0 border-round-2xl shadow-3 p-4 text-center w-full md:w-10 lg:w-10"
-    style="
-      background: url('../../assets/fondo_ciudad.jpg') center/cover no-repeat;
-    "
-  >
-    <h2 class="text-2xl md:text-4xl text-0 font-bold mb-3">
-      {{ encabezadoLanding?.titulo_principal }}
-    </h2>
-    <p class="text-0 text-md md:text-lg font-medium mb-2">
-      {{ encabezadoLanding?.subtitulo }}
-    </p>
-    <p class="text-0 text-sm mb-4">
-      {{ encabezadoLanding?.parrafo_encabezado }}
-    </p>
-    <div class="flex flex-column md:flex-row justify-content-center gap-3">
-      <p-button
-        label="Registrar cliente"
-        styleClass="p-button-sm button-white"
-        [raised]="true"
-        [routerLink]="'/register/cliente'"
-      ></p-button>
-      <p-button
-        label="Registrar empresa"
-        styleClass="p-button-outlined p-button-white p-button-sm"
-        [routerLink]="'/register/empresa'"
-      ></p-button>
+<p-galleria
+  [value]="slides"
+  [circular]="true"
+  [autoPlay]="true"
+  [showThumbnails]="false"
+  [showIndicators]="true"
+  [showIndicatorsOnItem]="true"
+  [numVisible]="1"
+  [transitionInterval]="5000"
+  [containerStyle]="{ 'max-width': '1200px', margin: '1rem auto' }"
+  *ngIf="slides?.length; else sliderFallback"
+>
+  <ng-template pTemplate="item" let-slide>
+    <div
+      class="border-round-2xl overflow-hidden shadow-3 w-full"
+      style="position: relative; height: 22rem"
+    >
+      <!-- Imagen al fondo -->
+      <img
+        [src]="slide.url"
+        alt="slide"
+        style="
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          z-index: 1;
+        "
+      />
+
+      <!-- Capa oscura + contenido por encima -->
+      <div
+        style="
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0 1rem;
+          background: linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.45),
+            rgba(0, 0, 0, 0.45)
+          );
+        "
+      >
+        <div class="text-center" style="max-width: 900px">
+          <h2 class="text-2xl md:text-4xl font-bold mb-3" style="color: #fff">
+            {{ encabezadoLanding?.titulo_principal }}
+          </h2>
+          <p class="text-md md:text-lg font-medium mb-2" style="color: #fff">
+            {{ encabezadoLanding?.subtitulo }}
+          </p>
+          <p class="text-sm mb-4" style="color: #fff">
+            {{ encabezadoLanding?.parrafo_encabezado }}
+          </p>
+          <div
+            class="flex flex-column md:flex-row justify-content-center gap-3"
+          >
+            <p-button
+              label="Registrar cliente"
+              styleClass="p-button-sm button-white"
+              [raised]="true"
+              [routerLink]="'/register/cliente'"
+            ></p-button>
+            <p-button
+              label="Registrar empresa"
+              styleClass="p-button-outlined p-button-white p-button-sm"
+              [routerLink]="'/register/empresa'"
+            ></p-button>
+          </div>
+        </div>
+      </div>
+      <!-- /Overlay -->
+    </div>
+  </ng-template>
+</p-galleria>
+
+<ng-template #sliderFallback>
+  <!-- Tu bloque estático tal cual -->
+  <div class="flex justify-content-center mt-5 px-3">
+    <div
+      class="surface-0 border-round-2xl shadow-3 p-4 text-center w-full md:w-10 lg:w-10"
+      style="
+        background: url('../../assets/fondo_ciudad.jpg') center/cover no-repeat;
+      "
+    >
+      <h2 class="text-2xl md:text-4xl text-0 font-bold mb-3">
+        {{ encabezadoLanding?.titulo_principal }}
+      </h2>
+      <p class="text-0 text-md md:text-lg font-medium mb-2">
+        {{ encabezadoLanding?.subtitulo }}
+      </p>
+      <p class="text-0 text-sm mb-4">
+        {{ encabezadoLanding?.parrafo_encabezado }}
+      </p>
+      <div class="flex flex-column md:flex-row justify-content-center gap-3">
+        <p-button
+          label="Registrar cliente"
+          styleClass="p-button-sm button-white"
+          [raised]="true"
+          [routerLink]="'/register/cliente'"
+        ></p-button>
+        <p-button
+          label="Registrar empresa"
+          styleClass="p-button-outlined p-button-white p-button-sm"
+          [routerLink]="'/register/empresa'"
+        ></p-button>
+      </div>
     </div>
   </div>
-</div>
+</ng-template>
 
 <h3 class="text-center text-2xl font-bold mt-6" id="quienes">
   ¿Quiénes pueden usarlo?
@@ -171,13 +254,31 @@
   Características
 </h3>
 
-<div class="grid mt-4 justify-content-center px-3">
+<div
+  class="grid mt-4 justify-content-center px-3"
+  cdkDropList
+  (cdkDropListDropped)="drop($event)"
+>
   <p-card
     class="col-12 md:col-5 m-2 carcteristicascard"
     *ngFor="let item of caracteristicasLanding; let i = index"
+    cdkDrag
   >
     <h4 class="mb-1">{{ item.titulo }}</h4>
     <p class="text-sm">{{ item.descripcion }}</p>
+
+    <!-- Preview mientras arrastras -->
+    <ng-template cdkDragPreview>
+      <div class="p-3 surface-card shadow-4 border-round w-full drag-preview">
+        <strong>{{ item.titulo }}</strong>
+        <div class="text-sm">{{ item.descripcion }}</div>
+      </div>
+    </ng-template>
+
+    <!-- Placeholder para mantener el espacio -->
+    <ng-template cdkDragPlaceholder>
+      <div class="card-placeholder"></div>
+    </ng-template>
   </p-card>
 </div>
 
