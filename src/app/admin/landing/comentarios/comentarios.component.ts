@@ -13,7 +13,10 @@ import { LandingService } from '../../../../services/landing.services';
 import { Router } from '@angular/router';
 import { CalendarModule } from 'primeng/calendar';
 import { TestimonialsRequest } from './domain/comentarios.request';
-
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 @Component({
   selector: 'app-comentarios',
@@ -72,13 +75,38 @@ export class ComentariosComponent {
     });
   }
   exportExcel() {
-
+    const header = ["ID", "Comentario", "Habilitado", "Cliente","Ocupación", "Creado"];
+    const data = this.comentariosTable.map(item => [
+      item.id,
+      item.comment,
+      item.enabled === true ? 'Si' : 'No',
+      item.client_name,
+      item.occupation_text,
+      item.creacion
+    ]);
+    const worksheet = XLSX.utils.aoa_to_sheet([header, ...data]);
+    const workbook = { Sheets: { data: worksheet }, SheetNames: ["data"] };
+    const excelBuffer: any = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const blob: Blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(blob, `Comentarios_${new Date().getTime()}.xlsx`);
   }
   exportCsv() {
+    const rows = this.comentariosTable.map(item => [item.id, item.comment, item.enabled === true ? 'Si' : 'No', item.client_name, item.occupation_text, item.creacion]);
+    const csvContent = [
+      ["ID", "Comentario", "Habilitado", "Cliente","Ocupación", "Creado"],
+      ...rows
+    ].map(e => e.join(",")).join("\n");
 
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, `Comentarios_${new Date().getTime()}.csv`);
   }
   exportPdf() {
-
+    const doc = new jsPDF();
+    autoTable(doc, {
+      head: [["ID", "Comentario", "Habilitado", "Cliente","Ocupación", "Creado"]],
+      body: this.comentariosTable.map(item => [item.id, item.comment, item.enabled === true ? 'Si' : 'No', item.client_name, item.occupation_text, item.creacion]),
+    });
+    doc.save(`Comentarios_${new Date().getTime()}.pdf`);
   }
   onEditPoppup(row: any) {
     this.visible = true

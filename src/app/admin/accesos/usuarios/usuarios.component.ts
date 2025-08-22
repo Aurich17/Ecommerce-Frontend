@@ -13,6 +13,10 @@ import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { LandingService } from '../../../../services/landing.services';
 import { PasswordModule } from 'primeng/password';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 
 @Component({
@@ -90,13 +94,40 @@ export class UsuariosComponent {
     this.visible = true
   }
   exportExcel() {
-
+    const header = ["ID", "Nombre Completo", "Email","Teléfono","Social Security","Estado","Rol","Comentarios"];
+    const data = this.usuariosTable.map(item => [
+      item.id,
+      item.fullname,
+      item.email,
+      item.phone,
+      item.socialSecurity,
+      item.status,
+      item.rol?.desc,
+      item.comment
+    ]);
+    const worksheet = XLSX.utils.aoa_to_sheet([header, ...data]);
+    const workbook = { Sheets: { data: worksheet }, SheetNames: ["data"] };
+    const excelBuffer: any = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const blob: Blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(blob, `Usuarios_${new Date().getTime()}.xlsx`);
   }
   exportCsv() {
+    const rows = this.usuariosTable.map(item => [item.id, item.fullname, item.email, item.phone, item.socialSecurity, item.status, item.rol?.desc, item.comment]);
+    const csvContent = [
+      ["ID", "Nombre Completo", "Email","Teléfono","Social Security","Estado","Rol","Comentarios"],
+      ...rows
+    ].map(e => e.join(",")).join("\n");
 
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, `Usuarios_${new Date().getTime()}.csv`);
   }
   exportPdf() {
-
+    const doc = new jsPDF();
+    autoTable(doc, {
+      head: [["ID", "Nombre Completo", "Email","Teléfono","Social Security","Estado","Rol","Comentarios"]],
+      body: this.usuariosTable.map(item => [item.id, item.fullname, item.email, item.phone, item.socialSecurity, item.status, item.rol?.desc, item.comment]),
+    });
+    doc.save(`Usuarios_${new Date().getTime()}.pdf`);
   }
   getSeverity(status: string) {
     switch (status) {

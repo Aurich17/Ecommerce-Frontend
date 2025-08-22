@@ -14,7 +14,10 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { AudienceRequest } from '../encabezado/domain/request/encabezado.request';
 import { th } from 'intl-tel-input/i18n';
 import { ToastModule } from 'primeng/toast';
-
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 @Component({
   selector: 'app-quienes',
@@ -76,9 +79,38 @@ export class QuienesComponent {
     this.quienesform.reset();
     this.currentId = 0;
   }
-  exportExcel() { }
-  exportCsv() { }
-  exportPdf() { }
+  exportExcel() {
+    const header = ["ID", "Ícono", "Entidad", "Descripción"];
+    const data = this.quienesTable.map(item => [
+      item.id,
+      item.icon,
+      item.entity,
+      item.description
+    ]);
+    const worksheet = XLSX.utils.aoa_to_sheet([header, ...data]);
+    const workbook = { Sheets: { data: worksheet }, SheetNames: ["data"] };
+    const excelBuffer: any = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const blob: Blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(blob, `QuienesPuedenUsar_${new Date().getTime()}.xlsx`);
+  }
+  exportCsv() {
+    const rows = this.quienesTable.map(item => [item.id, item.icon, item.entity, item.description]);
+    const csvContent = [
+      ['ID', 'Ícono', 'Entidad', 'Descripción'],
+      ...rows
+    ].map(e => e.join(",")).join("\n");
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, `QuienesPuedenUsar_${new Date().getTime()}.csv`);
+  }
+  exportPdf() {
+    const doc = new jsPDF();
+    autoTable(doc, {
+      head: [['ID', 'Ícono', 'Entidad', 'Descripción']],
+      body: this.quienesTable.map(item => [item.id, item.icon, item.entity, item.description]),
+    });
+    doc.save(`QuienesPuedenUsar_${new Date().getTime()}.pdf`);
+  }
   onEditPoppup(row: any) {
     this.visible = true;
     this.titulomantenimiento = 'Actualizar Audiencia';
@@ -105,7 +137,7 @@ export class QuienesComponent {
       },
       error: (err) => console.error('Error al eliminar audiencia:', err),
     });
-   }
+  }
   guardarData() {
     console.log('HACE CLICK')
     this.labelbtn = 'Guardando';

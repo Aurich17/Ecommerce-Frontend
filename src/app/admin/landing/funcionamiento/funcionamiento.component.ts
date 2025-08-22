@@ -11,7 +11,10 @@ import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { HowItWorksRequest } from './domain/funcionamiento.request';
-
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 @Component({
   selector: 'app-funcionamiento',
@@ -61,13 +64,35 @@ export class FuncionamientoComponent {
     this.currentId = 0;
   }
   exportExcel() {
-
+    const header = ["ID", "Ícono", "Descripción"];
+    const data = this.funcionamientoTable.map(item => [
+      item.id,
+      item.icon,
+      item.description
+    ]);
+    const worksheet = XLSX.utils.aoa_to_sheet([header, ...data]);
+    const workbook = { Sheets: { data: worksheet }, SheetNames: ["data"] };
+    const excelBuffer: any = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const blob: Blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(blob, `ComoFunciona_${new Date().getTime()}.xlsx`);
   }
   exportCsv() {
+    const rows = this.funcionamientoTable.map(item => [item.id, item.icon, item.description]);
+    const csvContent = [
+      ['ID', 'Ícono', 'Descripción'],
+      ...rows
+    ].map(e => e.join(",")).join("\n");
 
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    saveAs(blob, `ComoFunciona_${new Date().getTime()}.csv`);
   }
   exportPdf() {
-
+    const doc = new jsPDF();
+    autoTable(doc, {
+      head: [['ID', 'Ícono', 'Descripción']],
+      body: this.funcionamientoTable.map(item => [item.id, item.icon, item.description]),
+    });
+    doc.save(`ComoFunciona_${new Date().getTime()}.pdf`);
   }
   onEditPoppup(row: any) {
     this.visible = true
