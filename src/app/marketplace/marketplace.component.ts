@@ -98,6 +98,7 @@ export class MarketplaceComponent implements OnInit {
       })
       .subscribe({
         next: (res) => {
+          console.log('Usuarios/Empresas:', res);
           this.visibleStores = res.data.items.map((u) => ({
             id: u.id,
             name: u.fullName,
