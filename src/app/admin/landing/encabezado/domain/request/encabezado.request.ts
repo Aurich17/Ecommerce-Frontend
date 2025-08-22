@@ -18,38 +18,6 @@ export interface AudienceRequest {
   enabled: boolean;
 }
 
-export interface HowItWorksRequest {
-  icon: string;
-  description: string;
-  step_order: number;
-  enabled: boolean;
-}
-
-export interface TestimonialsRequest {
-  comment: string;
-  userId: string;
-  clientName: string;
-  occupationText: string;
-  occupationTab: string;
-  occupationCod: string;
-  enabled: boolean;
-}
-
-export interface FaqRequest {
-  pregunta: string;
-  respuesta: string;
-  orden: number;
-  activo: boolean;
-}
-
-export interface FeaturesRequest {
-  icono: string;
-  titulo: string;
-  descripcion: string;
-  orden: number;
-  activo: boolean;
-}
-
 export interface FooterRequest {
   contact_email: string;
   contact_phone: string;

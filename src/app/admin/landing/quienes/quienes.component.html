@@ -1,4 +1,6 @@
+
 <form [formGroup]="quienesform" class="block p-fluid p-formgrid p-grid gap-2 p-4">
+    <p-toast></p-toast>
     <div class="flex justify-content-between">
         <div class="text-lg font-bold">Sección: ¿Quiénes pueden usar?</div>
         <div class="flex gap-2">
@@ -32,7 +34,7 @@
                     <td>
                         <p-button icon="pi pi-pencil" [rounded]="true" [text]="true"
                             (onClick)="onEditPoppup(product)" />
-                        <p-button icon="pi pi-trash" [rounded]="true" [text]="true" (onClick)="onDeleteRow()" />
+                        <p-button icon="pi pi-trash" [rounded]="true" [text]="true" (onClick)="onDeleteRow(product.id)" />
                     </td>
                 </tr>
             </ng-template>

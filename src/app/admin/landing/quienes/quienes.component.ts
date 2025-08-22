@@ -12,6 +12,8 @@ import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { AudienceRequest } from '../encabezado/domain/request/encabezado.request';
+import { th } from 'intl-tel-input/i18n';
+import { ToastModule } from 'primeng/toast';
 
 
 @Component({
@@ -26,6 +28,7 @@ import { AudienceRequest } from '../encabezado/domain/request/encabezado.request
     DropdownModule,
     InputTextModule,
     InputTextareaModule,
+    ToastModule
   ],
   templateUrl: './quienes.component.html',
   styleUrl: './quienes.component.css',
@@ -36,7 +39,7 @@ export class QuienesComponent {
     private apiService: LandingService,
     private router: Router,
     private messageService: MessageService
-  ) {}
+  ) { }
   quienesTable: itemsLandingAudience[] = [];
   quienesLanding: itemsLandingAudience[] = [];
   loadingAud = false;
@@ -47,7 +50,7 @@ export class QuienesComponent {
   loading: boolean = false;
   clonedTable: { [s: string]: any } = {};
   listaEntidad: any[] = [];
-  currentId!:number
+  currentId!: number
   addRegister: boolean = false;
   quienesform = new FormGroup({
     icono: new FormControl(null, null),
@@ -71,10 +74,11 @@ export class QuienesComponent {
     this.titulomantenimiento = 'Registrar Audiencia';
     this.addRegister = true;
     this.quienesform.reset();
+    this.currentId = 0;
   }
-  exportExcel() {}
-  exportCsv() {}
-  exportPdf() {}
+  exportExcel() { }
+  exportCsv() { }
+  exportPdf() { }
   onEditPoppup(row: any) {
     this.visible = true;
     this.titulomantenimiento = 'Actualizar Audiencia';
@@ -87,7 +91,21 @@ export class QuienesComponent {
       this.quienesform.get('descripcion')?.setValue(row.description);
     }
   }
-  onDeleteRow() {}
+  onDeleteRow(id: number) {
+    this.apiService.deleteLandingAudience(id).subscribe({
+      next: (data) => {
+        this.getAudiencia();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Eliminado',
+          detail: 'La audiencia se eliminó correctamente.',
+          key: 'tc',
+          life: 2500,
+        });
+      },
+      error: (err) => console.error('Error al eliminar audiencia:', err),
+    });
+   }
   guardarData() {
     console.log('HACE CLICK')
     this.labelbtn = 'Guardando';
@@ -95,22 +113,50 @@ export class QuienesComponent {
 
     const f = this.quienesform.value;
 
-    const request:AudienceRequest  = {
+    const request: AudienceRequest = {
       icon: f.icono ?? '',
       entity: f.entidad ?? '', // si lo capturas en el form; si no, pásalo vacío o elimínalo si tu backend no lo requiere
       description: f.descripcion ?? '',
-      position:  1,
+      position: 1,
       enabled: true,
     };
 
-    this.apiService
-      .updateLandingAudience(this.currentId, request)
-      .subscribe({
+    if (this.addRegister === true) {
+      this.apiService.createdLandingAudience(request).subscribe({
         next: ({ data }) => {
           this.getAudiencia();
           this.visible = false;
+          this.loading = false;
+          this.labelbtn = 'Guardar';
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Guardado',
+            detail: 'La audiencia se creó correctamente.',
+            key: 'tc',
+            life: 2500,
+          });
         },
-        error: (err) => console.error('Error al actualizar testimonial:', err),
+        error: (err) => console.error('Error al crear audiencia:', err),
       });
+    } else {
+      this.apiService
+        .updateLandingAudience(this.currentId, request)
+        .subscribe({
+          next: ({ data }) => {
+            this.getAudiencia();
+            this.visible = false;
+            this.loading = false;
+            this.labelbtn = 'Guardar';
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Guardado',
+              detail: 'La audiencia se actualizó correctamente.',
+              key: 'tc',
+              life: 2500,
+            });
+          },
+          error: (err) => console.error('Error al actualizar testimonial:', err),
+        });
+    }
   }
 }

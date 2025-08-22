@@ -10,7 +10,7 @@ import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
-import { HowItWorksRequest } from '../encabezado/domain/request/encabezado.request';
+import { HowItWorksRequest } from './domain/funcionamiento.request';
 
 
 @Component({
@@ -27,7 +27,7 @@ export class FuncionamientoComponent {
     private router: Router,
     private messageService: MessageService
   ) { }
-  currentId!:number;
+  currentId!: number;
   visible: boolean = false
   titulomantenimiento: string = 'Registrar Item'
   labelbtn: string = 'Guardar'
@@ -58,6 +58,7 @@ export class FuncionamientoComponent {
     this.titulomantenimiento = 'Registrar Audiencia'
     this.addRegister = true
     this.funcionamientoform.reset()
+    this.currentId = 0;
   }
   exportExcel() {
 
@@ -80,29 +81,54 @@ export class FuncionamientoComponent {
     }
   }
   onDeleteRow(id: number) {
-
+    this.apiService.deleteLandingHowItWord(id).subscribe({
+      next: (data) => {
+        this.getLandingHowItWork();
+        this.messageService.clear();
+        this.messageService.add({ severity: 'success', summary: 'Eliminado', detail: 'El item se eliminó correctamente.', key: 'tc', life: 2500 });
+      },
+      error: (err) => console.error('Error al eliminar item:', err),
+    });
   }
-  guardarData(){
+  guardarData() {
     this.labelbtn = 'Guardando';
     this.loading = true;
 
     const f = this.funcionamientoform.value;
 
-    const request:HowItWorksRequest  = {
+    const request: HowItWorksRequest = {
       icon: f.icono ?? '', // si lo capturas en el form; si no, pásalo vacío o elimínalo si tu backend no lo requiere
       description: f.descripcion ?? '',
-      step_order:  1,
+      step_order: 1,
       enabled: true,
     };
-
-    this.apiService
-      .updateLandingHowItWord(this.currentId, request)
-      .subscribe({
+    if (this.addRegister === true) {
+      this.apiService.createdLandingHowItWord(request).subscribe({
         next: ({ data }) => {
           this.getLandingHowItWork();
           this.visible = false;
+          this.loading = false;
+          this.messageService.clear();
+          this.messageService.add({ severity: 'success', summary: 'Registrado', detail: 'El item se registró correctamente.', key: 'tc', life: 2500 });
+          this.labelbtn = 'Guardar';
         },
-        error: (err) => console.error('Error al actualizar testimonial:', err),
+        error: (err) => console.error('Error al registrar item:', err),
       });
+    } else {
+      this.apiService
+        .updateLandingHowItWord(this.currentId, request)
+        .subscribe({
+          next: ({ data }) => {
+            this.getLandingHowItWork();
+            this.visible = false;
+            this.loading = false;
+            this.messageService.clear();
+            this.messageService.add({ severity: 'success', summary: 'Actualizado', detail: 'El item se actualizó correctamente.', key: 'tc', life: 2500 });
+            this.labelbtn = 'Guardar';
+          },
+          error: (err) => console.error('Error al actualizar testimonial:', err),
+        });
+    }
+
   }
 }
