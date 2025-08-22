@@ -12,7 +12,7 @@ import { MessageService } from 'primeng/api';
 import { LandingService } from '../../../../services/landing.services';
 import { Router } from '@angular/router';
 import { CalendarModule } from 'primeng/calendar';
-import { TestimonialsRequest } from '../encabezado/domain/request/encabezado.request';
+import { TestimonialsRequest } from './domain/comentarios.request';
 
 
 @Component({
@@ -29,7 +29,7 @@ export class ComentariosComponent {
     private router: Router,
     private messageService: MessageService
   ) { }
-  currentId!:number
+  currentId!: number
   visible: boolean = false
   titulomantenimiento: string = 'Registrar Item'
   labelbtn: string = 'Guardar'
@@ -99,9 +99,7 @@ export class ComentariosComponent {
     this.loading = true
     if (!this.currentId) return;
     if (this.comentariosform.invalid) return;
-
     const f = this.comentariosform.value;
-
     const request: TestimonialsRequest = {
       comment: f.comentario ?? '',
       userId: 'ee4aacb9-1a95-42cb-bb30-2d817353446e',                   // si lo capturas en el form; si no, pásalo vacío o elimínalo si tu backend no lo requiere
@@ -111,17 +109,66 @@ export class ComentariosComponent {
       occupationCod: '001',      // '001' etc. (si usas catálogos)
       enabled: !!f.estado,
     };
-
-    this.apiService.updateLandingTestimonials(this.currentId, request).subscribe({
-      next: ({ data }) => {
-        this.getTestimonials();
-        this.visible = false;
-      },
-      error: (err) => console.error('Error al actualizar testimonial:', err),
-    });
+    if (this.addRegister === true) {
+      this.apiService.createdLandingTestimonials(request).subscribe({
+        next: ({ data }) => {
+          this.getTestimonials();
+          this.visible = false;
+          this.loading = false;
+          this.labelbtn = 'Guardar';
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Creado',
+            detail: 'El testimonio se creó correctamente.',
+            key: 'tc',
+            life: 2500,
+          });
+        },
+        error: (err) => console.error('Error al crear testimonial:', err),
+      });
+    } else {
+      this.apiService.updateLandingTestimonials(this.currentId, request).subscribe({
+        next: ({ data }) => {
+          this.getTestimonials();
+          this.visible = false;
+          this.loading = false;
+          this.labelbtn = 'Guardar';
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Actualizado',
+            detail: 'El testimonio se actualizó correctamente.',
+            key: 'tc',
+            life: 2500,
+          });
+        },
+        error: (err) => console.error('Error al actualizar testimonial:', err),
+      });
+    }
   }
 
-  onDeleteRow() {
+  onDeleteRow(id: number) {
+    this.apiService.deleteLandingTestimonials(id).subscribe({
+      next: ({ data }) => {
+        this.getTestimonials();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Eliminado',
+          detail: 'El testimonio se eliminó correctamente.',
+          key: 'tc',
+          life: 2500,
+        });
+      },
+      error: (err) => {
+        console.error('Error al eliminar testimonial:', err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo eliminar el testimonio.',
+          key: 'tc',
+          life: 2500,
+        });
+      },
+    });
 
   }
   getSeverity(status: boolean) {

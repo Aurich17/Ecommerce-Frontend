@@ -2,12 +2,12 @@
   <div class="header flex align-items-center justify-content-between">
     <div class="logo-and-search flex align-items-center gap-3">
       <span class="app-logo">FiaoX Market</span>
+      <button pButton type="button" label="Marketplace" [routerLink]="'/principal/marketplace'" severity="warning"></button>
       <input pInputText class="search" type="text" placeholder="Buscar productos o empresas en el sistema"
         [(ngModel)]="searchTerm" (input)="onSearchChange()">
     </div>
 
     <div class="actions flex align-items-center gap-3">
-      <button pButton type="button" label="Marketplace" class="p-button-rounded p-button-text"></button>
       <i class="pi pi-shopping-cart text-2xl"></i>
       <i class="pi pi-user text-2xl"></i>
     </div>

@@ -81,11 +81,11 @@
             <div class="w-full flex gap-3">
                 <div class="flex flex-column gap-3 w-6">
                     <label class="font-bold text-sm">Ícono</label>
-                    <input pInputText formControlName="icono" class="w-full" [readonly]="true">
+                    <input pInputText formControlName="icono" class="w-full">
                 </div>
                 <div class="flex flex-column gap-3 w-6">
                     <label class="font-bold text-sm">Título</label>
-                    <input pInputText formControlName="titulo" class="w-full" [readonly]="true">
+                    <input pInputText formControlName="titulo" class="w-full">
                 </div>
             </div>
             <div class="flex flex-column gap-3 w-full">
@@ -96,7 +96,7 @@
         <div *ngIf="!isfeature" class="w-full flex flex-column gap-3">
             <div class="flex flex-column gap-3 w-full">
                 <label class="font-bold text-sm">Pregunta</label>
-                <input pInputText formControlName="pregunta" class="w-full" [readonly]="true">
+                <input pInputText formControlName="pregunta" class="w-full">
             </div>
             <div class="flex flex-column gap-3 w-full">
                 <label class="font-bold text-sm">Respuesta</label>
@@ -107,7 +107,7 @@
             <div class="flex flex-column gap-3 w-6">
                 <label class="font-bold text-sm">Activo</label>
                 <p-dropdown formControlName="estado" [options]="listaEstado" optionLabel="label" optionValue="value"
-                    styleClass="w-full" appendTo="body" [disabled]="!addRegister" />
+                    styleClass="w-full" appendTo="body" />
             </div>
             <div class="flex flex-column gap-3 w-6">
                 <label class="font-bold text-sm">Número de Orden</label>
