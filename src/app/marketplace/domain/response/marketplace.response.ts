@@ -3,19 +3,18 @@ export interface StoreItem {
   name: string;
   welcome: string;
   address?: string;
-  city?: string;
   province?: string;
-  country?: string;
+  city?: string;
   representative?: string;
-  avatarText?: string;   // inicial para avatar
+  avatarText?: string;
 }
 
 export interface Product {
   id: string;
   name: string;
   price: number;
-  image: string;          // url o base64
-  discount?: number;      // %
+  image: string; // url o base64
+  discount?: number; // %
   category?: string;
 }
 
