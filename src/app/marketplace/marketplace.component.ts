@@ -15,7 +15,6 @@ import { MenubarModule } from 'primeng/menubar';
 
 import { StoreItem } from './domain/response/marketplace.response';
 import { UsersApi } from '../../services/users.api';
-// import { UsersApi } from '@/app/services/users.api';
 
 @Component({
   selector: 'app-marketplace',
@@ -39,7 +38,6 @@ import { UsersApi } from '../../services/users.api';
   styleUrl: './marketplace.component.css',
 })
 export class MarketplaceComponent implements OnInit {
-  // Filtros UI locales (si luego vienen del backend, se llenan dinámicamente)
   provinces = ['Todas', 'Ancash', 'La Libertad', 'Lima', 'Kentucky'];
   citiesByProvince: Record<string, string[]> = {
     Ancash: ['Todas', 'Chimbote'],
@@ -53,18 +51,14 @@ export class MarketplaceComponent implements OnInit {
   selectedCity = 'Todas';
   searchTerm = '';
 
-  // Paginación (UI base 0). Backend Nest usa base 1.
-  page = 0;
+  page = 0; // base 0 (UI)
   rows = 6;
   total = 0;
 
-  // Datos visibles (ya vienen paginados por el servidor)
   visibleStores: StoreItem[] = [];
-
   loading = false;
 
   constructor(private usersApi: UsersApi) {}
-
   ngOnInit() {
     this.fetch();
   }
@@ -72,8 +66,6 @@ export class MarketplaceComponent implements OnInit {
   get cities(): string[] {
     return this.citiesByProvince[this.selectedProvince] ?? ['Todas'];
   }
-
-  // ---- Eventos de UI ----
   onProvinceChange() {
     this.page = 0;
     this.fetch();
@@ -86,18 +78,14 @@ export class MarketplaceComponent implements OnInit {
     this.page = 0;
     this.fetch();
   }
-
   onPageChange(e: any) {
-    this.page = e.page; // base 0 en la UI
+    this.page = e.page;
     this.rows = e.rows;
     this.fetch();
   }
 
-  // ---- Carga desde API ----
   private fetch() {
     this.loading = true;
-
-    // Puedes mandar 'roleCod' si quieres solo empresas; ajusta el código real del rol
     const query = this.searchTerm?.trim() || undefined;
 
     this.usersApi
@@ -105,24 +93,21 @@ export class MarketplaceComponent implements OnInit {
         page: this.page + 1, // backend base 1
         limit: this.rows,
         q: query,
-        roleCod: '2', // descomenta si filtras por rol “empresa”
-        estCod: '001', // descomenta si filtras por estado
+        roleId: 2, // << AQUÍ el filtro por rol
+        estCod: '001', // si quieres solo activos; quítalo si no aplica
       })
       .subscribe({
         next: (res) => {
-          // Mapear respuesta del backend a StoreItem que usa la UI.
           this.visibleStores = res.data.items.map((u) => ({
             id: u.id,
             name: u.fullName,
             welcome: `Bienvenido a la tienda ${u.fullName}`,
-            // Cuando expongas estos campos en tu SELECT, reemplaza '—' por u.address/u.province/u.city/u.representative
             address: '—',
             province: '—',
             city: '—',
             representative: '—',
             avatarText: (u.fullName?.[0] || '?').toUpperCase(),
           }));
-
           this.total = res.data.total;
           this.loading = false;
         },
@@ -137,6 +122,5 @@ export class MarketplaceComponent implements OnInit {
 
   viewProducts(store: StoreItem) {
     console.log('Ver productos de', store.name);
-    // routerLink ya lo tienes en el template; aquí podrías navegar programáticamente si lo prefieres
   }
 }

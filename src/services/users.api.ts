@@ -5,18 +5,9 @@ import { environment } from '../environments/environment';
 export interface UsersListResponse {
   success: boolean;
   data: {
-    items: Array<{
-      id: string;
-      fullName: string;
-      email: string;
-      status: string;
-      roles: { tab: string; cod: string; desc: string }[];
-      accountState: { tab: string; cod: string; desc: string };
-      createdAt: string;
-      // Si luego expones más campos (province, city, address, representative) agrégalos aquí
-    }>;
+    items: Array<{ id: string; fullName: string /* ... */ }>;
     total: number;
-    page: number; // base 1 (Nest)
+    page: number;
     limit: number;
   };
 }
@@ -24,20 +15,20 @@ export interface UsersListResponse {
 @Injectable({ providedIn: 'root' })
 export class UsersApi {
   private http = inject(HttpClient);
-  private base = environment.urlApi; // ajusta a tu backend
-
+  private base = environment.urlApi;
   list(opts: {
     page: number;
     limit: number;
     q?: string;
-    roleCod?: string;
+    roleId?: number;
     estCod?: string;
   }) {
     let params = new HttpParams()
-      .set('page', String(opts.page)) // base 1
+      .set('page', String(opts.page))
       .set('limit', String(opts.limit));
-    if (opts.q) params = params.set('q', opts.q);
-    if (opts.roleCod) params = params.set('roleCod', opts.roleCod);
+
+    if (opts.q?.trim()) params = params.set('q', opts.q.trim());
+    if (opts.roleId != null) params = params.set('roleId', String(opts.roleId)); // << clave
     if (opts.estCod) params = params.set('estCod', opts.estCod);
 
     return this.http.get<UsersListResponse>(`${this.base}/users`, { params });
