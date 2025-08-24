@@ -30,6 +30,24 @@ import {
   RoleRow,
   Tipo,
 } from '../app/tipos/reponse/tipos.response';
+import {
+  MenuResponseDto,
+  MenuWithPermissionsDto,
+  BulkUpdateResponse,
+  GetMenusResponse,
+  GetRolePermissionsResponse,
+} from '../app/admin/accesos/permisosrol/domain/permisos.response';
+import {
+  BulkUpdatePermissionsDto,
+  CreateAccesoDto,
+} from '../app/admin/accesos/permisosrol/domain/permisos.request';
+import {
+  ProductListResponse,
+  ProductDetail,
+  CreateProductDto,
+  UpdateProductDto,
+} from '../app/admin/mantenimiento/productos/domain/productos.response';
+import { ProductosRequest } from '../app/admin/mantenimiento/productos/domain/productos.request';
 @Injectable({
   providedIn: 'root',
 })
@@ -130,5 +148,98 @@ export class ApiService {
     return this.http
       .get<RoleApi[]>(`${this.apiUrl}/roles`)
       .pipe(map((rs) => rs.find((x) => x.id === id)));
+  }
+
+  // ===== NUEVOS MÉTODOS PARA GESTIÓN DE PERMISOS =====
+
+  // Obtener todos los menús
+  getAllMenus(): Observable<MenuResponseDto[]> {
+    return this.http.get<MenuResponseDto[]>(`${this.apiUrl}/accesos/menus`);
+  }
+
+  // Obtener permisos de un rol específico
+  getRolePermissions(roleId: number): Observable<MenuWithPermissionsDto[]> {
+    return this.http.get<MenuWithPermissionsDto[]>(
+      `${this.apiUrl}/accesos/rol/${roleId}/menus-permisos`
+    );
+  }
+
+  // Actualizar permisos masivamente
+  bulkUpdatePermissions(
+    roleId: number,
+    permissions: BulkUpdatePermissionsDto
+  ): Observable<BulkUpdateResponse> {
+    return this.http.patch<BulkUpdateResponse>(
+      `${this.apiUrl}/accesos/rol/${roleId}/permisos-masivos`,
+      permissions
+    );
+  }
+
+  // Crear nuevo acceso
+  createAccess(access: CreateAccesoDto): Observable<any> {
+    return this.http.post(`${this.apiUrl}/accesos`, access);
+  }
+
+  // ===== MÉTODOS PARA GESTIÓN DE PRODUCTOS =====
+
+  getProducts(filters?: {
+    sellerUserId?: string;
+    page?: number;
+    limit?: number;
+    q?: string;
+    enabled?: string;
+  }): Observable<ProductListResponse> {
+    let params = new HttpParams();
+    if (filters?.sellerUserId)
+      params = params.set('sellerUserId', filters.sellerUserId);
+    if (filters?.page) params = params.set('page', filters.page.toString());
+    if (filters?.limit) params = params.set('limit', filters.limit.toString());
+    if (filters?.q) params = params.set('q', filters.q);
+    if (filters?.enabled) params = params.set('enabled', filters.enabled);
+    return this.http.get<ProductListResponse>(`${this.apiUrl}/products`, {
+      params,
+    });
+  }
+
+  getProductById(id: number): Observable<ProductDetail> {
+    return this.http.get<ProductDetail>(`${this.apiUrl}/products/${id}`);
+  }
+
+  createProduct(product: CreateProductDto): Observable<ProductDetail> {
+    return this.http.post<ProductDetail>(`${this.apiUrl}/products`, product);
+  }
+
+  updateProduct(
+    id: number,
+    updates: UpdateProductDto
+  ): Observable<ProductDetail> {
+    return this.http.patch<ProductDetail>(
+      `${this.apiUrl}/products/${id}`,
+      updates
+    );
+  }
+
+  getProductsBySeller(sellerId: string): Observable<ProductListResponse> {
+    return this.http.get<ProductListResponse>(
+      `${this.apiUrl}/products/seller/${sellerId}`
+    );
+  }
+
+  disableProduct(id: number): Observable<ProductDetail> {
+    return this.http.patch<ProductDetail>(
+      `${this.apiUrl}/products/${id}/disable`,
+      {}
+    );
+  }
+
+  enableProduct(id: number): Observable<ProductDetail> {
+    return this.http.patch<ProductDetail>(
+      `${this.apiUrl}/products/${id}/enable`,
+      {}
+    );
+  }
+
+  deleteProduct(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/products/${id}`);
   }
 }

@@ -9,20 +9,29 @@ import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { CheckboxModule, CheckboxChangeEvent } from 'primeng/checkbox';
 import { ApiService } from '../../../../services/api.services';
+import { MenuWithPermissionsDto } from './domain/permisos.response';
+import {
+  BulkUpdatePermissionsDto,
+  PermissionUpdateDto,
+} from './domain/permisos.request';
 
-// <-- ajusta la ruta si es necesario
-
-// Interface LOCAL para la tabla (evita depender de tipos dentro del service)
+// Interface LOCAL para la tabla
 type CampoPermiso = 'acceso' | 'ver' | 'agregar' | 'editar' | 'eliminar';
 interface PermisoRow {
-  id: number; // id de acceso
-  idMenu: number;
+  id: number; // id de menú
+  accesoId: number; // id de acceso
   nombre: string;
   acceso: boolean; // == activo
   ver: boolean; // alias de activo
   agregar: boolean; // add_register
   editar: boolean; // edit_register
   eliminar: boolean; // delete_register
+  hasChanges?: boolean; // para tracking de cambios
+}
+
+interface MenuGroup {
+  nombre: string;
+  permisos: PermisoRow[];
 }
 
 @Component({
@@ -44,9 +53,12 @@ export class PermisosrolComponent implements OnInit {
   descripcionrol = '';
   idRol!: number;
 
-  // Tablas (por ahora todo en "Migración")
-  migracionTable: PermisoRow[] = [];
-  mantTable: PermisoRow[] = [];
+  // Grupos de menús organizados jerárquicamente
+  menuGroups: MenuGroup[] = [];
+
+  // Control de cambios masivos
+  pendingChanges: Map<number, PermissionUpdateDto> = new Map();
+  isSaving = false;
 
   constructor(private route: ActivatedRoute, private api: ApiService) {}
 
@@ -72,11 +84,61 @@ export class PermisosrolComponent implements OnInit {
   }
 
   private cargarPermisos(idRol: number) {
-    this.api.obtenerPermisosRol(idRol).subscribe({
-      next: (rows: any[]) => {
-        // Si tu ApiService ya tipa obtenerPermisosRol, puedes castear:
-        this.migracionTable = rows as PermisoRow[];
-        // Si luego categorizas por grupo, separa en mantTable aquí.
+    this.api.getRolePermissions(idRol).subscribe({
+      next: (menus: MenuWithPermissionsDto[]) => {
+        // Función para procesar un menú y convertirlo a PermisoRow
+        const convertirMenuAPermiso = (
+          menu: MenuWithPermissionsDto
+        ): PermisoRow => ({
+          id: menu.id,
+          accesoId: menu.permisos.accesoId,
+          nombre: menu.descripcion,
+          acceso: menu.permisos.activo,
+          ver: menu.permisos.activo, // alias
+          agregar: menu.permisos.addRegister,
+          editar: menu.permisos.editRegister,
+          eliminar: menu.permisos.deleteRegister,
+          hasChanges: false,
+        });
+
+        // Función recursiva para procesar menús principales y sus hijos
+        const procesarGrupoMenu = (menu: MenuWithPermissionsDto): MenuGroup => {
+          const permisos: PermisoRow[] = [];
+
+          // Agregar el menú principal
+          permisos.push(convertirMenuAPermiso(menu));
+
+          // Agregar los submenús si existen
+          if (menu.children && menu.children.length > 0) {
+            menu.children.forEach((submenu) => {
+              permisos.push({
+                ...convertirMenuAPermiso(submenu),
+                nombre: `└─ ${submenu.descripcion}`, // Indentación visual
+              });
+
+              // Si el submenú tiene hijos, agregarlos también
+              if (submenu.children && submenu.children.length > 0) {
+                submenu.children.forEach((subsubmenu) => {
+                  permisos.push({
+                    ...convertirMenuAPermiso(subsubmenu),
+                    nombre: `  └─ ${subsubmenu.descripcion}`, // Doble indentación
+                  });
+                });
+              }
+            });
+          }
+
+          return {
+            nombre: menu.descripcion,
+            permisos,
+          };
+        };
+
+        // Procesar todos los menús principales
+        this.menuGroups = menus.map((menu) => procesarGrupoMenu(menu));
+
+        // Limpiar cambios pendientes
+        this.pendingChanges.clear();
       },
       error: (err) => console.error('Error cargando permisos', err),
     });
@@ -87,42 +149,80 @@ export class PermisosrolComponent implements OnInit {
     row: PermisoRow,
     campo: CampoPermiso
   ) {
-    // Mapa UI -> payload API
-    const mapCampo: Record<
-      CampoPermiso,
-      'activo' | 'addRegister' | 'editRegister' | 'deleteRegister'
-    > = {
-      acceso: 'activo',
-      ver: 'activo', // alias
-      agregar: 'addRegister',
-      editar: 'editRegister',
-      eliminar: 'deleteRegister',
-    };
-
-    const apiField = mapCampo[campo];
     const checked = !!event.checked;
-    const payload: Partial<Record<typeof apiField, boolean>> = {
-      [apiField]: checked,
-    } as any;
 
-    // Optimistic UI
+    // Actualizar UI inmediatamente
     (row as any)[campo] = checked;
     if (campo === 'acceso' || campo === 'ver') {
       row.acceso = checked;
       row.ver = checked;
     }
 
-    this.api.actualizarAcceso(row.id, payload).subscribe({
+    // Marcar fila como modificada
+    row.hasChanges = true;
+
+    // Obtener o crear entrada de cambios pendientes
+    let pendingChange = this.pendingChanges.get(row.id);
+    if (!pendingChange) {
+      pendingChange = { idMenu: row.id };
+      this.pendingChanges.set(row.id, pendingChange);
+    }
+
+    // Mapear campo UI a campo API
+    const mapCampo: Record<CampoPermiso, keyof PermissionUpdateDto> = {
+      acceso: 'activo',
+      ver: 'activo',
+      agregar: 'addRegister',
+      editar: 'editRegister',
+      eliminar: 'deleteRegister',
+    };
+
+    const apiField = mapCampo[campo];
+    (pendingChange as any)[apiField] = checked;
+
+    // Si es acceso/ver, actualizar ambos campos
+    if (campo === 'acceso' || campo === 'ver') {
+      pendingChange.activo = checked;
+    }
+  }
+
+  // Método para guardar todos los cambios pendientes
+  guardarCambiosMasivos() {
+    if (this.pendingChanges.size === 0) {
+      return;
+    }
+
+    this.isSaving = true;
+    const permisos = Array.from(this.pendingChanges.values());
+    const bulkUpdate: BulkUpdatePermissionsDto = { permisos };
+
+    this.api.bulkUpdatePermissions(this.idRol, bulkUpdate).subscribe({
+      next: (result) => {
+        console.log(
+          `Actualizados: ${result.updated}, Creados: ${result.created}`
+        );
+        // Limpiar cambios pendientes y marcas
+        this.pendingChanges.clear();
+        this.menuGroups.forEach((group) => {
+          group.permisos.forEach((row: PermisoRow) => (row.hasChanges = false));
+        });
+        this.isSaving = false;
+      },
       error: (err) => {
-        console.error('No se pudo actualizar permiso', err);
-        // revertir estado en caso de error
-        const prev = !checked;
-        (row as any)[campo] = prev;
-        if (campo === 'acceso' || campo === 'ver') {
-          row.acceso = prev;
-          row.ver = prev;
-        }
+        console.error('Error al guardar cambios masivos', err);
+        this.isSaving = false;
       },
     });
+  }
+
+  // Método para descartar cambios
+  descartarCambios() {
+    this.pendingChanges.clear();
+    this.cargarPermisos(this.idRol);
+  }
+
+  // Getter para saber si hay cambios pendientes
+  get hasPendingChanges(): boolean {
+    return this.pendingChanges.size > 0;
   }
 }

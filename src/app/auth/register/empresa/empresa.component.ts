@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {
   ReactiveFormsModule,
+  FormsModule,
   FormGroup,
   FormControl,
   Validators,
@@ -36,6 +37,7 @@ type Municipio = { id: string; nombre: string; provId: string };
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     RouterModule,
     StepsModule,
     InputTextModule,
@@ -272,6 +274,11 @@ export class EmpresaComponent {
   };
 
   private map!: L.Map;
+  searchAddress = '';
+  searchResults: any[] = [];
+  showSearchResults = false;
+  isSearching = false;
+  private searchTimeout: any;
 
   onMapReady(map: L.Map) {
     this.map = map;
@@ -358,5 +365,221 @@ export class EmpresaComponent {
         })
         .catch((err) => console.error('Error reverse geocoding', err));
     });
+  }
+
+  searchAddressOnMap() {
+    // Limpiar timeout anterior
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
+
+    if (!this.searchAddress.trim()) {
+      this.searchResults = [];
+      this.showSearchResults = false;
+      this.isSearching = false;
+      return;
+    }
+
+    // Debounce de 300ms para búsqueda más responsiva
+    this.searchTimeout = setTimeout(() => {
+      this.performSearch();
+    }, 300);
+  }
+
+  // Método para búsqueda inmediata (cuando se hace clic en el botón)
+  searchImmediately() {
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
+    if (this.searchAddress.trim()) {
+      this.performSearch();
+    }
+  }
+
+  private performSearch() {
+    if (!this.searchAddress.trim()) {
+      return;
+    }
+
+    this.isSearching = true;
+    
+    // Agregar más países si es necesario
+    const searchQuery = encodeURIComponent(this.searchAddress.trim());
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${searchQuery}&limit=8&addressdetails=1&countrycodes=pe,mx,es,co,ar,cl,ec,bo,py,uy,ve`;
+    
+    fetch(url)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Error HTTP: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        this.isSearching = false;
+        
+        if (!Array.isArray(data)) {
+          throw new Error('Respuesta inválida del servidor');
+        }
+        
+        this.searchResults = data.map((item: any) => ({
+          display_name: item.display_name,
+          lat: parseFloat(item.lat),
+          lon: parseFloat(item.lon),
+          address: item.address || {},
+          importance: item.importance || 0,
+          place_id: item.place_id
+        })).sort((a: any, b: any) => b.importance - a.importance); // Ordenar por relevancia
+        
+        this.showSearchResults = true;
+        
+        if (this.searchResults.length === 0) {
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Sin resultados',
+            detail: `No se encontraron direcciones para "${this.searchAddress}". Intenta con términos más específicos.`,
+            life: 4000,
+          });
+        } else {
+          console.log(`Encontrados ${this.searchResults.length} resultados para: ${this.searchAddress}`);
+        }
+      })
+      .catch((err) => {
+        this.isSearching = false;
+        console.error('Error searching address:', err);
+        
+        let errorMessage = 'No se pudo realizar la búsqueda de dirección.';
+        if (err.message.includes('HTTP')) {
+          errorMessage = 'Error del servidor de mapas. Intenta nuevamente.';
+        } else if (err.message.includes('Failed to fetch')) {
+          errorMessage = 'Sin conexión a internet. Verifica tu conexión.';
+        }
+        
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error de búsqueda',
+          detail: errorMessage,
+          life: 5000,
+        });
+        this.searchResults = [];
+        this.showSearchResults = false;
+      });
+  }
+
+  selectSearchResult(result: any) {
+    try {
+      // Verificar que el mapa esté disponible
+      if (!this.map) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error del mapa',
+          detail: 'El mapa no está disponible. Intenta recargar la página.',
+          life: 3000,
+        });
+        return;
+      }
+
+      // Centrar el mapa en la ubicación seleccionada
+      this.map.setView([result.lat, result.lon], 16);
+      
+      // Remover marcadores existentes
+      this.map.eachLayer((layer: any) => {
+        if (layer instanceof L.Marker) this.map.removeLayer(layer);
+      });
+      
+      // Agregar nuevo marcador con popup
+      const marker = L.marker([result.lat, result.lon]).addTo(this.map);
+      marker.bindPopup(result.display_name).openPopup();
+      
+      // Llenar formularios con la información de la dirección
+      const addr = result.address || {};
+      const city = addr.city || addr.town || addr.village || addr.municipality || '';
+      const state = addr.state || addr.region || addr.state_district || '';
+      const postcode = addr.postcode || '';
+      const countryName = addr.country || '';
+      const iso2 = (addr.country_code || '').toUpperCase();
+
+      // Actualizar formulario de ubicación
+      this.ubicacionForm.patchValue({
+        ciudad: city,
+        departamento: state,
+        codigopostal: postcode,
+        direccionfiscal: result.display_name,
+      });
+
+      // Buscar y actualizar país
+      let paisItem = (this.listPaises as Pais[]).find(
+        (p) => p.iso2.toUpperCase() === iso2
+      );
+      if (!paisItem) {
+        paisItem = this.findByName(this.listPaises, countryName) as Pais | undefined;
+      }
+      
+      if (paisItem) {
+        this.basicForm.patchValue(
+          { pais: paisItem.id },
+          { emitEvent: false }
+        );
+        
+        // Actualizar lista de provincias
+        this.listProvincias = this.PROVINCIAS.filter(
+          (p) => p.paisId === paisItem!.id
+        );
+
+        // Buscar y actualizar provincia
+        const provItem = this.findByName(this.listProvincias, state) as Provincia | undefined;
+        if (provItem) {
+          this.basicForm.patchValue(
+            { provincia: provItem.id },
+            { emitEvent: false }
+          );
+          
+          // Actualizar lista de municipios
+          this.listMunicipios = this.MUNICIPIOS.filter(
+            (m) => m.provId === provItem!.id
+          );
+
+          // Buscar y actualizar municipio
+          const munItem = this.findByName(this.listMunicipios, city) as Municipio | undefined;
+          if (munItem) {
+            this.basicForm.patchValue(
+              { ciudad: munItem.id },
+              { emitEvent: false }
+            );
+          }
+        }
+      }
+
+      // Ocultar resultados de búsqueda
+      this.showSearchResults = false;
+      this.searchAddress = result.display_name;
+      
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Ubicación seleccionada',
+        detail: 'La dirección ha sido seleccionada y el mapa actualizado.',
+        life: 3000,
+      });
+      
+    } catch (error) {
+      console.error('Error al seleccionar resultado:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Ocurrió un error al seleccionar la ubicación.',
+        life: 3000,
+      });
+    }
+  }
+
+  clearSearch() {
+    // Limpiar timeout si existe
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
+    
+    this.searchAddress = '';
+    this.searchResults = [];
+    this.showSearchResults = false;
+    this.isSearching = false;
   }
 }

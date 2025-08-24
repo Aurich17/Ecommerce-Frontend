@@ -193,6 +193,79 @@
               <input id="sitioweb" pInputText formControlName="sitioweb" />
             </div>
           </div>
+          <!-- Buscador de direcciones -->
+          <div class="field col-12">
+            <label class="font-bold block mb-2">
+              <i class="pi pi-map-marker mr-1"></i>
+              Buscar dirección en el mapa
+            </label>
+            <div class="p-inputgroup">
+              <input
+                type="text"
+                pInputText
+                placeholder="Ej: Av. Javier Prado 123, San Isidro, Lima..."
+                [(ngModel)]="searchAddress"
+                (input)="searchAddressOnMap()"
+                (keyup.enter)="searchImmediately()"
+                class="w-full"
+                [disabled]="isSearching"
+              />
+              <span *ngIf="isSearching" class="p-inputgroup-addon">
+                <i class="pi pi-spin pi-spinner text-blue-500"></i>
+              </span>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-search"
+                (click)="searchImmediately()"
+                [disabled]="isSearching"
+                [label]="isSearching ? 'Buscando...' : 'Buscar'"
+              ></button>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-times"
+                (click)="clearSearch()"
+                [disabled]="isSearching"
+                severity="secondary"
+              ></button>
+            </div>
+            <div class="text-xs text-500 mt-1">
+              Escribe una dirección y presiona Enter o haz clic en Buscar
+            </div>
+            
+            <!-- Resultados de búsqueda -->
+            <div
+              *ngIf="showSearchResults && searchResults.length > 0"
+              class="mt-2 border-1 border-round surface-border max-h-15rem overflow-auto shadow-2"
+            >
+              <div class="p-2 surface-100 border-bottom-1 surface-border">
+                <span class="text-xs font-medium text-600">
+                  <i class="pi pi-info-circle mr-1"></i>
+                  {{ searchResults.length }} resultado(s) encontrado(s). Haz clic para seleccionar:
+                </span>
+              </div>
+              <div
+                *ngFor="let result of searchResults; let i = index"
+                class="p-2 cursor-pointer hover:surface-hover border-bottom-1 surface-border transition-colors"
+                (click)="selectSearchResult(result)"
+                [class.surface-hover]="i === 0"
+              >
+                <div class="flex align-items-start gap-2">
+                  <i class="pi pi-map-marker text-primary mt-1 text-sm"></i>
+                  <div class="flex-1">
+                    <div class="text-sm font-medium text-900 line-height-3">{{ result.display_name }}</div>
+                    <div *ngIf="result.address" class="text-xs text-500 mt-1">
+                      {{ result.address.country || '' }}
+                      <span *ngIf="result.address.state"> • {{ result.address.state }}</span>
+                      <span *ngIf="result.address.postcode"> • CP: {{ result.address.postcode }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Mapa -->
           <div class="field col-12">
             <label class="font-bold block mb-2"
@@ -206,7 +279,7 @@
               (leafletMapReady)="onMapReady($event)"
             ></div>
             <small class="text-500 block mt-2">
-              Haz clic en el mapa para seleccionar tu ubicación exacta
+              Busca una dirección arriba o haz clic en el mapa para seleccionar tu ubicación exacta
             </small>
           </div>
           <div class="p-field p-col-12 flex justify-content-between mt-4 gap-4">

@@ -1,1 +1,146 @@
-<p>modulos works!</p>
+<div class="flex flex-column gap-4">
+    <!-- Header -->
+    <div class="flex justify-content-between align-items-center">
+        <div>
+            <h2 class="text-2xl font-bold m-0">Gestión de Módulos/Menús</h2>
+            <p class="text-gray-600 m-0 mt-1">Administra los menús y módulos del sistema</p>
+        </div>
+        <p-button 
+            label="Actualizar" 
+            icon="pi pi-refresh" 
+            severity="secondary"
+            size="small"
+            [loading]="loading"
+            (onClick)="cargarMenus()">
+        </p-button>
+    </div>
+
+    <!-- Toolbar con búsqueda -->
+    <p-toolbar>
+        <div class="p-toolbar-group-start">
+            <span class="p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input 
+                    type="text" 
+                    pInputText 
+                    placeholder="Buscar por nombre o URL..." 
+                    [(ngModel)]="searchValue"
+                    (input)="filtrarMenus()"
+                    class="w-20rem">
+            </span>
+            <p-button 
+                icon="pi pi-times" 
+                severity="secondary" 
+                text="true"
+                size="small"
+                (onClick)="limpiarFiltro()"
+                [disabled]="!searchValue"
+                pTooltip="Limpiar filtro"
+                class="ml-2">
+            </p-button>
+        </div>
+        <div class="p-toolbar-group-end">
+            <span class="text-sm text-gray-600">
+                {{menus.length}} menú(s) encontrado(s)
+            </span>
+        </div>
+    </p-toolbar>
+
+    <!-- Tabla de menús -->
+    <p-card>
+        <p-table 
+            [value]="menus" 
+            [loading]="loading"
+            dataKey="id"
+            [paginator]="true"
+            [rows]="10"
+            [showCurrentPageReport]="true"
+            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} menús"
+            [rowsPerPageOptions]="[10, 25, 50]"
+            styleClass="p-datatable-sm">
+            
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 60px">#</th>
+                    <th>Menú</th>
+                    <th style="width: 100px">Tipo</th>
+                    <th>URL</th>
+                    <th style="width: 80px">Estado</th>
+                    <th style="width: 120px">Menú Padre</th>
+                </tr>
+            </ng-template>
+            
+            <ng-template pTemplate="body" let-menu>
+                <tr>
+                    <td>{{menu.id}}</td>
+                    <td>
+                        <div class="flex align-items-center gap-2">
+                            <!-- Indentación visual para submenús con múltiples niveles -->
+                            <span *ngIf="menu.nivel > 0" 
+                                  class="text-gray-400"
+                                  [style.margin-left.rem]="menu.nivel * 1.5">
+                                {{menu.nivel === 1 ? '└─' : '└──'}}
+                            </span>
+                            
+                            <!-- Icono del menú -->
+                            <i [class]="getIconClass(menu.icono)" 
+                               class="text-primary"
+                               [pTooltip]="menu.icono || 'Sin icono'">
+                            </i>
+                            
+                            <!-- Nombre del menú -->
+                            <span [class.font-bold]="menu.nivel === 0"
+                                  [class.text-gray-700]="menu.nivel > 0"
+                                  [class.text-sm]="menu.nivel > 1">
+                                {{menu.descripcion}}
+                            </span>
+                        </div>
+                    </td>
+                    <td>
+                        <p-tag 
+                            [value]="menu.isSubmenu ? 'Submenú' : 'Menú'"
+                            [severity]="menu.isSubmenu ? 'info' : 'secondary'"
+                            [rounded]="true">
+                        </p-tag>
+                    </td>
+                    <td>
+                        <code class="text-sm bg-gray-100 p-1 border-round">
+                            {{menu.url || 'Sin URL'}}
+                        </code>
+                    </td>
+                    <td>
+                        <p-tag 
+                            [value]="getStatusText(menu.activo)"
+                            [severity]="getSeverityForStatus(menu.activo)"
+                            [rounded]="true">
+                        </p-tag>
+                    </td>
+                    <td>
+                        <span *ngIf="menu.nombrePadre" class="text-sm text-gray-600">
+                            {{menu.nombrePadre}}
+                        </span>
+                        <span *ngIf="!menu.nombrePadre && menu.esHijo" class="text-sm text-orange-600">
+                            <i class="pi pi-exclamation-triangle"></i> Sin padre
+                        </span>
+                        <span *ngIf="!menu.esHijo" class="text-sm text-gray-400">
+                            Menú principal
+                        </span>
+                    </td>
+                </tr>
+            </ng-template>
+            
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="6" class="text-center p-4">
+                        <div class="flex flex-column align-items-center gap-2">
+                            <i class="pi pi-search text-4xl text-gray-400"></i>
+                            <span class="text-gray-600">
+                                {{searchValue ? 'No se encontraron menús que coincidan con la búsqueda' : 'No hay menús disponibles'}}
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-card>
+</div>
