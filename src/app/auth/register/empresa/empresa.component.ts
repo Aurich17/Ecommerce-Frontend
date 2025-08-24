@@ -26,6 +26,7 @@ import { CommonModule } from '@angular/common';
 import { InputNumberModule } from 'primeng/inputnumber';
 import * as L from 'leaflet';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { MailService } from '../../../../services/mail/mail.service';
 
 type Pais = { id: string; nombre: string; iso2: string };
 type Provincia = { id: string; nombre: string; paisId: string };
@@ -61,7 +62,11 @@ type Municipio = { id: string; nombre: string; provId: string };
   providers: [MessageService],
 })
 export class EmpresaComponent {
-  constructor(private router: Router, private messageService: MessageService) {}
+  constructor(
+    private router: Router,
+    private messageService: MessageService,
+    private mailService: MailService
+  ) {}
 
   visible = false;
   items: MenuItem[] = [
@@ -212,6 +217,7 @@ export class EmpresaComponent {
 
   async finish() {
     this.visible = true;
+    this.enviarCorreo();
   }
 
   copy() {
@@ -367,6 +373,42 @@ export class EmpresaComponent {
     });
   }
 
+  enviarCorreo() {
+    const values = this.basicForm.value;
+    const valuescorreo = this.representanteForm.value;
+    const to = valuescorreo.correo || '';
+    const subject = 'Cuenta registrada con éxito';
+    const text = `
+    <div style="background-color:#f4f4f4; padding:30px; font-family:Arial, sans-serif;">
+      <div style="max-width:600px; margin:0 auto; background-color:#ffffff; border-radius:8px; padding:30px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+        <h2 style="text-align:center; color:#333;">Cuenta registrada con éxito</h2>
+        <p style="font-size:16px; color:#555; text-align:center;">
+          Estimado/a representante de <strong>${values.nombrecompleto}</strong>,<br><br>
+          Su empresa ha sido registrada exitosamente en nuestra plataforma.
+        </p>
+        <p style="font-size:16px; color:#555; text-align:center; margin-top:20px;">
+          Gracias por confiar en nosotros.
+        </p>
+        <p style="font-size:14px; color:#888; text-align:center; margin-top:30px;">
+          Atentamente,<br>
+          El equipo de FiaoX
+        </p>
+      </div>
+    </div>
+  `;
+
+    this.mailService.sendMail(to, subject, text).subscribe({
+      next: (res) => {
+        console.log('✅ Respuesta del backend:', res);
+        alert('Correo enviado con éxito');
+      },
+      error: (err) => {
+        console.error('❌ Error al enviar correo:', err);
+        alert('Error al enviar correo');
+      },
+    });
+  }
+
   searchAddressOnMap() {
     // Limpiar timeout anterior
     if (this.searchTimeout) {
@@ -402,11 +444,11 @@ export class EmpresaComponent {
     }
 
     this.isSearching = true;
-    
+
     // Agregar más países si es necesario
     const searchQuery = encodeURIComponent(this.searchAddress.trim());
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${searchQuery}&limit=8&addressdetails=1&countrycodes=pe,mx,es,co,ar,cl,ec,bo,py,uy,ve`;
-    
+
     fetch(url)
       .then((res) => {
         if (!res.ok) {
@@ -416,22 +458,24 @@ export class EmpresaComponent {
       })
       .then((data) => {
         this.isSearching = false;
-        
+
         if (!Array.isArray(data)) {
           throw new Error('Respuesta inválida del servidor');
         }
-        
-        this.searchResults = data.map((item: any) => ({
-          display_name: item.display_name,
-          lat: parseFloat(item.lat),
-          lon: parseFloat(item.lon),
-          address: item.address || {},
-          importance: item.importance || 0,
-          place_id: item.place_id
-        })).sort((a: any, b: any) => b.importance - a.importance); // Ordenar por relevancia
-        
+
+        this.searchResults = data
+          .map((item: any) => ({
+            display_name: item.display_name,
+            lat: parseFloat(item.lat),
+            lon: parseFloat(item.lon),
+            address: item.address || {},
+            importance: item.importance || 0,
+            place_id: item.place_id,
+          }))
+          .sort((a: any, b: any) => b.importance - a.importance); // Ordenar por relevancia
+
         this.showSearchResults = true;
-        
+
         if (this.searchResults.length === 0) {
           this.messageService.add({
             severity: 'info',
@@ -440,20 +484,22 @@ export class EmpresaComponent {
             life: 4000,
           });
         } else {
-          console.log(`Encontrados ${this.searchResults.length} resultados para: ${this.searchAddress}`);
+          console.log(
+            `Encontrados ${this.searchResults.length} resultados para: ${this.searchAddress}`
+          );
         }
       })
       .catch((err) => {
         this.isSearching = false;
         console.error('Error searching address:', err);
-        
+
         let errorMessage = 'No se pudo realizar la búsqueda de dirección.';
         if (err.message.includes('HTTP')) {
           errorMessage = 'Error del servidor de mapas. Intenta nuevamente.';
         } else if (err.message.includes('Failed to fetch')) {
           errorMessage = 'Sin conexión a internet. Verifica tu conexión.';
         }
-        
+
         this.messageService.add({
           severity: 'error',
           summary: 'Error de búsqueda',
@@ -480,19 +526,20 @@ export class EmpresaComponent {
 
       // Centrar el mapa en la ubicación seleccionada
       this.map.setView([result.lat, result.lon], 16);
-      
+
       // Remover marcadores existentes
       this.map.eachLayer((layer: any) => {
         if (layer instanceof L.Marker) this.map.removeLayer(layer);
       });
-      
+
       // Agregar nuevo marcador con popup
       const marker = L.marker([result.lat, result.lon]).addTo(this.map);
       marker.bindPopup(result.display_name).openPopup();
-      
+
       // Llenar formularios con la información de la dirección
       const addr = result.address || {};
-      const city = addr.city || addr.town || addr.village || addr.municipality || '';
+      const city =
+        addr.city || addr.town || addr.village || addr.municipality || '';
       const state = addr.state || addr.region || addr.state_district || '';
       const postcode = addr.postcode || '';
       const countryName = addr.country || '';
@@ -511,35 +558,38 @@ export class EmpresaComponent {
         (p) => p.iso2.toUpperCase() === iso2
       );
       if (!paisItem) {
-        paisItem = this.findByName(this.listPaises, countryName) as Pais | undefined;
+        paisItem = this.findByName(this.listPaises, countryName) as
+          | Pais
+          | undefined;
       }
-      
+
       if (paisItem) {
-        this.basicForm.patchValue(
-          { pais: paisItem.id },
-          { emitEvent: false }
-        );
-        
+        this.basicForm.patchValue({ pais: paisItem.id }, { emitEvent: false });
+
         // Actualizar lista de provincias
         this.listProvincias = this.PROVINCIAS.filter(
           (p) => p.paisId === paisItem!.id
         );
 
         // Buscar y actualizar provincia
-        const provItem = this.findByName(this.listProvincias, state) as Provincia | undefined;
+        const provItem = this.findByName(this.listProvincias, state) as
+          | Provincia
+          | undefined;
         if (provItem) {
           this.basicForm.patchValue(
             { provincia: provItem.id },
             { emitEvent: false }
           );
-          
+
           // Actualizar lista de municipios
           this.listMunicipios = this.MUNICIPIOS.filter(
             (m) => m.provId === provItem!.id
           );
 
           // Buscar y actualizar municipio
-          const munItem = this.findByName(this.listMunicipios, city) as Municipio | undefined;
+          const munItem = this.findByName(this.listMunicipios, city) as
+            | Municipio
+            | undefined;
           if (munItem) {
             this.basicForm.patchValue(
               { ciudad: munItem.id },
@@ -552,14 +602,13 @@ export class EmpresaComponent {
       // Ocultar resultados de búsqueda
       this.showSearchResults = false;
       this.searchAddress = result.display_name;
-      
+
       this.messageService.add({
         severity: 'success',
         summary: 'Ubicación seleccionada',
         detail: 'La dirección ha sido seleccionada y el mapa actualizado.',
         life: 3000,
       });
-      
     } catch (error) {
       console.error('Error al seleccionar resultado:', error);
       this.messageService.add({
@@ -576,7 +625,7 @@ export class EmpresaComponent {
     if (this.searchTimeout) {
       clearTimeout(this.searchTimeout);
     }
-    
+
     this.searchAddress = '';
     this.searchResults = [];
     this.showSearchResults = false;

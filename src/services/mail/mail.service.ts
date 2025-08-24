@@ -11,6 +11,6 @@ export class MailService {
   constructor(private http: HttpClient) {}
 
   sendMail(to: string, subject: string, text: string) {
-    return this.http.post(`${this.apiUrl}/send`, { to, subject, text });
+    return this.http.post(`${this.apiUrl}/mail/send`, { to, subject, text });
   }
 }
