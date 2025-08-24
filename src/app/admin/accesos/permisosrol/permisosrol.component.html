@@ -1,21 +1,21 @@
 <div class="flex flex-column gap-4">
     <div class="text-lg font-bold">Permisos del Rol</div>
     <div class="text-sm">Estás editando los permisos del rol: {{descripcionrol}}</div>
-    
+
     <!-- Controles de cambios masivos -->
     <div class="flex gap-2 align-items-center" *ngIf="hasPendingChanges">
-        <p-button 
-            label="Guardar Cambios" 
-            icon="pi pi-check" 
-            severity="success" 
+        <p-button
+            label="Guardar Cambios"
+            icon="pi pi-check"
+            severity="success"
             size="small"
             [loading]="isSaving"
             (onClick)="guardarCambiosMasivos()">
         </p-button>
-        <p-button 
-            label="Descartar" 
-            icon="pi pi-times" 
-            severity="secondary" 
+        <p-button
+            label="Descartar"
+            icon="pi pi-times"
+            severity="secondary"
             size="small"
             [disabled]="isSaving"
             (onClick)="descartarCambios()">
@@ -46,8 +46,8 @@
                     <tr [class.bg-yellow-50]="product.hasChanges">
                         <td>
                             {{product.id}}
-                            <i class="pi pi-circle-fill text-orange-500 ml-2" 
-                               *ngIf="product.hasChanges" 
+                            <i class="pi pi-circle-fill text-orange-500 ml-2"
+                               *ngIf="product.hasChanges"
                                style="font-size: 0.5rem"
                                title="Fila modificada">
                             </i>

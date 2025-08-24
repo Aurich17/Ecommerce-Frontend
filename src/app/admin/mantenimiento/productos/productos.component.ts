@@ -36,6 +36,9 @@ import { SessionService } from '../../../../services/session/session.service';
 import { ApiService } from '../../../../services/api.services';
 // import { ImagekitService } from '../../../../services/imagekit.service';
 import { ImagekitClient } from '../../../../services/imagekit.service';
+// import { ActiveCurrencyService } from '@/app/global/active-currency.service';
+import { map } from 'rxjs/operators';
+import { ActiveCurrencyService } from '../../../../global/active-currency.service';
 
 @Component({
   selector: 'app-productos',
@@ -108,7 +111,8 @@ export class ProductosComponent implements OnInit {
     private sessionService: SessionService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private imagekitService: ImagekitClient
+    private imagekitService: ImagekitClient,
+    private activeCurrency: ActiveCurrencyService
   ) {}
 
   ngOnInit() {
@@ -311,8 +315,6 @@ export class ProductosComponent implements OnInit {
         name: formData.nombre!,
         description: formData.descripcion!,
         price: formData.precio!,
-        currencyTab: formData.moneda!,
-        currencyCod: this.currencyMap[formData.moneda!] || '840',
         stock: formData.stock!,
         discountPercent: formData.descuento || 0,
         urlImg: imageUrl || undefined,
@@ -349,8 +351,6 @@ export class ProductosComponent implements OnInit {
         name: formData.nombre!,
         description: formData.descripcion!,
         price: formData.precio!,
-        currencyTab: formData.moneda!,
-        currencyCod: this.currencyMap[formData.moneda!] || '840',
         stock: formData.stock!,
         discountPercent: formData.descuento || 0,
         urlImg: imageUrl || undefined,

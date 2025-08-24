@@ -68,27 +68,32 @@ export class ModulosComponent implements OnInit {
   private procesarMenusParaVisualizacion(menus: MenuResponseDto[]) {
     const menusDisplay: MenuDisplay[] = [];
     
-    // Función recursiva para procesar menús y sus hijos
-    const procesarMenu = (menu: MenuResponseDto, nivel: number = 0, nombrePadre?: string) => {
-      // Agregar el menú actual
+    // Crear mapa de menús por ID para búsqueda rápida
+    const menuMap = new Map<number, MenuResponseDto>();
+    menus.forEach(menu => menuMap.set(menu.id, menu));
+    
+    // Procesar menús padre primero
+    const menusPadre = menus.filter(m => !m.isSubmenu || m.idpadre === null);
+    
+    menusPadre.forEach(padre => {
+      // Agregar menú padre
       menusDisplay.push({
-        ...menu,
-        nivel,
-        esHijo: nivel > 0,
-        nombrePadre
+        ...padre,
+        nivel: 0,
+        esHijo: false
       });
       
-      // Procesar los hijos si existen
-      if (menu.children && menu.children.length > 0) {
-        menu.children.forEach(hijo => {
-          procesarMenu(hijo, nivel + 1, menu.descripcion);
+      // Agregar menús hijos
+      const hijos = menus.filter(m => m.idpadre === padre.id);
+      hijos.forEach(hijo => {
+        const nombrePadre = menuMap.get(hijo.idpadre!)?.descripcion;
+        menusDisplay.push({
+          ...hijo,
+          nivel: 1,
+          esHijo: true,
+          nombrePadre
         });
-      }
-    };
-    
-    // Procesar todos los menús de nivel raíz
-    menus.forEach(menu => {
-      procesarMenu(menu);
+      });
     });
     
     this.menus = menusDisplay;

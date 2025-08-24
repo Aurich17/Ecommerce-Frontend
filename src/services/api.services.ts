@@ -47,7 +47,6 @@ import {
   CreateProductDto,
   UpdateProductDto,
 } from '../app/admin/mantenimiento/productos/domain/productos.response';
-import { ProductosRequest } from '../app/admin/mantenimiento/productos/domain/productos.request';
 import {
   Currency,
   CreateCurrencyDto,
@@ -255,7 +254,7 @@ export class ApiService {
   // Listar todas las monedas con filtros opcionales
   getCurrencies(filters?: CurrencyFilters): Observable<Currency[]> {
     let params = new HttpParams();
-    
+
     if (filters?.status !== undefined) {
       params = params.set('status', filters.status.toString());
     }
@@ -284,12 +283,18 @@ export class ApiService {
 
   // Actualizar moneda
   updateCurrency(id: number, updates: UpdateCurrencyDto): Observable<Currency> {
-    return this.http.patch<Currency>(`${this.apiUrl}/currencies/${id}`, updates);
+    return this.http.patch<Currency>(
+      `${this.apiUrl}/currencies/${id}`,
+      updates
+    );
   }
 
   // Cambiar estado de moneda (toggle)
   toggleCurrencyStatus(id: number): Observable<Currency> {
-    return this.http.patch<Currency>(`${this.apiUrl}/currencies/${id}/toggle-status`, {});
+    return this.http.patch<Currency>(
+      `${this.apiUrl}/currencies/${id}/toggle-status`,
+      {}
+    );
   }
 
   // Eliminar moneda
