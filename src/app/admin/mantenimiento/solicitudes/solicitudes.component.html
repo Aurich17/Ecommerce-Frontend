@@ -2,7 +2,8 @@
     <div class="flex justify-content-between w-full">
         <div class="text-lg font-bold">Solicitudes</div>
         <div class="flex gap-2 w-5">
-            <input pInputText formControlName="nombreapellido" [readOnly]="true" placeholder="Buscar por nombre o apellido..." class="text-xs w-full"/>
+            <input pInputText formControlName="nombreapellido" [readOnly]="true"
+                placeholder="Buscar por nombre o apellido..." class="text-xs w-full" />
             <p-button icon="pi pi-file-excel" styleClass="text-sm" iconPos="left" label="Excel" severity="success"
                 (onClick)="exportExcel()" />
             <p-button icon="pi pi-file-o" styleClass="text-sm" iconPos="left" label="Csv" (onClick)="exportCsv()" />
@@ -11,7 +12,8 @@
         </div>
     </div>
     <div class="pt-3 w-full">
-        <p-selectButton [options]="optionsFiltro" formControlName="selectfiltro" optionLabel="label" optionValue="value" class="filtrobandeja"/>
+        <p-selectButton [options]="optionsFiltro" formControlName="selectfiltro" optionLabel="label" optionValue="value"
+            class="filtrobandeja" />
     </div>
     <div class="pt-3">
         <p-table [value]="solicitudesTable" class="w-full" dataKey="id" editMode="row">
@@ -34,8 +36,10 @@
                     <td>{{product.descripcion}}</td>
                     <td>{{product.fechacreacion}}</td>
                     <td>
-                        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" (onClick)="onEditPoppup(product)" />
-                        <p-button icon="pi pi-trash" [rounded]="true" [text]="true" (onClick)="onDeleteRow(product.id)" />
+                        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true"
+                            (onClick)="onEditPoppup(product)" />
+                        <p-button icon="pi pi-trash" [rounded]="true" [text]="true"
+                            (onClick)="onDeleteRow(product.id)" />
                     </td>
                 </tr>
             </ng-template>
@@ -50,7 +54,8 @@
     <div class="pt-4 w-full">
         <form [formGroup]="poppupgroup">
             <div><p-selectButton [options]="stateOptions" formControlName="select" optionLabel="label"
-                    optionValue="value" (onChange)="mostrarSeccion($event)" styleClass="w-full" class="filtrobtn"/></div>
+                    optionValue="value" (onChange)="mostrarSeccion($event)" styleClass="w-full" class="filtrobtn" />
+            </div>
             <div *ngIf="infocliente" class="pt-4 w-full flex flex-column">
                 <div class="pt-4 w-full flex gap-2">
                     <div class="p-field p-col-12 flex flex-column gap-3 w-6">
@@ -95,6 +100,14 @@
                         <p-dropdown formControlName="estado" [options]="listaEstado" optionLabel="label"
                             optionValue="label" styleClass="w-full" appendTo="body" />
                     </div>
+
+                </div>
+            </div>
+            <div class="pt-3 w-full flex gap-2">
+                <div class="flex flex-column gap-3 w-full">
+                    <label class="font-bold text-sm">Motivo Rechazo</label>
+                    <textarea rows="5" cols="30" class="w-full" pInputTextarea
+                        formControlName="motivorechazo"></textarea>
                 </div>
             </div>
             <div class="pt-4 w-full flex justify-content-end">

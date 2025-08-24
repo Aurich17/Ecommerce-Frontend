@@ -35,6 +35,7 @@ import { DialogModule } from 'primeng/dialog';
 import { AuthService } from '../../../../services/auth.services';
 import { SessionService } from '../../../../services/session/session.service';
 import { ImagekitClient } from '../../../../services/imagekit.service';
+import { MailService } from '../../../../services/mail/mail.service';
 
 // Tipo normalizado para usar SIEMPRE desc/cod
 type TipoUI = {
@@ -84,8 +85,9 @@ export class ClienteComponent implements OnInit, AfterViewInit {
   constructor(
     private api: ApiService,
     private router: Router,
-    private messageService: MessageService
-  ) {}
+    private messageService: MessageService,
+    private mailService: MailService
+  ) { }
 
   // ==== PHONE INPUT ====
   @ViewChild('phoneInput', { static: true })
@@ -436,12 +438,12 @@ export class ClienteComponent implements OnInit, AfterViewInit {
               });
               this.visible = true;
               this.social_security = res.social_security;
-              this.cliente = `${personal.nombres || ''} ${
-                personal.apellidos || ''
-              }`.trim();
+              this.cliente = `${personal.nombres || ''} ${personal.apellidos || ''
+                }`.trim();
               this.socialsecurity
                 .get('socialsecurity')
                 ?.setValue(this.social_security);
+              this.enviarCorreo()
             }
           },
           error: (err) => {
@@ -449,9 +451,8 @@ export class ClienteComponent implements OnInit, AfterViewInit {
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: `No se pudo registrar cliente. ${
-                err?.error?.message || ''
-              }`,
+              detail: `No se pudo registrar cliente. ${err?.error?.message || ''
+                }`,
               life: 3500,
             });
           },
@@ -498,4 +499,39 @@ export class ClienteComponent implements OnInit, AfterViewInit {
   }
 
   errorMsg = '';
+  enviarCorreo() {
+    const values = this.personalForm.value
+    const valuescorreo = this.credentialsForm.value
+    const to = valuescorreo.email || '';
+    const subject = 'Cuenta registrada con éxito';
+    const text = `
+    <div style="background-color:#f4f4f4; padding:30px; font-family:Arial, sans-serif;">
+      <div style="max-width:600px; margin:0 auto; background-color:#ffffff; border-radius:8px; padding:30px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+        <h2 style="text-align:center; color:#333;">Cuenta registrada con éxito</h2>
+        <p style="font-size:16px; color:#555; text-align:center;">
+          Estimado/a <strong>${values.nombres} ${values.apellidos}</strong>,<br><br>
+          Su cuenta ha sido registrada exitosamente en nuestra plataforma.
+        </p>
+        <p style="font-size:16px; color:#555; text-align:center; margin-top:20px;">
+          Gracias por confiar en nosotros.
+        </p>
+        <p style="font-size:14px; color:#888; text-align:center; margin-top:30px;">
+          Atentamente,<br>
+          El equipo de FiaoX
+        </p>
+      </div>
+    </div>
+  `;
+
+    this.mailService.sendMail(to, subject, text).subscribe({
+      next: (res) => {
+        console.log('✅ Respuesta del backend:', res);
+        alert('Correo enviado con éxito');
+      },
+      error: (err) => {
+        console.error('❌ Error al enviar correo:', err);
+        alert('Error al enviar correo');
+      }
+    });
+  }
 }

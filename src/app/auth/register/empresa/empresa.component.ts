@@ -25,6 +25,7 @@ import { CommonModule } from '@angular/common';
 import { InputNumberModule } from 'primeng/inputnumber';
 import * as L from 'leaflet';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { MailService } from '../../../../services/mail/mail.service';
 
 type Pais = { id: string; nombre: string; iso2: string };
 type Provincia = { id: string; nombre: string; paisId: string };
@@ -59,7 +60,7 @@ type Municipio = { id: string; nombre: string; provId: string };
   providers: [MessageService],
 })
 export class EmpresaComponent {
-  constructor(private router: Router, private messageService: MessageService) {}
+  constructor(private router: Router, private messageService: MessageService, private mailService: MailService) { }
 
   visible = false;
   items: MenuItem[] = [
@@ -210,6 +211,7 @@ export class EmpresaComponent {
 
   async finish() {
     this.visible = true;
+    this.enviarCorreo()
   }
 
   copy() {
@@ -357,6 +359,44 @@ export class EmpresaComponent {
           }
         })
         .catch((err) => console.error('Error reverse geocoding', err));
+    });
+  }
+
+
+
+  enviarCorreo() {
+    const values = this.basicForm.value
+    const valuescorreo = this.representanteForm.value
+    const to = valuescorreo.correo || '';
+    const subject = 'Cuenta registrada con éxito';
+    const text = `
+    <div style="background-color:#f4f4f4; padding:30px; font-family:Arial, sans-serif;">
+      <div style="max-width:600px; margin:0 auto; background-color:#ffffff; border-radius:8px; padding:30px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+        <h2 style="text-align:center; color:#333;">Cuenta registrada con éxito</h2>
+        <p style="font-size:16px; color:#555; text-align:center;">
+          Estimado/a representante de <strong>${values.nombrecompleto}</strong>,<br><br>
+          Su empresa ha sido registrada exitosamente en nuestra plataforma.
+        </p>
+        <p style="font-size:16px; color:#555; text-align:center; margin-top:20px;">
+          Gracias por confiar en nosotros.
+        </p>
+        <p style="font-size:14px; color:#888; text-align:center; margin-top:30px;">
+          Atentamente,<br>
+          El equipo de FiaoX
+        </p>
+      </div>
+    </div>
+  `;
+
+    this.mailService.sendMail(to, subject, text).subscribe({
+      next: (res) => {
+        console.log('✅ Respuesta del backend:', res);
+        alert('Correo enviado con éxito');
+      },
+      error: (err) => {
+        console.error('❌ Error al enviar correo:', err);
+        alert('Error al enviar correo');
+      }
     });
   }
 }
