@@ -6,12 +6,13 @@ export interface SessionState {
   expAt: number | null;   // epoch ms
   rol: string | null;
   menu: any[];
+  user: { id: string; full_name: string; email: string; phone_e164: string; social_security_code: string; status: string; } | null;
 }
 
 @Injectable({ providedIn: 'root' })
 export class SessionService {
   // estado en memoria
-  snapshot: SessionState = { token: null, expAt: null, rol: null, menu: [] };
+  snapshot: SessionState = { token: null, expAt: null, rol: null, menu: [], user: null };
 
   setFromLogin(res: LoginResponse) {
     const expAt = Date.now() + (res.expires_in * 1000);
@@ -20,6 +21,7 @@ export class SessionService {
       expAt,
       rol: res.rol ?? null,
       menu: res.menu ?? [],
+      user: res.user ?? null,
     };
     localStorage.setItem('session', JSON.stringify(this.snapshot));
   }
@@ -40,9 +42,11 @@ export class SessionService {
   }
 
   clear() {
-    this.snapshot = { token: null, expAt: null, rol: null, menu: [] };
+    this.snapshot = { token: null, expAt: null, rol: null, menu: [], user: null };
     localStorage.removeItem('session');
   }
 
   get token() { return this.snapshot.token; }
+  get user() { return this.snapshot.user; }
+  get userId() { return this.snapshot.user?.id || null; }
 }

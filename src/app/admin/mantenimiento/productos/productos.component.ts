@@ -129,8 +129,9 @@ export class ProductosComponent implements OnInit {
   }
 
   private getUserIdFromSession(): string {
-    // Generar UUID ya que no tenemos ID de usuario en la sesión
-    return this.generateUUID();
+    // Obtener el ID del usuario desde la sesión
+    const userId = this.sessionService.userId;
+    return userId || this.generateUUID(); // Fallback a UUID si no hay usuario en sesión
   }
 
   private generateUUID(): string {
@@ -305,11 +306,11 @@ export class ProductosComponent implements OnInit {
 
     if (this.addRegister) {
       // Crear nuevo producto
-      const createDto: CreateProductDto = {
+      const createDto: any = {
         sellerUserId: this.currentUserId,
         name: formData.nombre!,
         description: formData.descripcion!,
-        priceAmount: formData.precio!,
+        price: formData.precio!,
         currencyTab: formData.moneda!,
         currencyCod: this.currencyMap[formData.moneda!] || '840',
         stock: formData.stock!,
@@ -329,6 +330,7 @@ export class ProductosComponent implements OnInit {
           this.imageFile = null;
         },
         error: (error) => {
+          console.log(error);
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
@@ -343,10 +345,10 @@ export class ProductosComponent implements OnInit {
       });
     } else {
       // Actualizar producto existente
-      const updateDto: UpdateProductDto = {
+      const updateDto: any = {
         name: formData.nombre!,
         description: formData.descripcion!,
-        priceAmount: formData.precio!,
+        price: formData.precio!,
         currencyTab: formData.moneda!,
         currencyCod: this.currencyMap[formData.moneda!] || '840',
         stock: formData.stock!,

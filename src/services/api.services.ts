@@ -48,6 +48,13 @@ import {
   UpdateProductDto,
 } from '../app/admin/mantenimiento/productos/domain/productos.response';
 import { ProductosRequest } from '../app/admin/mantenimiento/productos/domain/productos.request';
+import {
+  Currency,
+  CreateCurrencyDto,
+  UpdateCurrencyDto,
+  CurrencyListResponse,
+} from '../app/admin/mantenimiento/monedas/domain/monedas.response';
+import { CurrencyFilters } from '../app/admin/mantenimiento/monedas/domain/monedas.request';
 @Injectable({
   providedIn: 'root',
 })
@@ -241,5 +248,52 @@ export class ApiService {
 
   deleteProduct(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/products/${id}`);
+  }
+
+  // ===== MÉTODOS DE LA API DE MONEDAS =====
+
+  // Listar todas las monedas con filtros opcionales
+  getCurrencies(filters?: CurrencyFilters): Observable<Currency[]> {
+    let params = new HttpParams();
+    
+    if (filters?.status !== undefined) {
+      params = params.set('status', filters.status.toString());
+    }
+    if (filters?.page) {
+      params = params.set('page', filters.page.toString());
+    }
+    if (filters?.limit) {
+      params = params.set('limit', filters.limit.toString());
+    }
+    if (filters?.q) {
+      params = params.set('q', filters.q);
+    }
+
+    return this.http.get<Currency[]>(`${this.apiUrl}/currencies`, { params });
+  }
+
+  // Obtener moneda por ID
+  getCurrencyById(id: number): Observable<Currency> {
+    return this.http.get<Currency>(`${this.apiUrl}/currencies/${id}`);
+  }
+
+  // Crear nueva moneda
+  createCurrency(currency: CreateCurrencyDto): Observable<Currency> {
+    return this.http.post<Currency>(`${this.apiUrl}/currencies`, currency);
+  }
+
+  // Actualizar moneda
+  updateCurrency(id: number, updates: UpdateCurrencyDto): Observable<Currency> {
+    return this.http.patch<Currency>(`${this.apiUrl}/currencies/${id}`, updates);
+  }
+
+  // Cambiar estado de moneda (toggle)
+  toggleCurrencyStatus(id: number): Observable<Currency> {
+    return this.http.patch<Currency>(`${this.apiUrl}/currencies/${id}/toggle-status`, {});
+  }
+
+  // Eliminar moneda
+  deleteCurrency(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/currencies/${id}`);
   }
 }
