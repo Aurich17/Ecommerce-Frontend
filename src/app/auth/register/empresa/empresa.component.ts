@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormsModule,
@@ -27,10 +27,36 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import * as L from 'leaflet';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { MailService } from '../../../../services/mail/mail.service';
+import { ImagekitClient } from '../../../../services/imagekit.service';
 
-type Pais = { id: string; nombre: string; iso2: string };
-type Provincia = { id: string; nombre: string; paisId: string };
-type Municipio = { id: string; nombre: string; provId: string };
+interface Pais {
+  id: string;
+  nombre: string;
+  iso2: string;
+}
+interface Provincia {
+  id: string;
+  nombre: string;
+  paisId: string;
+}
+interface Municipio {
+  id: string;
+  nombre: string;
+  provId: string;
+}
+
+import {
+  EmpresaApiService,
+  RegistroEmpresaRequest,
+} from '../../../../services/empresa-api.service';
+import { ApiService } from '../../../../services/api.services';
+
+interface TipoUI {
+  id?: number | string;
+  desc: string;
+  cod: string;
+  parent?: string;
+}
 
 @Component({
   selector: 'app-empresa',
@@ -61,12 +87,41 @@ type Municipio = { id: string; nombre: string; provId: string };
   styleUrl: './empresa.component.css',
   providers: [MessageService],
 })
-export class EmpresaComponent {
+export class EmpresaComponent implements OnInit {
+  // En el constructor, agregar el servicio
   constructor(
     private router: Router,
     private messageService: MessageService,
-    private mailService: MailService
+    private mailService: MailService,
+    private ik: ImagekitClient,
+    private empresaApiService: EmpresaApiService,
+    private api: ApiService // Agregar esta línea
   ) {}
+
+  logoUrl: string | null = null;
+  // Documentos
+  selectedDocs: File[] = []; // seleccionados (pendientes)
+  listNegocios: TipoUI[] = [];
+  listCargos: TipoUI[] = [];
+  uploadedDocs: { name: string; url: string; type: string }[] = []; // subidos
+  uploadingDocs = false;
+
+  private COUNTRY_MAP: Record<string, string> = {
+    peru: 'pe',
+    perú: 'pe',
+    mexico: 'mx',
+    méxico: 'mx',
+    spain: 'es',
+    españa: 'es',
+    colombia: 'co',
+    argentina: 'ar',
+    chile: 'cl',
+    ecuador: 'ec',
+    bolivia: 'bo',
+    paraguay: 'py',
+    uruguay: 'uy',
+    venezuela: 've',
+  };
 
   visible = false;
   items: MenuItem[] = [
@@ -74,13 +129,18 @@ export class EmpresaComponent {
     { label: 'Ubicación' },
     { label: 'Representante Legal' },
     { label: 'Credenciales' },
+    { label: 'Documentos' },
     { label: 'Confirmación' },
   ];
+
+  private searchTimeout: any;
+  private searchAbort?: AbortController; // <- NUEVO
+  private lastQueryId = 0; // <- para ignorar respuestas viejas
+  isSearching = false;
 
   listaTipoNegocio: any[] = [];
   listaCiudad: any[] = [];
   listaDepartamento: any[] = [];
-  listaCargo: any[] = [];
 
   listPaises: any[] = [];
   listProvincias: any[] = [];
@@ -112,6 +172,16 @@ export class EmpresaComponent {
     { id: 'ES-CT-BCN', nombre: 'Barcelona', provId: 'ES-CT' },
   ];
 
+  private detectCountryFromQuery(q: string): string | null {
+    const lower = q
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .toLowerCase();
+    for (const name in this.COUNTRY_MAP) {
+      if (lower.includes(name)) return this.COUNTRY_MAP[name];
+    }
+    return null;
+  }
   loadingPais = false;
   loadingProv = false;
   loadingMun = false;
@@ -155,6 +225,9 @@ export class EmpresaComponent {
   });
 
   ngOnInit(): void {
+    this.cargarNegocio();
+    this.cargarCargos();
+    this.logoUrl = localStorage.getItem('logoUrl');
     this.listPaises = this.PAISES;
     this.basicForm.get('pais')!.valueChanges.subscribe((paisId) => {
       this.basicForm.patchValue(
@@ -208,16 +281,65 @@ export class EmpresaComponent {
       });
       return;
     }
+    // Validación para la sección de documentos
+    if (this.activeIndex === 4) {
+      if (this.selectedDocs.length === 0 && this.uploadedDocs.length === 0) {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Documentos Requeridos',
+          detail: 'Debe seleccionar al menos un documento para continuar.',
+        });
+        return;
+      }
+    }
     this.activeIndex++;
+  }
+
+  clearPickedDocs() {
+    this.selectedDocs = [];
+  }
+
+  removeUploadedDoc(i: number) {
+    this.uploadedDocs.splice(i, 1);
+  }
+
+  async uploadPickedDocs() {
+    if (!this.selectedDocs.length) return;
+    this.uploadingDocs = true;
+    try {
+      for (const f of this.selectedDocs) {
+        // carpeta separada para empresas
+        const res: any = await this.ik.uploadAndSave(f, '/empresas', [
+          'empresa',
+          'documento',
+        ]);
+        // si es imagen, genera URL transformada; si es PDF, usa la URL directa
+        const isImage = (f.type || '').startsWith('image/');
+        const url = isImage
+          ? this.ik.url({ path: res.filePath }, { w: 1200, q: 80, f: 'auto' })
+          : res.url;
+
+        this.uploadedDocs.push({ name: f.name, url, type: f.type });
+      }
+      this.selectedDocs = [];
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Documentos',
+        detail: 'Documentos subidos.',
+      });
+    } catch (err: any) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error al subir',
+        detail: err?.message || 'Intenta de nuevo.',
+      });
+    } finally {
+      this.uploadingDocs = false;
+    }
   }
 
   prev() {
     this.activeIndex = Math.max(this.activeIndex - 1, 0);
-  }
-
-  async finish() {
-    this.visible = true;
-    this.enviarCorreo();
   }
 
   copy() {
@@ -283,8 +405,6 @@ export class EmpresaComponent {
   searchAddress = '';
   searchResults: any[] = [];
   showSearchResults = false;
-  isSearching = false;
-  private searchTimeout: any;
 
   onMapReady(map: L.Map) {
     this.map = map;
@@ -410,105 +530,166 @@ export class EmpresaComponent {
   }
 
   searchAddressOnMap() {
-    // Limpiar timeout anterior
-    if (this.searchTimeout) {
-      clearTimeout(this.searchTimeout);
-    }
+    // Debounce más largo y mínimo de caracteres
+    if (this.searchTimeout) clearTimeout(this.searchTimeout);
 
-    if (!this.searchAddress.trim()) {
+    const q = (this.searchAddress || '').trim();
+    if (q.length < 3) {
+      // si borran o hay poco texto, limpia resultados
+      this.cancelSearch();
       this.searchResults = [];
       this.showSearchResults = false;
       this.isSearching = false;
       return;
     }
 
-    // Debounce de 300ms para búsqueda más responsiva
     this.searchTimeout = setTimeout(() => {
-      this.performSearch();
-    }, 300);
+      this.performSearch(false); // false => no mostrar toasts si no hay resultados mientras escribe
+    }, 600);
   }
 
   // Método para búsqueda inmediata (cuando se hace clic en el botón)
   searchImmediately() {
-    if (this.searchTimeout) {
-      clearTimeout(this.searchTimeout);
-    }
-    if (this.searchAddress.trim()) {
-      this.performSearch();
-    }
+    if (this.searchTimeout) clearTimeout(this.searchTimeout);
+    const q = (this.searchAddress || '').trim();
+    if (q.length < 3) return;
+    this.performSearch(true); // true => fue intención explícita (Enter/botón)
   }
 
-  private performSearch() {
-    if (!this.searchAddress.trim()) {
-      return;
-    }
+  private cancelSearch() {
+    try {
+      this.searchAbort?.abort();
+    } catch {}
+    this.searchAbort = undefined;
+  }
+  private performSearch(showNoResultsToast: boolean) {
+    const raw = (this.searchAddress || '').trim();
+    if (!raw) return;
 
+    // 1) Cancela la búsqueda anterior
+    this.cancelSearch();
+    const abort = new AbortController();
+    this.searchAbort = abort;
     this.isSearching = true;
 
-    // Agregar más países si es necesario
-    const searchQuery = encodeURIComponent(this.searchAddress.trim());
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${searchQuery}&limit=8&addressdetails=1&countrycodes=pe,mx,es,co,ar,cl,ec,bo,py,uy,ve`;
+    // 2) ¿El usuario especificó país en el texto?
+    const detectedCC = this.detectCountryFromQuery(raw); // ej. "pe"
+    // 3) País desde el formulario (para sesgo por defecto)
+    const paisId = (this.basicForm.get('pais')?.value as string | null) || '';
+    const fallbackCCs = 'pe,mx,es,co,ar,cl,ec,bo,py,uy,ve';
 
-    fetch(url)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`Error HTTP: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        this.isSearching = false;
+    // 4) Limpia el query si contiene el país al final (opcional)
+    const cleaned = raw.replace(
+      /\s*,\s*(per[uú]|mexico|m[eé]xico|espa[ñn]a|spain|colombia|argentina|chile|ecuador|bolivia|paraguay|uruguay|venezuela)\s*$/i,
+      ''
+    );
+    const q = encodeURIComponent(cleaned || raw);
 
-        if (!Array.isArray(data)) {
-          throw new Error('Respuesta inválida del servidor');
-        }
+    // 5) Construye URL en modo “dirigido” si hay país explícito;
+    //    si no, usa viewbox como sesgo (bounded=1 opcional)
+    let viewboxParam = '';
+    let boundedParam = '';
+    if (!detectedCC && this.map) {
+      const b = this.map.getBounds();
+      const sw = b.getSouthWest();
+      const ne = b.getNorthEast();
+      viewboxParam = `&viewbox=${sw.lng},${sw.lat},${ne.lng},${ne.lat}`;
+      boundedParam = '&bounded=1'; // <- si quieres solo sesgo, quita esta línea
+    }
 
-        this.searchResults = data
-          .map((item: any) => ({
-            display_name: item.display_name,
-            lat: parseFloat(item.lat),
-            lon: parseFloat(item.lon),
-            address: item.address || {},
-            importance: item.importance || 0,
-            place_id: item.place_id,
-          }))
-          .sort((a: any, b: any) => b.importance - a.importance); // Ordenar por relevancia
+    const countryCodes = detectedCC
+      ? detectedCC
+      : paisId
+      ? paisId.toLowerCase()
+      : fallbackCCs;
 
-        this.showSearchResults = true;
+    const baseUrl =
+      `https://nominatim.openstreetmap.org/search` +
+      `?format=jsonv2` +
+      `&q=${q}` +
+      `&limit=8` +
+      `&addressdetails=1` +
+      `&accept-language=es` +
+      `&countrycodes=${countryCodes}` +
+      `${viewboxParam}${detectedCC ? '' : boundedParam}` + // ojo: si hay país detectado, NO bounded
+      `&dedupe=1`;
 
-        if (this.searchResults.length === 0) {
+    const queryId = ++this.lastQueryId;
+
+    const runFetch = (url: string, isFallback = false) => {
+      fetch(url, { signal: abort.signal })
+        .then((res) => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.json();
+        })
+        .then((data) => {
+          if (queryId !== this.lastQueryId) return; // respuesta vieja, ignorar
+
+          this.isSearching = false;
+          if (!Array.isArray(data)) throw new Error('Respuesta inválida');
+
+          this.searchResults = data
+            .map((item: any) => ({
+              display_name: item.display_name,
+              lat: parseFloat(item.lat),
+              lon: parseFloat(item.lon),
+              address: item.address || {},
+              importance: item.importance || 0,
+              place_id: item.place_id,
+            }))
+            .sort((a: any, b: any) => b.importance - a.importance);
+
+          this.showSearchResults = this.searchResults.length > 0;
+
+          // 6) Fallback: si no hay resultados y NO hemos intentado global
+          if (!this.searchResults.length && !isFallback) {
+            const globalUrl =
+              `https://nominatim.openstreetmap.org/search` +
+              `?format=jsonv2` +
+              `&q=${q}` +
+              `&limit=8` +
+              `&addressdetails=1` +
+              `&accept-language=es` +
+              `&countrycodes=${fallbackCCs}`; // sin viewbox ni bounded
+            this.isSearching = true;
+            runFetch(globalUrl, true);
+            return;
+          }
+
+          if (!this.searchResults.length && showNoResultsToast) {
+            this.messageService.add({
+              severity: 'info',
+              summary: 'Sin resultados',
+              detail: `No se encontraron direcciones para "${raw}". Intenta ser más específico.`,
+              life: 4000,
+            });
+          }
+        })
+        .catch((err) => {
+          if (err?.name === 'AbortError') return; // cancelado
+
+          if (queryId !== this.lastQueryId) return;
+          this.isSearching = false;
+
+          const msg = String(err?.message || '');
+          let detail = 'No se pudo realizar la búsqueda.';
+          if (msg.includes('HTTP'))
+            detail = 'Error del servidor de mapas. Intenta nuevamente.';
+          else if (msg.includes('Failed to fetch'))
+            detail = 'Sin conexión a internet. Verifica tu conexión.';
+
           this.messageService.add({
-            severity: 'info',
-            summary: 'Sin resultados',
-            detail: `No se encontraron direcciones para "${this.searchAddress}". Intenta con términos más específicos.`,
-            life: 4000,
+            severity: 'error',
+            summary: 'Error de búsqueda',
+            detail,
+            life: 5000,
           });
-        } else {
-          console.log(
-            `Encontrados ${this.searchResults.length} resultados para: ${this.searchAddress}`
-          );
-        }
-      })
-      .catch((err) => {
-        this.isSearching = false;
-        console.error('Error searching address:', err);
-
-        let errorMessage = 'No se pudo realizar la búsqueda de dirección.';
-        if (err.message.includes('HTTP')) {
-          errorMessage = 'Error del servidor de mapas. Intenta nuevamente.';
-        } else if (err.message.includes('Failed to fetch')) {
-          errorMessage = 'Sin conexión a internet. Verifica tu conexión.';
-        }
-
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error de búsqueda',
-          detail: errorMessage,
-          life: 5000,
+          this.searchResults = [];
+          this.showSearchResults = false;
         });
-        this.searchResults = [];
-        this.showSearchResults = false;
-      });
+    };
+
+    runFetch(baseUrl);
   }
 
   selectSearchResult(result: any) {
@@ -630,5 +811,321 @@ export class EmpresaComponent {
     this.searchResults = [];
     this.showSearchResults = false;
     this.isSearching = false;
+  }
+
+  // Método para formatear el tamaño del archivo
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  // Método para quitar un archivo específico
+  removeSelectedFile(index: number): void {
+    this.selectedDocs.splice(index, 1);
+  }
+
+  // Eventos de drag and drop
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    const target = event.target as HTMLElement;
+    target.classList.add('dragover');
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    const target = event.target as HTMLElement;
+    target.classList.remove('dragover');
+
+    const files = event.dataTransfer?.files;
+    if (files) {
+      this.handleFileSelection(files);
+    }
+  }
+
+  // Método auxiliar para manejar la selección de archivos
+  private handleFileSelection(files: FileList): void {
+    const pdfFiles = Array.from(files).filter(
+      (file) => file.type === 'application/pdf'
+    );
+    this.selectedDocs.push(...pdfFiles);
+  }
+
+  // Modificar el método onDocsPick existente
+  onDocsPick(event: any): void {
+    const files = event.target.files;
+    if (files) {
+      this.handleFileSelection(files);
+    }
+  }
+
+  // Modificar el método finish() para subir los documentos al finalizar
+  finish(): void {
+    // Primero subir los documentos si hay alguno seleccionado
+    if (this.selectedDocs.length > 0) {
+      this.uploadingDocs = true;
+      this.uploadPickedDocs()
+        .then(() => {
+          // Después de subir los documentos, proceder con el registro
+          this.proceedWithRegistration();
+        })
+        .catch((error) => {
+          console.error('Error al subir documentos:', error);
+          this.uploadingDocs = false;
+          // Mostrar mensaje de error al usuario
+        });
+    } else {
+      // Si no hay documentos, proceder directamente con el registro
+      this.proceedWithRegistration();
+    }
+  }
+
+  // Reemplazar el método proceedWithRegistration
+  private proceedWithRegistration(): void {
+    try {
+      // Preparar los datos según el formato de la API
+      const registroData: RegistroEmpresaRequest = this.prepararDatosRegistro();
+
+      // Llamar a la API de registro
+      this.empresaApiService.registrar(registroData).subscribe({
+        next: (response) => {
+          console.log('✅ Empresa registrada exitosamente:', response);
+
+          // Guardar el social security en el formulario
+          this.socialsecurity.patchValue({
+            socialsecurity: response.social_security,
+          });
+
+          // Mostrar mensaje de éxito
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Registro Exitoso',
+            detail: `Empresa registrada con código: ${response.social_security}`,
+            life: 5000,
+          });
+
+          // Mostrar el diálogo de éxito
+          this.visible = true;
+
+          // Opcional: enviar correo de confirmación
+          this.enviarCorreoConfirmacion(response.social_security);
+        },
+        error: (error) => {
+          console.error('❌ Error al registrar empresa:', error);
+
+          let errorMessage = 'Error al registrar la empresa';
+
+          if (error.status === 400) {
+            errorMessage =
+              'Datos de validación incorrectos. Verifique la información.';
+          } else if (error.status === 409) {
+            errorMessage = 'El email o RUC ya están registrados en el sistema.';
+          } else if (error.status === 500) {
+            errorMessage = 'Error interno del servidor. Intente nuevamente.';
+          }
+
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error de Registro',
+            detail: errorMessage,
+            life: 5000,
+          });
+        },
+        complete: () => {
+          this.uploadingDocs = false;
+        },
+      });
+    } catch (error) {
+      console.error('❌ Error al preparar datos:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Error al preparar los datos de registro',
+        life: 3000,
+      });
+      this.uploadingDocs = false;
+    }
+  }
+
+  // Nuevo método para preparar los datos según el formato de la API
+  private prepararDatosRegistro(): RegistroEmpresaRequest {
+    const basicValues = this.basicForm.value;
+    const ubicacionValues = this.ubicacionForm.value;
+    const representanteValues = this.representanteForm.value;
+    const credencialesValues = this.credencialesForm.value;
+
+    // Formatear fecha de fundación
+    let foundedOn: string | undefined;
+    if (basicValues.fechafundacion) {
+      const fecha = new Date(basicValues.fechafundacion);
+      foundedOn = fecha.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+    }
+
+    // Formatear teléfono a formato E.164
+    let phoneE164: string | undefined;
+    if (representanteValues.telefono) {
+      const phone =
+        (representanteValues.telefono as string | number | null)?.toString() ||
+        '';
+      // Asumiendo que el teléfono ya incluye código de país o agregar lógica de formateo
+      phoneE164 = phone.startsWith('+') ? phone : `+57${phone}`; // Ejemplo para Colombia
+    }
+
+    // Obtener URLs de documentos subidos
+    const docUrls = this.uploadedDocs.map((doc) => doc.url);
+
+    const registroData: RegistroEmpresaRequest = {
+      company_name: basicValues.nombrecompleto || '',
+      ruc: basicValues.ruc || '',
+      email: credencialesValues.correo || '',
+      password: credencialesValues.contrasenia || '',
+      phone_e164: phoneE164,
+      business_type_cod: this.mapearTipoNegocio(basicValues.tiponegocio),
+      country_cod: this.mapearCodigoPais(basicValues.pais),
+      province_cod: this.mapearCodigoProvincia(basicValues.provincia),
+      municipality_cod: this.mapearCodigoMunicipio(basicValues.ciudad),
+      founded_on: foundedOn,
+      employee_count: basicValues.numeroempleados || undefined,
+      fiscal_address: ubicacionValues.direccionfiscal || undefined,
+      city: ubicacionValues.ciudad || undefined,
+      postal_code: ubicacionValues.codigopostal || undefined,
+      website: ubicacionValues.sitioweb || undefined,
+      doc_urls: docUrls.length > 0 ? docUrls : undefined,
+      role_id: 2, // Rol de empresa según la documentación
+    };
+
+    return registroData;
+  }
+
+  // Métodos auxiliares para mapear códigos
+  private mapearTipoNegocio(
+    tipoId: number | null | undefined
+  ): string | undefined {
+    if (!tipoId) return undefined;
+
+    // Mapear según los tipos de negocio disponibles en tu sistema
+    const tiposMap: Record<number, string> = {
+      1: 'COMERCIO',
+      2: 'SERVICIOS',
+      3: 'MANUFACTURA',
+      4: 'TECNOLOGIA',
+      // Agregar más según tu catálogo
+    };
+
+    return tiposMap[tipoId];
+  }
+
+  private mapearCodigoPais(paisId: string | null | undefined): string {
+    if (!paisId) return 'COL'; // Default Colombia
+
+    // Mapear IDs internos a códigos ISO
+    const paisesMap: Record<string, string> = {
+      PE: 'COL', // Ejemplo: mapear Perú a Colombia
+      MX: 'MEX',
+      ES: 'ESP',
+      CO: 'COL',
+      // Agregar más según tu catálogo
+    };
+
+    return paisesMap[paisId] || paisId;
+  }
+
+  private mapearCodigoProvincia(
+    provinciaId: string | null | undefined
+  ): string {
+    if (!provinciaId) return 'ANT'; // Default Antioquia
+
+    // Mapear IDs internos a códigos de provincia
+    const provinciasMap: Record<string, string> = {
+      'PE-LIM': 'ANT', // Ejemplo
+      'PE-CUS': 'BOG',
+      'MX-JAL': 'JAL',
+      // Agregar más según tu catálogo
+    };
+
+    return provinciasMap[provinciaId] || provinciaId;
+  }
+
+  private mapearCodigoMunicipio(
+    municipioId: string | null | undefined
+  ): string {
+    if (!municipioId) return 'MED'; // Default Medellín
+
+    // Mapear IDs internos a códigos de municipio
+    const municipiosMap: Record<string, string> = {
+      'PE-LIM-MIR': 'MED', // Ejemplo
+      'PE-LIM-SIS': 'MED',
+      'MX-JAL-GDL': 'GDL',
+      // Agregar más según tu catálogo
+    };
+
+    return municipiosMap[municipioId] || municipioId;
+  }
+
+  // Método opcional para enviar correo de confirmación
+  private enviarCorreoConfirmacion(socialSecurity: string): void {
+    const representanteValues = this.representanteForm.value;
+    const basicValues = this.basicForm.value;
+    const to = representanteValues.correo || '';
+    const subject = 'Empresa registrada exitosamente';
+    const text = `
+      <div style="background-color:#f4f4f4; padding:30px; font-family:Arial, sans-serif;">
+        <div style="max-width:600px; margin:0 auto; background-color:#ffffff; border-radius:8px; padding:30px; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+          <h2 style="text-align:center; color:#333;">¡Empresa registrada exitosamente!</h2>
+          <p style="font-size:16px; color:#555; text-align:center;">
+            Estimado/a representante de <strong>${basicValues.nombrecompleto}</strong>,<br><br>
+            Su empresa ha sido registrada exitosamente en nuestra plataforma.
+          </p>
+          <div style="background-color:#f8f9fa; padding:20px; border-radius:5px; margin:20px 0; text-align:center;">
+            <h3 style="color:#333; margin:0;">Código de Seguridad Social</h3>
+            <p style="font-size:24px; font-weight:bold; color:#007bff; margin:10px 0;">${socialSecurity}</p>
+            <p style="font-size:14px; color:#666;">Guarde este código para futuras referencias</p>
+          </div>
+          <p style="font-size:16px; color:#555; text-align:center; margin-top:20px;">
+            Gracias por confiar en nosotros.
+          </p>
+          <p style="font-size:14px; color:#888; text-align:center; margin-top:30px;">
+            Atentamente,<br>
+            El equipo de FiaoX
+          </p>
+        </div>
+      </div>
+    `;
+
+    this.mailService.sendMail(to, subject, text).subscribe({
+      next: (res) => {
+        console.log('✅ Correo de confirmación enviado:', res);
+      },
+      error: (err) => {
+        console.error('❌ Error al enviar correo de confirmación:', err);
+      },
+    });
+  }
+
+  private normalize(list: any[]): TipoUI[] {
+    return (list ?? []).map((x) => ({
+      id: x.id ?? x.ID ?? x.cod ?? x.codigo ?? x.cod_tipo,
+      desc: x.desc ?? x.des_tipo ?? x.nombre ?? x.descripcion ?? '',
+      cod: x.cod ?? x.codigo ?? x.cod_tipo ?? '',
+      parent: x.parent ?? x.parent_id ?? x.parentCod ?? undefined, // <- añade esto
+    }));
+  }
+
+  private cargarNegocio(): void {
+    this.api.obtenerTipos('NEG').subscribe({
+      next: (data: any[]) => (this.listNegocios = this.normalize(data)),
+      error: () => (this.listNegocios = []),
+    });
+  }
+
+  private cargarCargos(): void {
+    this.api.obtenerTipos('CAR').subscribe({
+      next: (data: any[]) => (this.listCargos = this.normalize(data)),
+      error: () => (this.listCargos = []),
+    });
   }
 }

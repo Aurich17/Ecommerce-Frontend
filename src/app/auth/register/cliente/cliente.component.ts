@@ -30,7 +30,7 @@ import { DividerModule } from 'primeng/divider';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { CardModule } from 'primeng/card';
-import { finalize, distinctUntilChanged } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 import { DialogModule } from 'primeng/dialog';
 import { AuthService } from '../../../../services/auth.services';
 import { SessionService } from '../../../../services/session/session.service';
@@ -38,12 +38,12 @@ import { ImagekitClient } from '../../../../services/imagekit.service';
 import { MailService } from '../../../../services/mail/mail.service';
 
 // Tipo normalizado para usar SIEMPRE desc/cod
-type TipoUI = {
+interface TipoUI {
   id?: number | string;
   desc: string;
   cod: string;
   parent?: string;
-};
+}
 
 type IntlTelOptions = NonNullable<Parameters<typeof intlTelInput>[1]>;
 
@@ -81,13 +81,14 @@ export class ClienteComponent implements OnInit, AfterViewInit {
   private ik = inject(ImagekitClient);
   private auth = inject(AuthService);
   private session = inject(SessionService);
+  logoUrl: string | null = null;
 
   constructor(
     private api: ApiService,
     private router: Router,
     private messageService: MessageService,
     private mailService: MailService
-  ) { }
+  ) {}
 
   // ==== PHONE INPUT ====
   @ViewChild('phoneInput', { static: true })
@@ -193,6 +194,7 @@ export class ClienteComponent implements OnInit, AfterViewInit {
 
   // ================= LIFECYCLE =================
   ngOnInit(): void {
+    this.logoUrl = localStorage.getItem('logoUrl');
     this.cargarOcupaciones();
     this.cargarGeneros();
     this.listPaises = this.PAISES;
@@ -438,12 +440,13 @@ export class ClienteComponent implements OnInit, AfterViewInit {
               });
               this.visible = true;
               this.social_security = res.social_security;
-              this.cliente = `${personal.nombres || ''} ${personal.apellidos || ''
-                }`.trim();
+              this.cliente = `${personal.nombres || ''} ${
+                personal.apellidos || ''
+              }`.trim();
               this.socialsecurity
                 .get('socialsecurity')
                 ?.setValue(this.social_security);
-              this.enviarCorreo()
+              this.enviarCorreo();
             }
           },
           error: (err) => {
@@ -451,8 +454,9 @@ export class ClienteComponent implements OnInit, AfterViewInit {
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: `No se pudo registrar cliente. ${err?.error?.message || ''
-                }`,
+              detail: `No se pudo registrar cliente. ${
+                err?.error?.message || ''
+              }`,
               life: 3500,
             });
           },
@@ -500,8 +504,8 @@ export class ClienteComponent implements OnInit, AfterViewInit {
 
   errorMsg = '';
   enviarCorreo() {
-    const values = this.personalForm.value
-    const valuescorreo = this.credentialsForm.value
+    const values = this.personalForm.value;
+    const valuescorreo = this.credentialsForm.value;
     const to = valuescorreo.email || '';
     const subject = 'Cuenta registrada con éxito';
     const text = `
@@ -531,7 +535,7 @@ export class ClienteComponent implements OnInit, AfterViewInit {
       error: (err) => {
         console.error('❌ Error al enviar correo:', err);
         alert('Error al enviar correo');
-      }
+      },
     });
   }
 }

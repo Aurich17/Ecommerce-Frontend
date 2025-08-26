@@ -1,26 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import {
-  BehaviorSubject,
-  catchError,
-  forkJoin,
-  map,
-  Observable,
-  of,
-  shareReplay,
-  tap,
-  throwError,
-} from 'rxjs';
-import {
-  ciudadesResponse,
-  paisesResponse,
-  provinciasResponse,
-  RegisterClienteResponse,
-  tiposResponse,
-} from '../app/auth/register/domain/response/register.response';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { forkJoin, map, Observable } from 'rxjs';
+import { RegisterClienteResponse } from '../app/auth/register/domain/response/register.response';
 import { RegisterClienteRequest } from '../app/auth/register/domain/request/register.request';
 import { environment } from '../environments/environment';
-import { RequestTipos } from '../app/tipos/request/tipos.request';
 import {
   AccesoApi,
   MenuApi,
@@ -34,8 +17,6 @@ import {
   MenuResponseDto,
   MenuWithPermissionsDto,
   BulkUpdateResponse,
-  GetMenusResponse,
-  GetRolePermissionsResponse,
 } from '../app/admin/accesos/permisosrol/domain/permisos.response';
 import {
   BulkUpdatePermissionsDto,
@@ -51,7 +32,6 @@ import {
   Currency,
   CreateCurrencyDto,
   UpdateCurrencyDto,
-  CurrencyListResponse,
 } from '../app/admin/mantenimiento/monedas/domain/monedas.response';
 import { CurrencyFilters } from '../app/admin/mantenimiento/monedas/domain/monedas.request';
 @Injectable({

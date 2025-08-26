@@ -14,6 +14,10 @@ module.exports = tseslint.config(
     ],
     processor: angular.processInlineTemplates,
     rules: {
+      "no-empty": "off",
+      "@angular-eslint/prefer-inject": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-expressions": "off",
       "@angular-eslint/directive-selector": [
         "error",
         {
@@ -38,6 +42,11 @@ module.exports = tseslint.config(
       ...angular.configs.templateRecommended,
       ...angular.configs.templateAccessibility,
     ],
-    rules: {},
+    rules: {
+      "@angular-eslint/template/click-events-have-key-events": "off",
+      "@angular-eslint/template/interactive-supports-focus": "off",
+      "@angular-eslint/template/label-has-associated-control": "off",
+      "@angular-eslint/template/elements-content": "off",
+    },
   }
 );

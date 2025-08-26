@@ -15,6 +15,7 @@ import { MenubarModule } from 'primeng/menubar';
 
 import { StoreItem } from './domain/response/marketplace.response';
 import { UsersApi } from '../../services/users.api';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-marketplace',
@@ -58,7 +59,7 @@ export class MarketplaceComponent implements OnInit {
   visibleStores: StoreItem[] = [];
   loading = false;
 
-  constructor(private usersApi: UsersApi) {}
+  constructor(private usersApi: UsersApi, private router: Router) {}
   ngOnInit() {
     this.fetch();
   }
@@ -99,17 +100,27 @@ export class MarketplaceComponent implements OnInit {
       .subscribe({
         next: (res) => {
           console.log('Usuarios/Empresas:', res);
-          this.visibleStores = res.data.items.map((u) => ({
-            id: u.id,
-            name: u.fullName,
-            welcome: `Bienvenido a la tienda ${u.fullName}`,
-            address: '—',
-            province: '—',
-            city: '—',
-            representative: '—',
-            avatarText: (u.fullName?.[0] || '?').toUpperCase(),
-          }));
-          this.total = res.data.total;
+
+          // Verificar que res.data existe y es un array
+          if (res && res.data && Array.isArray(res.data)) {
+            this.visibleStores = res.data.map((u) => ({
+              id: u.id,
+              name: u.fullName,
+              welcome: `Bienvenido a la tienda ${u.fullName}`,
+              address: '—',
+              province: '—',
+              city: '—',
+              representative: '—',
+              avatarText: (u.fullName?.[0] || '?').toUpperCase(),
+            }));
+            // Como no hay total en la respuesta, usar la longitud del array
+            this.total = res.data.length;
+          } else {
+            console.warn('Estructura de respuesta inesperada:', res);
+            this.visibleStores = [];
+            this.total = 0;
+          }
+
           this.loading = false;
         },
         error: (err) => {
@@ -121,7 +132,7 @@ export class MarketplaceComponent implements OnInit {
       });
   }
 
-  viewProducts(store: StoreItem) {
-    console.log('Ver productos de', store.name);
+  viewProducts(store: any) {
+    this.router.navigate(['/principal/store-products', store.id]);
   }
 }

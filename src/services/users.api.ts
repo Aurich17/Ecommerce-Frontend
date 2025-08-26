@@ -5,7 +5,7 @@ import { environment } from '../environments/environment';
 export interface UsersListResponse {
   success: boolean;
   data: {
-    items: Array<{ id: string; fullName: string /* ... */ }>;
+    items: { id: string; fullName: string /* ... */ }[];
     total: number;
     page: number;
     limit: number;

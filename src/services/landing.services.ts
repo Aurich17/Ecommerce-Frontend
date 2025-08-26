@@ -1,20 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import {
-  BehaviorSubject,
-  catchError,
-  Observable,
-  of,
-  shareReplay,
-  tap,
-  throwError,
-} from 'rxjs';
-import {
-  ciudadesResponse,
-  paisesResponse,
-  provinciasResponse,
-  tiposResponse,
-} from '../app/auth/register/domain/response/register.response';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { EncabezadoResponse } from '../app/admin/landing/encabezado/domain/response/encabezado.response';
 import {
   AudienceRequest,
@@ -29,7 +15,6 @@ import {
   getLandingFAQResponse,
   getLandingFeaturesResponse,
 } from '../app/admin/landing/cuerpo/domain/cuerpo.response';
-import { getMantTiposResponse } from '../app/admin/accesos/roles/domain/roles.response';
 import { getMantUsuariosRequest } from '../app/admin/accesos/usuarios/domain/usuarios.request';
 import { getMantUsuariosResponse } from '../app/admin/accesos/usuarios/domain/usuarios.response';
 import {

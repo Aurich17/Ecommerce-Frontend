@@ -1,14 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { CarouselModule } from 'primeng/carousel';
 import { AccordionModule } from 'primeng/accordion';
 import { Router, RouterModule } from '@angular/router';
-import { ApiService } from '../../services/api.services';
+// import { ApiService } from '../../services/api.services';
 import { LandingService } from '../../services/landing.services';
 import { EncabezadoResponse } from '../admin/landing/encabezado/domain/response/encabezado.response';
 import { ImagekitClient } from '../../services/imagekit.service';
-import { getLandingAudienceResponse } from '../admin/landing/quienes/domain/quienes.response';
+// import { getLandingAudienceResponse } from '../admin/landing/quienes/domain/quienes.response';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AvatarModule } from 'primeng/avatar';
 import { moveItemInArray, CdkDragDrop } from '@angular/cdk/drag-drop';
@@ -16,13 +16,13 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { GalleriaModule } from 'primeng/galleria';
 import { SliderDto } from '../admin/landing/slider/domain/slider.dto';
 
-type UploadItem = {
+interface UploadItem {
   file: File;
   progress: number;
   url?: string;
   thumb?: string;
   error?: string;
-};
+}
 @Component({
   selector: 'app-landing',
   standalone: true,
@@ -39,7 +39,7 @@ type UploadItem = {
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css',
 })
-export class LandingComponent {
+export class LandingComponent implements OnInit {
   slides: SliderDto[] = [];
   loadingSlides = false;
   uploads: UploadItem[] = [];
@@ -139,6 +139,9 @@ export class LandingComponent {
           ...data,
           updated_at: new Date(data.updated_at),
         };
+        if (data.logoUrl) {
+          localStorage.setItem('logoUrl', data.logoUrl);
+        }
       },
       error: (err) => console.error('Error fetching encabezado:', err),
     });

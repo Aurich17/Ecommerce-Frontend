@@ -2,8 +2,10 @@
     <div class="flex justify-content-between w-full">
         <div class="text-lg font-bold">Solicitudes</div>
         <div class="flex gap-2 w-5">
-            <input pInputText formControlName="nombreapellido" [readOnly]="true"
-                placeholder="Buscar por nombre o apellido..." class="text-xs w-full" />
+            <input pInputText 
+                   placeholder="Buscar por nombre o email..." 
+                   class="text-xs w-full" 
+                   (input)="onSearch($any($event.target).value)" />
             <p-button icon="pi pi-file-excel" styleClass="text-sm" iconPos="left" label="Excel" severity="success"
                 (onClick)="exportExcel()" />
             <p-button icon="pi pi-file-o" styleClass="text-sm" iconPos="left" label="Csv" (onClick)="exportCsv()" />
@@ -12,42 +14,60 @@
         </div>
     </div>
     <div class="pt-3 w-full">
-        <p-selectButton [options]="optionsFiltro" formControlName="selectfiltro" optionLabel="label" optionValue="value"
-            class="filtrobandeja" />
+        <p-selectButton [options]="optionsFiltro" 
+                        optionLabel="label" 
+                        optionValue="value"
+                        class="filtrobandeja" 
+                        (onChange)="onStatusFilter($event.value)" />
     </div>
     <div class="pt-3">
-        <p-table [value]="solicitudesTable" class="w-full" dataKey="id" editMode="row">
+        <p-table [value]="usersWithDocuments" 
+                 class="w-full" 
+                 dataKey="id" 
+                 [loading]="loading"
+                 [paginator]="true"
+                 [rows]="pageSize"
+                 [totalRecords]="totalUsers"
+                 [lazy]="true"
+                 (onLazyLoad)="onPageChange($event)">
             <ng-template pTemplate="header">
                 <tr>
                     <th class="text-sm">ID</th>
-                    <th class="text-sm">Cliente</th>
+                    <th class="text-sm">Nombre Completo</th>
+                    <th class="text-sm">Email</th>
                     <th class="text-sm">Estado</th>
-                    <th class="text-sm">Descripción</th>
+                    <th class="text-sm">Rol Principal</th>
+                    <th class="text-sm">Documentos</th>
                     <th class="text-sm">Creado el</th>
                     <th class="text-sm">Acciones</th>
                 </tr>
             </ng-template>
 
-            <ng-template pTemplate="body" let-product>
+            <ng-template pTemplate="body" let-user>
                 <tr>
-                    <td>{{product.id}}</td>
-                    <td>{{product.cliente}}</td>
-                    <td><p-tag [value]="product.estado" [severity]="getSeverity(product.estado)" /></td>
-                    <td>{{product.descripcion}}</td>
-                    <td>{{product.fechacreacion}}</td>
+                    <td>{{user.id}}</td>
+                    <td>{{user.fullName}}</td>
+                    <td>{{user.email}}</td>
+                    <td><p-tag [value]="user.status" [severity]="getSeverity(user.status)"></p-tag></td>
+                    <td>{{user.primaryRole}}</td>
+                    <td>
+                        <p-badge [value]="user.documents.length" severity="info"></p-badge>
+                    </td>
+                    <td>{{user.createdAt | date:'short'}}</td>
                     <td>
                         <p-button icon="pi pi-pencil" [rounded]="true" [text]="true"
-                            (onClick)="onEditPoppup(product)" />
+                            (onClick)="onEditPoppup(user)" />
                         <p-button icon="pi pi-trash" [rounded]="true" [text]="true"
-                            (onClick)="onDeleteRow(product.id)" />
+                            (onClick)="onDeleteRow(user.id)" />
                     </td>
                 </tr>
             </ng-template>
         </p-table>
     </div>
 </form>
+
 <p-dialog header="Actualizar Solicitud" [modal]="true" [(visible)]="visible"
-    [style]="{ width: '50rem', height: '37rem' }">
+    [style]="{ width: '60rem', height: '45rem' }">
     <div class="text-sm">
         Cambia el estado de esta solicitud (aprobar o rechazar)
     </div>
@@ -56,6 +76,8 @@
             <div><p-selectButton [options]="stateOptions" formControlName="select" optionLabel="label"
                     optionValue="value" (onChange)="mostrarSeccion($event)" styleClass="w-full" class="filtrobtn" />
             </div>
+            
+            <!-- Sección de información del cliente -->
             <div *ngIf="infocliente" class="pt-4 w-full flex flex-column">
                 <div class="pt-4 w-full flex gap-2">
                     <div class="p-field p-col-12 flex flex-column gap-3 w-6">
@@ -77,22 +99,35 @@
                         <input pInputText formControlName="socialsecurity" class="w-full" [readOnly]="true" />
                     </div>
                 </div>
-
             </div>
+            
+            <!-- Sección para mostrar documentos -->
             <div *ngIf="!infocliente" class="pt-4 w-full">
-                <div class="pt-3 w-full flex gap-2">
-                    <div class="p-field p-col-12 flex flex-column gap-3 w-6">
-                        <label class="font-bold text-sm">Foto Validación</label>
-                        <div class="w-full h-9rem" [ngStyle]="{'background-image': 'url(' + fotovalidacion + ')'}">
+                <div class="pt-3 w-full">
+                    <label class="font-bold text-sm">Documentos del Usuario</label>
+                    <div class="grid pt-2" *ngIf="userDocuments && userDocuments.length > 0">
+                        <div class="col-6" *ngFor="let doc of userDocuments">
+                            <div class="p-3 border-1 border-300 border-round">
+                                <div class="flex flex-column gap-2">
+                                    <label class="font-bold text-xs">{{doc.documentType}}</label>
+                                    <img [src]="doc.imageUrl" 
+                                         [alt]="doc.fileName" 
+                                         class="w-full h-8rem object-cover border-round"
+                                         style="cursor: pointer;"
+                                         (click)="viewDocument(doc.imageUrl)" />
+                                    <small class="text-xs text-500">{{doc.fileName}}</small>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="p-field p-col-12 flex flex-column gap-3 w-6">
-                        <label class="font-bold text-sm">Documento</label>
-                        <div class="w-full h-9rem" [ngStyle]="{'background-image': 'url(' + fotodocumento + ')'}">
-                        </div>
+                    <div *ngIf="!userDocuments || userDocuments.length === 0" class="text-center p-4">
+                        <i class="pi pi-file text-4xl text-300"></i>
+                        <p class="text-500 mt-2">No hay documentos disponibles</p>
                     </div>
                 </div>
             </div>
+            
+            <!-- Sección de estado y motivo de rechazo -->
             <div class="pt-3 w-full">
                 <div class="pt-3 w-full flex gap-2">
                     <div class="p-field p-col-12 flex flex-column gap-3 w-6">
@@ -100,7 +135,6 @@
                         <p-dropdown formControlName="estado" [options]="listaEstado" optionLabel="label"
                             optionValue="label" styleClass="w-full" appendTo="body" />
                     </div>
-
                 </div>
             </div>
             <div class="pt-3 w-full flex gap-2">
@@ -114,5 +148,15 @@
                 <p-button [label]="labelbtn" severity="warning" [loading]="loading" (onClick)="actualizarCliente()" />
             </div>
         </form>
+    </div>
+</p-dialog>
+
+<!-- Modal para visualizar documentos -->
+<p-dialog header="Visualizar Documento" [modal]="true" [(visible)]="documentViewVisible"
+    [style]="{ width: '70rem', height: '80vh' }">
+    <div class="flex justify-content-center align-items-center h-full">
+        <img [src]="selectedDocumentUrl" 
+             alt="Documento" 
+             class="max-w-full max-h-full object-contain" />
     </div>
 </p-dialog>

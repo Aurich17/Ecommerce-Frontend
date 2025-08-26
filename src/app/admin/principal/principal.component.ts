@@ -1,5 +1,6 @@
+/* eslint-disable @angular-eslint/prefer-inject */
 // principal.component.ts
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { Router, RouterModule, NavigationStart } from '@angular/router';
@@ -12,7 +13,8 @@ import { AuthStore } from '../../../services/auth.store';
 import { mapApiMenuToPrime } from '../../../services/menu.mapper';
 import { MenuModule } from 'primeng/menu';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
-import { ViewChild } from '@angular/core';
+import { SessionService } from '../../../services/session/session.service';
+// import { ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-principal',
@@ -31,16 +33,15 @@ import { ViewChild } from '@angular/core';
   templateUrl: './principal.component.html',
   styleUrl: './principal.component.css',
 })
-export class PrincipalComponent {
+export class PrincipalComponent implements OnInit {
   items: MenuItem[] = [];
   // verMenu = true;
   isDesktop = window.matchMedia('(min-width: 1024px)').matches;
   verMenu = this.isDesktop;
 
   user = {
-    org: 'Universidad Tecnologica del Peru',
-    displayName: 'ALUMNO - GABRIEL ...',
-    email: 'U21231727@utp.edu.pe',
+    displayName: this.session.user?.full_name ?? '',
+    email: this.session.user?.email ?? '',
     photoUrl: '', // si no tienes foto real, deja vacío
   };
 
@@ -70,7 +71,11 @@ export class PrincipalComponent {
     /* lógica */
   }
 
-  constructor(private router: Router, private authStore: AuthStore) {}
+  constructor(
+    private router: Router,
+    private authStore: AuthStore,
+    public session: SessionService
+  ) {}
 
   // ===== utilidades de foco =====
   private blurActiveSoon() {

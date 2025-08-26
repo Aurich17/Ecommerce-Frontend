@@ -7,7 +7,20 @@
   >
     <!-- Título general -->
     <div class="text-center mb-6">
-      <h2 class="text-2xl font-bold text-orange-500 mb-1">FiaoX</h2>
+      <a routerLink="/" class="inline-block">
+        <img
+          *ngIf="logoUrl; else defaultLogo"
+          [src]="logoUrl"
+          alt="Logo"
+          [style.height.px]="32"
+          style="width: auto; display: block; margin: 0 auto"
+        />
+      </a>
+
+      <ng-template #defaultLogo>
+        <h2 class="text-xl font-bold text-orange-500 mb-1">FiaoX</h2>
+      </ng-template>
+
       <p class="text-sm text-gray-600">Registro de Empresa</p>
     </div>
 
@@ -44,9 +57,9 @@
             <label class="font-bold" for="tiponegocio">Tipo de Negocio</label>
             <p-dropdown
               formControlName="tiponegocio"
-              [options]="listaTipoNegocio"
-              optionLabel="label"
-              optionValue="value"
+              [options]="listNegocios"
+              optionLabel="desc"
+              optionValue="cod"
               inputId="tiponegocio"
             />
           </div>
@@ -205,10 +218,10 @@
                 pInputText
                 placeholder="Ej: Av. Javier Prado 123, San Isidro, Lima..."
                 [(ngModel)]="searchAddress"
+                [ngModelOptions]="{ standalone: true }"
                 (input)="searchAddressOnMap()"
                 (keyup.enter)="searchImmediately()"
                 class="w-full"
-                [disabled]="isSearching"
               />
               <span *ngIf="isSearching" class="p-inputgroup-addon">
                 <i class="pi pi-spin pi-spinner text-blue-500"></i>
@@ -233,7 +246,7 @@
             <div class="text-xs text-500 mt-1">
               Escribe una dirección y presiona Enter o haz clic en Buscar
             </div>
-            
+
             <!-- Resultados de búsqueda -->
             <div
               *ngIf="showSearchResults && searchResults.length > 0"
@@ -242,36 +255,49 @@
               <div class="p-2 surface-100 border-bottom-1 surface-border">
                 <span class="text-xs font-medium text-600">
                   <i class="pi pi-info-circle mr-1"></i>
-                  {{ searchResults.length }} resultado(s) encontrado(s). Haz clic para seleccionar:
+                  {{ searchResults.length }} resultado(s) encontrado(s). Haz
+                  clic para seleccionar:
                 </span>
               </div>
-              <div
+              <button
                 *ngFor="let result of searchResults; let i = index"
-                class="p-2 cursor-pointer hover:surface-hover border-bottom-1 surface-border transition-colors"
+                type="button"
+                class="p-2 w-full text-left hover:surface-hover border-bottom-1 surface-border transition-colors"
                 (click)="selectSearchResult(result)"
-                [class.surface-hover]="i === 0"
+                (keyup.enter)="selectSearchResult(result)"
+                (keyup.space)="selectSearchResult(result)"
+                [attr.aria-label]="
+                  'Seleccionar dirección: ' + result.display_name
+                "
               >
                 <div class="flex align-items-start gap-2">
                   <i class="pi pi-map-marker text-primary mt-1 text-sm"></i>
                   <div class="flex-1">
-                    <div class="text-sm font-medium text-900 line-height-3">{{ result.display_name }}</div>
+                    <div class="text-sm font-medium text-900 line-height-3">
+                      {{ result.display_name }}
+                    </div>
                     <div *ngIf="result.address" class="text-xs text-500 mt-1">
-                      {{ result.address.country || '' }}
-                      <span *ngIf="result.address.state"> • {{ result.address.state }}</span>
-                      <span *ngIf="result.address.postcode"> • CP: {{ result.address.postcode }}</span>
+                      {{ result.address.country || "" }}
+                      <span *ngIf="result.address.state">
+                        • {{ result.address.state }}</span
+                      >
+                      <span *ngIf="result.address.postcode">
+                        • CP: {{ result.address.postcode }}</span
+                      >
                     </div>
                   </div>
                 </div>
-              </div>
+              </button>
             </div>
           </div>
 
           <!-- Mapa -->
           <div class="field col-12">
-            <label class="font-bold block mb-2"
+            <label class="font-bold block mb-2" for="map-container"
               >Selecciona la ubicación en el mapa</label
             >
             <div
+              id="map-container"
               class="border-round surface-border surface-50 shadow-1"
               style="height: 350px; overflow: hidden"
               leaflet
@@ -279,7 +305,8 @@
               (leafletMapReady)="onMapReady($event)"
             ></div>
             <small class="text-500 block mt-2">
-              Busca una dirección arriba o haz clic en el mapa para seleccionar tu ubicación exacta
+              Busca una dirección arriba o haz clic en el mapa para seleccionar
+              tu ubicación exacta
             </small>
           </div>
           <div class="p-field p-col-12 flex justify-content-between mt-4 gap-4">
@@ -321,9 +348,9 @@
             <label class="font-bold" for="cargo">Cargo</label>
             <p-dropdown
               formControlName="cargo"
-              [options]="listaCargo"
-              optionLabel="label"
-              optionValue="value"
+              [options]="listCargos"
+              optionLabel="desc"
+              optionValue="cod"
               inputId="cargo"
             />
           </div>
@@ -376,6 +403,95 @@
         </div>
       </form>
 
+      <div *ngSwitchCase="4" class="p-4">
+        <div class="document-upload-container">
+          <h3 class="document-title">Documentos de la empresa</h3>
+          <p class="document-description">
+            Selecciona los documentos PDF que deseas adjuntar. Se subirán
+            automáticamente al finalizar el registro.
+          </p>
+
+          <!-- Área de selección de archivos mejorada -->
+          <div class="file-upload-area">
+            <div
+              class="upload-zone"
+              (click)="fileInput.click()"
+              (dragover)="onDragOver($event)"
+              (drop)="onDrop($event)"
+            >
+              <i class="pi pi-cloud-upload upload-icon"></i>
+              <p class="upload-text">Haz clic aquí o arrastra archivos PDF</p>
+              <p class="upload-subtext">Solo se permiten archivos PDF</p>
+              <input
+                #fileInput
+                type="file"
+                multiple
+                accept=".pdf"
+                (change)="onDocsPick($event)"
+                style="display: none"
+              />
+            </div>
+          </div>
+
+          <!-- Lista de archivos seleccionados -->
+          <div *ngIf="selectedDocs.length" class="selected-files">
+            <h4 class="files-title">
+              Archivos seleccionados ({{ selectedDocs.length }})
+            </h4>
+            <div class="file-list">
+              <div
+                *ngFor="let file of selectedDocs; let i = index"
+                class="file-item"
+              >
+                <div class="file-info">
+                  <i class="pi pi-file-pdf file-icon"></i>
+                  <span class="file-name">{{ file.name }}</span>
+                  <span class="file-size"
+                    >({{ formatFileSize(file.size) }})</span
+                  >
+                </div>
+                <button
+                  pButton
+                  icon="pi pi-times"
+                  class="p-button-text p-button-sm remove-btn"
+                  (click)="removeSelectedFile(i)"
+                  pTooltip="Quitar archivo"
+                ></button>
+              </div>
+            </div>
+            <button
+              pButton
+              label="Limpiar todos"
+              icon="pi pi-trash"
+              class="p-button-outlined p-button-sm clear-all-btn"
+              (click)="clearPickedDocs()"
+            ></button>
+          </div>
+
+          <!-- Mensaje cuando no hay archivos -->
+          <div *ngIf="!selectedDocs.length" class="no-files-message">
+            <i class="pi pi-info-circle"></i>
+            <span>No hay archivos seleccionados</span>
+          </div>
+        </div>
+
+        <div class="flex justify-content-between mt-4 gap-4">
+          <button
+            pButton
+            label="Atrás"
+            [outlined]="true"
+            severity="secondary"
+            (click)="prev()"
+          ></button>
+          <button
+            pButton
+            label="Siguiente"
+            class="p-button-warning p-button-sm"
+            (click)="next()"
+          ></button>
+        </div>
+      </div>
+
       <!-- Paso 4: Credenciales -->
       <form
         *ngSwitchCase="3"
@@ -420,7 +536,7 @@
       </form>
 
       <!-- Paso 5: Confirmación -->
-      <div *ngSwitchCase="4" class="p-4">
+      <div *ngSwitchCase="5" class="p-4">
         <p-card>
           <div class="flex flex-column w-full">
             <div class="flex flex-column w-full gap-2">
