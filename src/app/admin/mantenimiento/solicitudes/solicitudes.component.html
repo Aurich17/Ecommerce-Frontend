@@ -1,162 +1,258 @@
-<form [formGroup]="solicitudesform" class="block p-fluid p-formgrid p-grid gap-2 p-4">
-    <div class="flex justify-content-between w-full">
-        <div class="text-lg font-bold">Solicitudes</div>
-        <div class="flex gap-2 w-5">
-            <input pInputText 
-                   placeholder="Buscar por nombre o email..." 
-                   class="text-xs w-full" 
-                   (input)="onSearch($any($event.target).value)" />
-            <p-button icon="pi pi-file-excel" styleClass="text-sm" iconPos="left" label="Excel" severity="success"
-                (onClick)="exportExcel()" />
-            <p-button icon="pi pi-file-o" styleClass="text-sm" iconPos="left" label="Csv" (onClick)="exportCsv()" />
-            <p-button icon="pi pi-file-pdf" styleClass="text-sm" iconPos="left" label="Pdf" severity="danger"
-                (onClick)="exportPdf()" />
-        </div>
+<form
+  [formGroup]="solicitudesform"
+  class="block p-fluid p-formgrid p-grid gap-2 p-4"
+>
+  <div class="flex justify-content-between w-full">
+    <div class="text-lg font-bold">Solicitudes Usuarios</div>
+    <div class="flex gap-2 w-5">
+      <input
+        pInputText
+        placeholder="Buscar por nombre o email..."
+        class="text-xs w-full"
+        (input)="onSearch($any($event.target).value)"
+      />
+      <p-button
+        icon="pi pi-file-excel"
+        styleClass="text-sm"
+        iconPos="left"
+        label="Excel"
+        severity="success"
+        (onClick)="exportExcel()"
+      />
+      <p-button
+        icon="pi pi-file-o"
+        styleClass="text-sm"
+        iconPos="left"
+        label="Csv"
+        (onClick)="exportCsv()"
+      />
+      <p-button
+        icon="pi pi-file-pdf"
+        styleClass="text-sm"
+        iconPos="left"
+        label="Pdf"
+        severity="danger"
+        (onClick)="exportPdf()"
+      />
     </div>
-    <div class="pt-3 w-full">
-        <p-selectButton [options]="optionsFiltro" 
-                        optionLabel="label" 
-                        optionValue="value"
-                        class="filtrobandeja" 
-                        (onChange)="onStatusFilter($event.value)" />
-    </div>
-    <div class="pt-3">
-        <p-table [value]="usersWithDocuments" 
-                 class="w-full" 
-                 dataKey="id" 
-                 [loading]="loading"
-                 [paginator]="true"
-                 [rows]="pageSize"
-                 [totalRecords]="totalUsers"
-                 [lazy]="true"
-                 (onLazyLoad)="onPageChange($event)">
-            <ng-template pTemplate="header">
-                <tr>
-                    <th class="text-sm">ID</th>
-                    <th class="text-sm">Nombre Completo</th>
-                    <th class="text-sm">Email</th>
-                    <th class="text-sm">Estado</th>
-                    <th class="text-sm">Rol Principal</th>
-                    <th class="text-sm">Documentos</th>
-                    <th class="text-sm">Creado el</th>
-                    <th class="text-sm">Acciones</th>
-                </tr>
-            </ng-template>
+  </div>
+  <div class="pt-3 w-full">
+    <p-selectButton
+      [options]="optionsFiltro"
+      optionLabel="label"
+      optionValue="value"
+      class="filtrobandeja"
+      (onChange)="onRoleSelect($event.value)"
+    />
+  </div>
+  <div class="pt-3">
+    <p-table
+      [value]="usersWithDocuments"
+      class="w-full"
+      dataKey="id"
+      [loading]="loading"
+      [paginator]="true"
+      [rows]="pageSize"
+      [totalRecords]="totalUsers"
+      [lazy]="true"
+      (onLazyLoad)="onPageChange($event)"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="text-sm">ID</th>
+          <th class="text-sm">Nombre Completo</th>
+          <th class="text-sm">Estado</th>
+          <th class="text-sm">Rol Principal</th>
+          <th class="text-sm">Acciones</th>
+        </tr>
+      </ng-template>
 
-            <ng-template pTemplate="body" let-user>
-                <tr>
-                    <td>{{user.id}}</td>
-                    <td>{{user.fullName}}</td>
-                    <td>{{user.email}}</td>
-                    <td><p-tag [value]="user.status" [severity]="getSeverity(user.status)"></p-tag></td>
-                    <td>{{user.primaryRole}}</td>
-                    <td>
-                        <p-badge [value]="user.documents.length" severity="info"></p-badge>
-                    </td>
-                    <td>{{user.createdAt | date:'short'}}</td>
-                    <td>
-                        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true"
-                            (onClick)="onEditPoppup(user)" />
-                        <p-button icon="pi pi-trash" [rounded]="true" [text]="true"
-                            (onClick)="onDeleteRow(user.id)" />
-                    </td>
-                </tr>
-            </ng-template>
-        </p-table>
-    </div>
+      <ng-template pTemplate="body" let-user>
+        <tr>
+          <td>{{ user.id }}</td>
+          <td class="truncate">{{ user.fullName }}</td>
+          <td>
+            <p-tag
+              [value]="user.status"
+              [severity]="getSeverity(user.status)"
+            ></p-tag>
+          </td>
+          <td>{{ user.primaryRole }}</td>
+          <td>
+            <p-button
+              icon="pi pi-pencil"
+              [rounded]="true"
+              [text]="true"
+              (onClick)="onEditPoppup(user)"
+            />
+            <p-button
+              icon="pi pi-trash"
+              [rounded]="true"
+              [text]="true"
+              (onClick)="onDeleteRow(user.id)"
+            />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
 </form>
 
-<p-dialog header="Actualizar Solicitud" [modal]="true" [(visible)]="visible"
-    [style]="{ width: '60rem', height: '45rem' }">
-    <div class="text-sm">
-        Cambia el estado de esta solicitud (aprobar o rechazar)
-    </div>
-    <div class="pt-4 w-full">
-        <form [formGroup]="poppupgroup">
-            <div><p-selectButton [options]="stateOptions" formControlName="select" optionLabel="label"
-                    optionValue="value" (onChange)="mostrarSeccion($event)" styleClass="w-full" class="filtrobtn" />
-            </div>
-            
-            <!-- Sección de información del cliente -->
-            <div *ngIf="infocliente" class="pt-4 w-full flex flex-column">
-                <div class="pt-4 w-full flex gap-2">
-                    <div class="p-field p-col-12 flex flex-column gap-3 w-6">
-                        <label class="font-bold text-sm">Nombre</label>
-                        <input pInputText formControlName="nombre" class="w-full" [readOnly]="true" />
-                    </div>
-                    <div class="p-field p-col-12 flex flex-column gap-3 w-6">
-                        <label class="font-bold text-sm">Email</label>
-                        <input pInputText formControlName="email" class="w-full" [readOnly]="true" />
-                    </div>
+<p-dialog
+  header="Actualizar Solicitud"
+  [modal]="true"
+  [(visible)]="visible"
+  [style]="{ width: '60rem', height: '45rem' }"
+>
+  <div class="text-sm">
+    Cambia el estado de esta solicitud (aprobar o rechazar)
+  </div>
+  <div class="pt-4 w-full">
+    <form [formGroup]="poppupgroup">
+      <div>
+        <p-selectButton
+          [options]="stateOptions"
+          formControlName="select"
+          optionLabel="label"
+          optionValue="value"
+          (onChange)="mostrarSeccion($event)"
+          styleClass="w-full"
+          class="filtrobtn"
+        />
+      </div>
+
+      <!-- Sección de información del cliente -->
+      <div *ngIf="infocliente" class="pt-4 w-full flex flex-column">
+        <div class="pt-4 w-full flex gap-2">
+          <div class="p-field p-col-12 flex flex-column gap-3 w-6">
+            <label class="font-bold text-sm">Nombre</label>
+            <input
+              pInputText
+              formControlName="nombre"
+              class="w-full"
+              [readOnly]="true"
+            />
+          </div>
+          <div class="p-field p-col-12 flex flex-column gap-3 w-6">
+            <label class="font-bold text-sm">Email</label>
+            <input
+              pInputText
+              formControlName="email"
+              class="w-full"
+              [readOnly]="true"
+            />
+          </div>
+        </div>
+        <div class="pt-3 w-full flex gap-2">
+          <div class="p-field p-col-12 flex flex-column gap-3 w-6">
+            <label class="font-bold text-sm">Rol</label>
+            <input
+              pInputText
+              formControlName="rol"
+              class="w-full"
+              [readOnly]="true"
+            />
+          </div>
+          <div class="p-field p-col-12 flex flex-column gap-3 w-6">
+            <label class="font-bold text-sm">Social Security</label>
+            <input
+              pInputText
+              formControlName="socialsecurity"
+              class="w-full"
+              [readOnly]="true"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección para mostrar documentos -->
+      <div *ngIf="!infocliente" class="pt-4 w-full">
+        <div class="pt-3 w-full">
+          <label class="font-bold text-sm">Documentos del Usuario</label>
+          <div
+            class="grid pt-2"
+            *ngIf="userDocuments && userDocuments.length > 0"
+          >
+            <div class="col-6" *ngFor="let doc of userDocuments">
+              <div class="p-3 border-1 border-300 border-round">
+                <div class="flex flex-column gap-2">
+                  <label class="font-bold text-xs">{{
+                    doc.documentType
+                  }}</label>
+                  <img
+                    [src]="doc.imageUrl"
+                    [alt]="doc.fileName"
+                    class="w-full h-8rem object-cover border-round"
+                    style="cursor: pointer"
+                    (click)="viewDocument(doc.imageUrl)"
+                  />
+                  <small class="text-xs text-500">{{ doc.fileName }}</small>
                 </div>
-                <div class="pt-3 w-full flex gap-2">
-                    <div class="p-field p-col-12 flex flex-column gap-3 w-6">
-                        <label class="font-bold text-sm">Rol</label>
-                        <input pInputText formControlName="rol" class="w-full" [readOnly]="true" />
-                    </div>
-                    <div class="p-field p-col-12 flex flex-column gap-3 w-6">
-                        <label class="font-bold text-sm">Social Security</label>
-                        <input pInputText formControlName="socialsecurity" class="w-full" [readOnly]="true" />
-                    </div>
-                </div>
+              </div>
             </div>
-            
-            <!-- Sección para mostrar documentos -->
-            <div *ngIf="!infocliente" class="pt-4 w-full">
-                <div class="pt-3 w-full">
-                    <label class="font-bold text-sm">Documentos del Usuario</label>
-                    <div class="grid pt-2" *ngIf="userDocuments && userDocuments.length > 0">
-                        <div class="col-6" *ngFor="let doc of userDocuments">
-                            <div class="p-3 border-1 border-300 border-round">
-                                <div class="flex flex-column gap-2">
-                                    <label class="font-bold text-xs">{{doc.documentType}}</label>
-                                    <img [src]="doc.imageUrl" 
-                                         [alt]="doc.fileName" 
-                                         class="w-full h-8rem object-cover border-round"
-                                         style="cursor: pointer;"
-                                         (click)="viewDocument(doc.imageUrl)" />
-                                    <small class="text-xs text-500">{{doc.fileName}}</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div *ngIf="!userDocuments || userDocuments.length === 0" class="text-center p-4">
-                        <i class="pi pi-file text-4xl text-300"></i>
-                        <p class="text-500 mt-2">No hay documentos disponibles</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Sección de estado y motivo de rechazo -->
-            <div class="pt-3 w-full">
-                <div class="pt-3 w-full flex gap-2">
-                    <div class="p-field p-col-12 flex flex-column gap-3 w-6">
-                        <label class="font-bold text-sm">Estado</label>
-                        <p-dropdown formControlName="estado" [options]="listaEstado" optionLabel="label"
-                            optionValue="label" styleClass="w-full" appendTo="body" />
-                    </div>
-                </div>
-            </div>
-            <div class="pt-3 w-full flex gap-2">
-                <div class="flex flex-column gap-3 w-full">
-                    <label class="font-bold text-sm">Motivo Rechazo</label>
-                    <textarea rows="5" cols="30" class="w-full" pInputTextarea
-                        formControlName="motivorechazo"></textarea>
-                </div>
-            </div>
-            <div class="pt-4 w-full flex justify-content-end">
-                <p-button [label]="labelbtn" severity="warning" [loading]="loading" (onClick)="actualizarCliente()" />
-            </div>
-        </form>
-    </div>
+          </div>
+          <div
+            *ngIf="!userDocuments || userDocuments.length === 0"
+            class="text-center p-4"
+          >
+            <i class="pi pi-file text-4xl text-300"></i>
+            <p class="text-500 mt-2">No hay documentos disponibles</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección de estado y motivo de rechazo -->
+      <div class="pt-3 w-full">
+        <div class="pt-3 w-full flex gap-2">
+          <div class="p-field p-col-12 flex flex-column gap-3 w-6">
+            <label class="font-bold text-sm">Estado</label>
+            <p-dropdown
+              formControlName="estado"
+              [options]="listEstado"
+              optionLabel="desc"
+              optionValue="cod"
+              styleClass="w-full"
+              appendTo="body"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="pt-3 w-full flex gap-2">
+        <div class="flex flex-column gap-3 w-full">
+          <label class="font-bold text-sm">Motivo Rechazo</label>
+          <textarea
+            rows="5"
+            cols="30"
+            class="w-full"
+            pInputTextarea
+            formControlName="motivorechazo"
+          ></textarea>
+        </div>
+      </div>
+      <div class="pt-4 w-full flex justify-content-end">
+        <p-button
+          [label]="labelbtn"
+          severity="warning"
+          [loading]="loading"
+          (onClick)="actualizarCliente()"
+        />
+      </div>
+    </form>
+  </div>
 </p-dialog>
 
 <!-- Modal para visualizar documentos -->
-<p-dialog header="Visualizar Documento" [modal]="true" [(visible)]="documentViewVisible"
-    [style]="{ width: '70rem', height: '80vh' }">
-    <div class="flex justify-content-center align-items-center h-full">
-        <img [src]="selectedDocumentUrl" 
-             alt="Documento" 
-             class="max-w-full max-h-full object-contain" />
-    </div>
+<p-dialog
+  header="Visualizar Documento"
+  [modal]="true"
+  [(visible)]="documentViewVisible"
+  [style]="{ width: '70rem', height: '80vh' }"
+>
+  <div class="flex justify-content-center align-items-center h-full">
+    <img
+      [src]="selectedDocumentUrl"
+      alt="Documento"
+      class="max-w-full max-h-full object-contain"
+    />
+  </div>
 </p-dialog>

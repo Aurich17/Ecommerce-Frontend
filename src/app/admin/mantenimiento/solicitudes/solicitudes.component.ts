@@ -12,6 +12,7 @@ import {
   SelectButtonModule,
 } from 'primeng/selectbutton';
 import { CommonModule } from '@angular/common';
+import { forkJoin } from 'rxjs';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextareaModule } from 'primeng/inputtextarea';
@@ -24,6 +25,21 @@ import {
   UsersWithDocumentsFilters,
   UserDocument,
 } from '../../../../services/users-with-documents.service';
+import { UsersApi } from '../../../../services/users.api';
+import { ApiService } from '../../../../services/api.services';
+
+interface DocVM {
+  documentType: string;
+  imageUrl: string;
+  fileName: string;
+}
+
+interface TipoUI {
+  id?: number | string;
+  desc: string;
+  cod: string;
+  parent?: string;
+}
 
 @Component({
   selector: 'app-solicitudes',
@@ -47,6 +63,19 @@ import {
   styleUrl: './solicitudes.component.css',
 })
 export class SolicitudesComponent implements OnInit {
+  private roleFilterLocal: 'todos' | 'clientes' | 'empresas' = 'todos';
+  private ROLE_MAP: Record<string, number | undefined> = {
+    todos: undefined,
+    empresas: 2, // <-- reemplaza por tu ID real
+    clientes: 3, // <-- reemplaza por tu ID real
+  };
+  onRoleSelect(val: 'todos' | 'clientes' | 'empresas') {
+    this.roleFilterLocal = val;
+    this.searchFilters.roleId = this.ROLE_MAP[val]; // <- usa el mapa
+    this.searchFilters.page = 1;
+    this.currentPage = 1;
+    this.loadUsersWithDocuments();
+  }
   // Propiedades de UI
   visible: boolean = false;
   infocliente: boolean = false;
@@ -61,7 +90,8 @@ export class SolicitudesComponent implements OnInit {
   currentPage = 1;
   pageSize = 10;
   selectedUser: UserWithDocuments | null = null;
-  userDocuments: UserDocument[] = [];
+  userDocuments: DocVM[] = [];
+  listEstado: TipoUI[] = [];
   documentViewVisible = false;
   selectedDocumentUrl = '';
 
@@ -72,15 +102,6 @@ export class SolicitudesComponent implements OnInit {
   };
 
   // Datos de ejemplo (mantener para compatibilidad)
-  solicitudesTable: any[] = [
-    {
-      id: '1',
-      cliente: 'Prueba',
-      estado: 'Aprobado',
-      descripcion: 'No se',
-      fechacreacion: '2025-08-16',
-    },
-  ];
 
   // Formularios
   solicitudesform = new FormGroup({
@@ -89,13 +110,13 @@ export class SolicitudesComponent implements OnInit {
   });
 
   poppupgroup = new FormGroup({
-    select: new FormControl('documentos', null),
-    nombre: new FormControl(null, null),
-    email: new FormControl(null, null),
-    rol: new FormControl(null, null),
-    socialsecurity: new FormControl(null, null),
-    estado: new FormControl(null, null),
-    motivorechazo: new FormControl(null, null),
+    select: new FormControl<'documentos' | 'infousser'>('documentos'),
+    nombre: new FormControl<string | null>(null),
+    email: new FormControl<string | null>(null),
+    rol: new FormControl<string | null>(null),
+    socialsecurity: new FormControl<string | null>(null),
+    estado: new FormControl<string | null>(null),
+    motivorechazo: new FormControl<string | null>(null),
   });
 
   // Opciones para dropdowns
@@ -110,20 +131,17 @@ export class SolicitudesComponent implements OnInit {
     { label: 'Empresas', value: 'empresas' },
   ];
 
-  listaEstado: any[] = [
-    { label: 'Aprobado', value: '1' },
-    { label: 'Pendiente', value: '2' },
-    { label: 'Rechazado', value: '3' },
-  ];
-
   constructor(
     private mailService: MailService,
     private usersWithDocumentsService: UsersWithDocumentsService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private usersApi: UsersApi,
+    private api: ApiService
   ) {}
 
   ngOnInit(): void {
     this.loadUsersWithDocuments();
+    this.cargarCargos();
   }
 
   // Métodos de exportación
@@ -157,19 +175,80 @@ export class SolicitudesComponent implements OnInit {
   // Método para cargar usuarios con documentos
   loadUsersWithDocuments(): void {
     this.loading = true;
+
+    const base = {
+      page: this.currentPage,
+      limit: this.pageSize,
+      q: this.searchFilters.q?.trim() || undefined,
+      estCod: this.searchFilters.estCod ?? '001',
+      // si quieres pasar roleId cuando el usuario elija el filtro:
+      roleId: this.ROLE_MAP[this.roleFilterLocal], // puede quedar undefined para "todos"
+    };
+
+    this.usersApi.list(base).subscribe({
+      next: (res) => {
+        const arr = Array.isArray(res?.data) ? res.data : [];
+
+        // Filtro defensivo por rol en FE
+        const filtered = arr.filter((u: any) => {
+          const r = String(u.role ?? u.primaryRole ?? '').toLowerCase();
+          if (this.roleFilterLocal === 'empresas')
+            return r === 'empresa' || u.roleId === 2;
+          if (this.roleFilterLocal === 'clientes')
+            return r === 'cliente' || u.roleId === 3;
+          return (
+            r === 'empresa' ||
+            r === 'cliente' ||
+            u.roleId === 2 ||
+            u.roleId === 3
+          );
+        });
+
+        // DEDUP por id, por si el backend aún mezcla
+        const unique = Array.from(
+          new Map(filtered.map((u: any) => [u.id, u])).values()
+        );
+
+        this.usersWithDocuments = unique.map((u) => this.mapToRow(u));
+        this.totalUsers = this.usersWithDocuments.length;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error cargando usuarios', err);
+        this.usersWithDocuments = [];
+        this.totalUsers = 0;
+        this.loading = false;
+      },
+    });
+  }
+
+  private loadDocumentsForUser(u: UserWithDocuments) {
+    const role = (u.primaryRole || '').toLowerCase(); // 'cliente' | 'empresa'
+    const type = role === 'empresa' ? 'empresa' : 'cliente'; // default cliente
+
     this.usersWithDocumentsService
-      .getUsersWithDocuments(this.searchFilters)
+      .getUserDocuments(String(u.id), type as 'cliente' | 'empresa')
       .subscribe({
-        next: (response) => {
-          this.usersWithDocuments = response.data;
-          this.totalUsers = response.pagination.total;
-          this.loading = false;
+        next: (res) => {
+          this.userDocuments = res?.data ?? [];
         },
-        error: (error) => {
-          console.error('Error loading users with documents:', error);
-          this.loading = false;
+        error: (err) => {
+          console.error('Error cargando documentos', err);
+          this.userDocuments = [];
         },
       });
+  }
+
+  private isClienteOEempresa(u: any): boolean {
+    const roleStr = (u.primaryRole ?? u.role ?? u.roleName ?? '')
+      .toString()
+      .trim()
+      .toLowerCase();
+    const roleId = Number(u.primaryRoleId ?? u.roleId ?? NaN);
+
+    if (roleStr) return roleStr === 'empresa' || roleStr === 'cliente';
+    if (!Number.isNaN(roleId)) return roleId === 2 || roleId === 3;
+    return false;
   }
 
   // Método para filtrar por búsqueda
@@ -204,75 +283,117 @@ export class SolicitudesComponent implements OnInit {
   }
 
   // Método para abrir el popup de edición (versión unificada)
-  onEditPoppup(user: UserWithDocuments | any): void {
+  onEditPoppup(user: any): void {
     this.visible = true;
+    this.loading = true;
 
-    if (user.fullName) {
-      // Es un UserWithDocuments (nueva API)
-      this.selectedUser = user;
-      this.poppupgroup.patchValue({
-        nombre: user.fullName,
-        email: user.email,
-        rol: user.primaryRole,
-        socialsecurity: user.socialSecurity,
-        estado: user.status,
-      });
-      this.userDocuments = user.documents;
-    } else {
-      // Es el formato anterior (compatibilidad)
-      this.poppupgroup.patchValue({
-        nombre: user.cliente,
-        email: user.email,
-        rol: user.rol,
-        socialsecurity: user.socialsecurity,
-        estado: user.estado,
-      });
-    }
+    // 1) Lo que viene desde la fila de la tabla
+    console.log('%c[EDIT] Row user (input):', 'color:#0af', user);
+
+    this.usersApi.getUserSummary(user.id).subscribe({
+      next: (res) => {
+        console.log('%c[EDIT] /summary raw response:', 'color:#2a2', res);
+
+        const u = res?.data;
+        if (!u) {
+          this.loading = false;
+          return;
+        }
+
+        // 2) Lo que trae el backend ya mapeado
+        console.log('%c[EDIT] Parsed summary:', 'color:#2a2', {
+          id: u.id,
+          name: u.name,
+          email: u.email,
+          social: u.social,
+          status: u.status,
+          role: u.role,
+          docsCount: Array.isArray(u.documents) ? u.documents.length : 0,
+        });
+        if (Array.isArray(u.documents)) {
+          console.table(u.documents); // type/url por fila
+        }
+
+        // 3) Patch al formulario (lo que vas a mostrar)
+        this.poppupgroup.patchValue({
+          nombre: u.name,
+          email: u.email,
+          rol: u.role,
+          socialsecurity: u.social,
+          estado: u.status,
+        });
+        console.log(
+          '%c[EDIT] Form after patchValue:',
+          'color:#f90',
+          this.poppupgroup.getRawValue()
+        );
+
+        // 4) Adaptación de documentos para el template
+        this.userDocuments = (u.documents || []).map((d: any) => ({
+          documentType: d.type,
+          imageUrl: d.url,
+          fileName: d.url?.split('/').pop() || d.type,
+        }));
+        console.table(this.userDocuments);
+
+        // 5) selectedUser que usas para actualizar estado
+        this.selectedUser = {
+          id: u.id,
+          fullName: u.name,
+          email: u.email,
+          primaryRole: u.role,
+          socialSecurity: u.social,
+          status: u.status,
+          documents: this.userDocuments,
+        } as any;
+        console.log(
+          '%c[EDIT] selectedUser VM:',
+          'color:#a0f',
+          this.selectedUser
+        );
+
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('[EDIT] /summary error:', err);
+        this.userDocuments = [];
+        this.loading = false;
+      },
+    });
   }
 
   // Método para actualizar cliente (versión unificada)
   actualizarCliente(): void {
-    if (this.selectedUser) {
-      // Usar nueva API
-      const newStatus = this.poppupgroup.get('estado')?.value;
-      if (!newStatus) return;
+    if (!this.selectedUser) return;
 
-      this.loading = true;
+    const newStatus = this.poppupgroup.get('estado')?.value;
+    if (!newStatus) return;
 
-      this.usersWithDocumentsService
-        .updateUserStatus(this.selectedUser.id, { status: newStatus })
-        .subscribe({
-          next: (response) => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Éxito',
-              detail: 'Estado del usuario actualizado correctamente',
-            });
+    this.loading = true;
 
-            this.loadUsersWithDocuments();
-            this.visible = false;
-            this.loading = false;
-          },
-          error: (error) => {
-            console.error('Error updating user status:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Error al actualizar el estado del usuario',
-            });
-            this.loading = false;
-          },
-        });
-    } else {
-      // Lógica anterior (compatibilidad)
-      this.loading = true;
-      this.labelbtn = 'Actualizando';
-      this.enviarCorreoRechazo();
-      setTimeout(() => {
-        this.loading = false;
-        this.labelbtn = 'Actualizar';
-      }, 2000);
-    }
+    this.usersWithDocumentsService
+      .updateUserStatus(String(this.selectedUser.id), { status: newStatus })
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Estado del usuario actualizado correctamente',
+          });
+          this.loadUsersWithDocuments();
+          this.visible = false;
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('Error updating user status:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al actualizar el estado del usuario',
+          });
+          this.loading = false;
+        },
+      });
   }
 
   // Método para visualizar documento en modal
@@ -378,5 +499,36 @@ export class SolicitudesComponent implements OnInit {
         alert('Error al enviar correo');
       },
     });
+  }
+
+  private mapToRow(u: any): UserWithDocuments {
+    return {
+      id: u.id,
+      fullName:
+        u.fullName ??
+        u.name ??
+        `${u.firstName ?? ''} ${u.lastName ?? ''}`.trim(),
+      email: u.email ?? '—',
+      status: u.status ?? 'pendiente',
+      primaryRole: u.role ?? u.primaryRole ?? '',
+      documents: u.documents ?? [], // si tu API no trae, queda []
+      createdAt: u.createdAt ?? u.created_at ?? null,
+    } as any;
+  }
+
+  private cargarCargos(): void {
+    this.api.obtenerTipos('EST').subscribe({
+      next: (data: any[]) => (this.listEstado = this.normalize(data)),
+      error: () => (this.listEstado = []),
+    });
+  }
+
+  private normalize(list: any[]): TipoUI[] {
+    return (list ?? []).map((x) => ({
+      id: x.id ?? x.ID ?? x.cod ?? x.codigo ?? x.cod_tipo,
+      desc: x.desc ?? x.des_tipo ?? x.nombre ?? x.descripcion ?? '',
+      cod: x.cod ?? x.codigo ?? x.cod_tipo ?? '',
+      parent: x.parent ?? x.parent_id ?? x.parentCod ?? undefined, // <- añade esto
+    }));
   }
 }

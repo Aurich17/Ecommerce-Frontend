@@ -1,19 +1,135 @@
 /* registered-stores.component.scss */
+
+/* Layout base */
 .page {
-  padding: 0;
+  padding: 0 1rem 2rem;
   margin: 0;
 }
-.header { background: #edf2f7; border-radius: 12px; padding: .6rem .8rem; }
-.app-logo { font-weight: 800; color: #ff6a00; font-size: 1.25rem; }
-.search { width: 28rem; }
-.title { margin: 2rem 0 1rem; font-size: 2rem; font-weight: 800; }
 
-.filters .filter-label { display:block; margin-bottom:.4rem; font-weight:600; }
+/* Header fijo, limpio y con sombra suave */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 0.6rem 0.8rem;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+  margin-top: 0.5rem;
+}
 
-.store-card { border-radius: 14px; box-shadow: 0 6px 24px rgba(0,0,0,.06); }
-.store-name { font-weight: 700; font-size: 1.1rem; }
-.qr-box { width: 64px; height: 64px; background:#f4f6fa; border-radius: 8px; }
+.app-logo {
+  font-weight: 800;
+  color: #ff6a00;
+  font-size: 1.25rem;
+  letter-spacing: 0.3px;
+}
 
+/* Search responsivo */
+.search-wrap {
+  width: 28rem;
+}
+.search {
+  width: 100%;
+}
+@media (max-width: 768px) {
+  .search-wrap {
+    width: 100%;
+  }
+  .hide-sm {
+    display: none !important;
+  }
+}
+
+.title {
+  margin: 1.5rem 0 1rem;
+  font-size: 1.9rem;
+  font-weight: 800;
+}
+
+/* Tarjeta de filtros */
+.filters.card {
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+  margin-bottom: 1rem;
+}
+.filters .filter-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+}
+
+/* Grilla de stores */
+.stores {
+  margin-top: 0.5rem;
+}
+
+/* Card de tienda */
+.store-card {
+  height: 100%;
+  border-radius: 16px !important;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  display: flex;
+  flex-direction: column;
+}
+.store-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+}
+
+/* Contenido superior */
+.store-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.25rem 0.25rem 0;
+}
+.store-left {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.store-text {
+  min-width: 0;
+}
+.store-name {
+  font-weight: 700;
+  font-size: 1.1rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.muted {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* QR box minimal */
+.store-qr {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: #f4f6fa;
+  display: grid;
+  place-items: center;
+}
+.store-qr i {
+  font-size: 1.35rem;
+  color: #334155;
+}
+
+/* CTA al final para alturas iguales */
+.store-cta {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+/* Clamp para texto secundario */
 .line-clamp {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -22,23 +138,10 @@
   overflow: hidden;
 }
 
-.store-card {
-  height: 100%;              /* asegura que ocupe todo el alto del col */
-  display: flex;
-  flex-direction: column;
-}
-
-.card-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  min-height: 200px;         /* 🔑 altura mínima igual para todas */
-}
-
+/* Utilidades previas (mantengo por compatibilidad) */
 .qr-box {
-  width: 64px; height: 64px;
-  background:#f4f6fa; border-radius: 8px;
+  width: 64px;
+  height: 64px;
+  background: #f4f6fa;
+  border-radius: 8px;
 }
-
-.store-name { font-weight: 700; font-size: 1.1rem; }

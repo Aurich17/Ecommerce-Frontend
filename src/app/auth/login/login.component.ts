@@ -59,6 +59,10 @@ export class LoginComponent implements OnInit {
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: async (res) => {
+          localStorage.setItem(
+            'account_state',
+            JSON.stringify(res.user.accountState ?? null)
+          );
           this.session.setFromLogin(res); // token/exp/rol/menu
           // const url = new URL(window.location.href);
           // const returnUrl = url.searchParams.get('returnUrl');

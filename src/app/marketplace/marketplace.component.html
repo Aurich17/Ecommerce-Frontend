@@ -1,111 +1,147 @@
-<!-- eslint-disable @angular-eslint/template/label-has-associated-control -->
-<!-- eslint-disable @angular-eslint/template/elements-content -->
 <div class="page">
-  <div class="header flex align-items-center justify-content-between">
+  <!-- Header fijo y respirable -->
+  <header
+    class="header surface-card flex align-items-center justify-content-between"
+  >
     <div class="logo-and-search flex align-items-center gap-3">
       <span class="app-logo">FiaoX Market</span>
+
       <button
         pButton
         type="button"
         label="Marketplace"
         [routerLink]="'/principal/marketplace'"
         severity="warning"
+        class="hide-sm"
       ></button>
-      <input
-        pInputText
-        class="search"
-        type="text"
-        placeholder="Buscar productos o empresas en el sistema"
-        [(ngModel)]="searchTerm"
-        (input)="onSearchChange()"
-      />
+
+      <!-- Search con ícono y full en móvil -->
+      <span class="p-input-icon-left search-wrap">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          class="search"
+          type="text"
+          placeholder="Buscar productos o empresas"
+          [(ngModel)]="searchTerm"
+          (input)="onSearchChange()"
+          aria-label="Buscar"
+        />
+      </span>
     </div>
 
     <div class="actions flex align-items-center gap-3">
-      <i class="pi pi-shopping-cart text-2xl"></i>
-      <i class="pi pi-user text-2xl"></i>
+      <button
+        pButton
+        type="button"
+        icon="pi pi-shopping-cart"
+        class="p-button-text"
+        aria-label="Carrito"
+      ></button>
+      <button
+        pButton
+        type="button"
+        icon="pi pi-user"
+        class="p-button-text"
+        aria-label="Perfil"
+      ></button>
     </div>
-  </div>
+  </header>
 
   <h2 class="title text-center">Tiendas Registradas</h2>
 
-  <!-- Filtros -->
-  <div class="filters grid">
-    <div class="col-12 md:col-3">
-      <label class="filter-label">Provincia</label>
-      <p-dropdown
-        [options]="provinces"
-        [(ngModel)]="selectedProvince"
-        (onChange)="onProvinceChange()"
-        [showClear]="false"
-        [editable]="false"
-        [style]="{ width: '100%' }"
-      ></p-dropdown>
+  <!-- Filtros en tarjeta -->
+  <section class="filters card surface-card">
+    <div class="grid">
+      <div class="col-12 md:col-3">
+        <label class="filter-label">Provincia</label>
+        <p-dropdown
+          [options]="provinces"
+          [(ngModel)]="selectedProvince"
+          (onChange)="onProvinceChange()"
+          [showClear]="false"
+          [editable]="false"
+          [style]="{ width: '100%' }"
+          placeholder="Selecciona provincia"
+        ></p-dropdown>
+      </div>
+
+      <div class="col-12 md:col-3">
+        <label class="filter-label">Municipio</label>
+        <p-dropdown
+          [options]="cities"
+          [(ngModel)]="selectedCity"
+          (onChange)="onCityChange()"
+          [showClear]="false"
+          [editable]="false"
+          [style]="{ width: '100%' }"
+          placeholder="Selecciona municipio"
+        ></p-dropdown>
+      </div>
+
+      <div class="col-12 md:col-6">
+        <label class="filter-label">Buscar empresa</label>
+        <input
+          pInputText
+          type="text"
+          placeholder="Buscar por nombre"
+          [(ngModel)]="searchTerm"
+          (input)="onSearchChange()"
+          class="w-full"
+          aria-label="Buscar empresa"
+        />
+      </div>
     </div>
+  </section>
 
-    <div class="col-12 md:col-3">
-      <label class="filter-label">Municipio</label>
-      <p-dropdown
-        [options]="cities"
-        [(ngModel)]="selectedCity"
-        (onChange)="onCityChange()"
-        [showClear]="false"
-        [editable]="false"
-        [style]="{ width: '100%' }"
-      ></p-dropdown>
-    </div>
+  <!-- Cards en grilla consistente -->
+  <section class="stores grid">
+    <div class="col-12 md:col-6 lg:col-4" *ngFor="let s of visibleStores">
+      <p-card [styleClass]="'store-card'">
+        <div class="store-top">
+          <div class="store-left">
+            <!-- Usa imagen si hay URL válida; si no, inicial -->
+            <ng-container *ngIf="isImageUrl(s.avatarText); else onlyDefault">
+              <p-avatar
+                [image]="s.avatarText"
+                shape="circle"
+                size="large"
+              ></p-avatar>
+            </ng-container>
 
-    <div class="col-12 md:col-3 md:col-offset-3">
-      <label class="filter-label">Buscar empresa</label>
-      <input
-        pInputText
-        type="text"
-        placeholder="Buscar por nombre"
-        [(ngModel)]="searchTerm"
-        (input)="onSearchChange()"
-        class="w-full"
-      />
-    </div>
-  </div>
+            <ng-template #onlyDefault>
+              <p-avatar
+                [image]="
+                  'https://img.freepik.com/premium-vector/store-shop-icon-blue-color-design_1178600-842.jpg'
+                "
+                shape="circle"
+                size="large"
+              >
+              </p-avatar>
+            </ng-template>
 
-  <!-- Cards -->
-  <div class="col-12 md:col-4" *ngFor="let s of visibleStores">
-    <p-card [styleClass]="'store-card flex flex-column'">
-      <div class="store-top">
-        <div class="store-left">
-          <!-- Avatar: usa imagen si la tienes, si no, inicial -->
-          <p-avatar
-            *ngIf="s.avatarText; else onlyInitial"
-            [image]="s.avatarText"
-            shape="circle"
-            size="large"
-          >
-          </p-avatar>
-          <ng-template #onlyInitial>
-            <p-avatar [label]="s.avatarText" shape="circle" size="large">
-            </p-avatar>
-          </ng-template>
+            <div class="store-text">
+              <div class="store-name" [title]="s.name">{{ s.name }}</div>
+              <small *ngIf="s.welcome" class="muted line-clamp">{{
+                s.welcome
+              }}</small>
+            </div>
+          </div>
 
-          <div class="store-text">
-            <div class="store-name" [title]="s.name">{{ s.name }}</div>
-            <!-- opcional: tagline solo si existe -->
-            <small *ngIf="s.welcome" class="muted">{{ s.welcome }}</small>
+          <div class="store-qr" title="Ver QR">
+            <i class="pi pi-qrcode"></i>
           </div>
         </div>
 
-        <div class="store-qr">
-          <i class="pi pi-qrcode text-2xl"></i>
-        </div>
-      </div>
-
-      <button
-        pButton
-        label="Ver productos"
-        class="store-cta"
-        (click)="viewProducts(s)"
-      ></button>
-    </p-card>
-  </div>
+        <button
+          pButton
+          label="Ver productos"
+          class="store-cta"
+          (click)="viewProducts(s)"
+        ></button>
+      </p-card>
+    </div>
+  </section>
 
   <!-- Paginación -->
   <div class="flex justify-content-center mt-3">
@@ -114,7 +150,6 @@
       [totalRecords]="total"
       [rowsPerPageOptions]="[6, 9, 12]"
       (onPageChange)="onPageChange($event)"
-    >
-    </p-paginator>
+    ></p-paginator>
   </div>
 </div>

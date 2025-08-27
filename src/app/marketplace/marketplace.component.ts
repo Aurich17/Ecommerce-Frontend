@@ -103,18 +103,20 @@ export class MarketplaceComponent implements OnInit {
 
           // Verificar que res.data existe y es un array
           if (res && res.data && Array.isArray(res.data)) {
-            this.visibleStores = res.data.map((u) => ({
+            const empresas = res.data.filter((u) => u.role === 'Empresa');
+
+            this.visibleStores = empresas.map((u) => ({
               id: u.id,
-              name: u.fullName,
-              welcome: `Bienvenido a la tienda ${u.fullName}`,
+              name: u.name, // usa el campo correcto según backend
+              welcome: `Bienvenido a la tienda ${u.name}`,
               address: '—',
               province: '—',
               city: '—',
               representative: '—',
-              avatarText: (u.fullName?.[0] || '?').toUpperCase(),
+              avatarText: (u.name?.[0] || '?').toUpperCase(),
             }));
-            // Como no hay total en la respuesta, usar la longitud del array
-            this.total = res.data.length;
+
+            this.total = empresas.length;
           } else {
             console.warn('Estructura de respuesta inesperada:', res);
             this.visibleStores = [];
@@ -134,5 +136,15 @@ export class MarketplaceComponent implements OnInit {
 
   viewProducts(store: any) {
     this.router.navigate(['/principal/store-products', store.id]);
+  }
+
+  isImageUrl(v?: string | null): boolean {
+    if (!v) return false;
+    const s = v.trim().toLowerCase();
+    return (
+      s.startsWith('http://') ||
+      s.startsWith('https://') ||
+      /\.(png|jpe?g|gif|webp|svg)$/.test(s)
+    );
   }
 }

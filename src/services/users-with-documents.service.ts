@@ -74,7 +74,7 @@ export interface UpdateUserStatusResponse {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UsersWithDocumentsService {
   private apiUrl = environment.urlApi;
@@ -82,9 +82,11 @@ export class UsersWithDocumentsService {
   constructor(private http: HttpClient) {}
 
   // GET /users/with-documents - Lista usuarios con sus documentos y roles asociados
-  getUsersWithDocuments(filters?: UsersWithDocumentsFilters): Observable<UsersWithDocumentsResponse> {
+  getUsersWithDocuments(
+    filters?: UsersWithDocumentsFilters
+  ): Observable<UsersWithDocumentsResponse> {
     let params = new HttpParams();
-    
+
     if (filters?.page) {
       params = params.set('page', filters.page.toString());
     }
@@ -108,10 +110,20 @@ export class UsersWithDocumentsService {
   }
 
   // PATCH /users/:id/status - Actualiza únicamente el estado de un usuario
-  updateUserStatus(userId: number, statusData: UpdateUserStatusRequest): Observable<UpdateUserStatusResponse> {
-    return this.http.patch<UpdateUserStatusResponse>(
-      `${this.apiUrl}/users/${userId}/status`,
+  updateUserStatus(
+    userId: string, // 👈 string (UUID)
+    statusData: { status: string }
+  ) {
+    return this.http.patch<{ success: boolean; data: any }>(
+      `${this.apiUrl}/users/${userId}/status`, // usa el mismo prefijo que el resto (p.ej. /api)
       statusData
+    );
+  }
+
+  getUserDocuments(userId: string, type: 'cliente' | 'empresa') {
+    return this.http.get<{ success: boolean; data: UserDocument[] }>(
+      `/api/users/${userId}/documents`,
+      { params: { type } }
     );
   }
 }

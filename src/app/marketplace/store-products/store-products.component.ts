@@ -1,5 +1,3 @@
-/* eslint-disable @angular-eslint/prefer-inject */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -24,6 +22,8 @@ import {
   ProductListResponse,
   ProductListItem,
 } from '../../admin/mantenimiento/productos/domain/productos.response';
+
+type AccountState = { tab: string; cod: string; desc?: string } | null;
 
 @Component({
   selector: 'app-store-products',
@@ -201,13 +201,83 @@ export class StoreProductsComponent implements OnInit {
     }, 0);
   }
 
+  private isAccountApproved(): boolean {
+    // 1) account_state => aprobado si EST/002
+    const raw = localStorage.getItem('account_state');
+    console.log(raw);
+    if (raw) {
+      try {
+        const st: AccountState = JSON.parse(raw);
+        if (st && st.tab === 'EST' && st.cod === '002') return true;
+      } catch {
+        /* ignore JSON error */
+      }
+    }
+
+    // 2) fallback: session.user.status (aprobado / habilitado / activo)
+    const sraw = localStorage.getItem('session');
+    if (sraw) {
+      try {
+        const s = JSON.parse(sraw);
+        const legacy = String(s?.user?.status || '').toLowerCase();
+        if (['aprobado', 'habilitado', 'activo'].includes(legacy)) return true;
+      } catch {
+        /* ignore */
+      }
+    }
+
+    return false;
+  }
+
+  private getAccountStateLabel(): string {
+    const raw = localStorage.getItem('account_state');
+    if (raw) {
+      try {
+        const st: AccountState = JSON.parse(raw);
+        if (st) return st.desc || `${st.tab}/${st.cod}`;
+      } catch {
+        /* ignore */
+      }
+    }
+    const sraw = localStorage.getItem('session');
+    if (sraw) {
+      try {
+        const s = JSON.parse(sraw);
+        if (s?.user?.status) return s.user.status;
+      } catch {
+        /* ignore */
+      }
+    }
+    return 'desconocido';
+  }
+
   submitOrder() {
-    // aquí llamarías a tu API; por ahora solo feedback
+    // Lee y parsea el estado de cuenta del localStorage
+    const raw = localStorage.getItem('account_state');
+    let st: { tab?: string; cod?: string; desc?: string } | null = null;
+    try {
+      st = raw ? JSON.parse(raw) : null;
+    } catch {
+      st = null;
+    }
+
+    // Bloquea si NO está aprobado (aprobado = EST/002)
+    if (!st || st.cod !== '002') {
+      this.msg.add({
+        severity: 'warn',
+        summary: 'Su cuenta no está habilitada para compras',
+        detail: `Estado actual: ${st?.desc ?? 'DESCONOCIDO'}`,
+        life: 4000,
+      });
+      return;
+    }
+
+    // Si está aprobado, continúa
     this.msg.add({
       severity: 'success',
       summary: 'Orden de compra creada con éxito.',
     });
-    // Mantengo el carrito para que se vea en el sidebar; si quieres, limpia:
-    // this.clear();
+
+    // TODO: aquí va tu llamada real a la API de órdenes
   }
 }

@@ -16,6 +16,7 @@ export interface UsersListResponse {
 export class UsersApi {
   private http = inject(HttpClient);
   private base = environment.urlApi;
+
   list(opts: {
     page: number;
     limit: number;
@@ -32,5 +33,20 @@ export class UsersApi {
     if (opts.estCod) params = params.set('estCod', opts.estCod);
 
     return this.http.get<UsersListResponse>(`${this.base}/users`, { params });
+  }
+
+  getUserSummary(userId: string) {
+    return this.http.get<{
+      success: boolean;
+      data: {
+        id: string;
+        name: string;
+        email: string;
+        social: string;
+        status: string;
+        role: string;
+        documents: { type: string; url: string }[];
+      };
+    }>(`${this.base}/users/${userId}/summary`);
   }
 }
