@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 import { Component, OnInit } from '@angular/core';
 import {
   FormControl,
@@ -78,7 +80,7 @@ export class ProductosComponent implements OnInit {
   imageFile: File | null = null;
 
   // Mapeo de códigos de moneda a códigos ISO de 3 dígitos
-  currencyMap: { [key: string]: string } = {
+  currencyMap: Record<string, string> = {
     USD: '840',
     EUR: '978',
     GBP: '826',
@@ -87,7 +89,7 @@ export class ProductosComponent implements OnInit {
   };
 
   // Mapeo de códigos de moneda a símbolos
-  currencySymbolMap: { [key: string]: string } = {
+  currencySymbolMap: Record<string, string> = {
     USD: '$',
     EUR: '€',
     GBP: '£',
