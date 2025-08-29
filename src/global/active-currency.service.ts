@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { map, tap, shareReplay, finalize } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import {} from 'rxjs/operators';
 import { Currency } from '../app/admin/mantenimiento/monedas/domain/monedas.response';
 import { ApiService } from '../services/api.services';
 // import { ApiService } from '../api.services';
@@ -21,18 +21,17 @@ export class ActiveCurrencyService {
   constructor(private api: ApiService) {}
 
   /** Carga del backend (solo una vez) o fuerza recarga con force=true */
-  load(force = false): Observable<Currency | null> {
-    if (this.subject.value && !force) return of(this.subject.value);
-    if (this.inflight$ && !force) return this.inflight$;
-
-    this.inflight$ = this.api.getCurrencies({ status: true, limit: 1 }).pipe(
-      map((arr) => (Array.isArray(arr) ? arr[0] : null) ?? null),
-      tap((curr) => this.setActive(curr)),
-      finalize(() => (this.inflight$ = undefined)),
-      shareReplay(1)
-    );
-    return this.inflight$;
-  }
+  // load(force = false): Observable<Currency | null> {
+  //   // if (this.subject.value && !force) return of(this.subject.value);
+  //   // if (this.inflight$ && !force) return this.inflight$;
+  //   // this.inflight$ = this.api.getCurrencies({ status: true, limit: 1 }).pipe(
+  //   //   map((arr) => (Array.isArray(arr) ? arr[0] : null) ?? null),
+  //   //   tap((curr) => this.setActive(curr)),
+  //   //   finalize(() => (this.inflight$ = undefined)),
+  //   //   shareReplay(1)
+  //   // );
+  //   // return this.inflight$;
+  // }
 
   /** Estado actual síncrono (para usar en TS) */
   get snapshot(): Currency | null {
@@ -45,9 +44,9 @@ export class ActiveCurrencyService {
     this.saveToStorage(curr);
   }
 
-  refresh(): Observable<Currency | null> {
-    return this.load(true);
-  }
+  // refresh(): Observable<Currency | null> {
+  //   return this.load(true);
+  // }
 
   // ---- storage helpers ----
   private loadFromStorage(): Currency | null {
