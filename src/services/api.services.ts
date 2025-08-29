@@ -33,7 +33,7 @@ import {
   CreateCurrencyDto,
   UpdateCurrencyDto,
 } from '../app/admin/mantenimiento/monedas/domain/monedas.response';
-import { CurrencyFilters } from '../app/admin/mantenimiento/monedas/domain/monedas.request';
+// import { CurrencyFilters } from '../app/admin/mantenimiento/monedas/domain/monedas.request';
 @Injectable({
   providedIn: 'root',
 })
@@ -232,24 +232,24 @@ export class ApiService {
   // ===== MÉTODOS DE LA API DE MONEDAS =====
 
   // Listar todas las monedas con filtros opcionales
-  getCurrencies(filters?: CurrencyFilters): Observable<Currency[]> {
-    let params = new HttpParams();
+  // getCurrencies(filters?: CurrencyFilters): Observable<Currency[]> {
+  //   let params = new HttpParams();
 
-    if (filters?.status !== undefined) {
-      params = params.set('status', filters.status.toString());
-    }
-    if (filters?.page) {
-      params = params.set('page', filters.page.toString());
-    }
-    if (filters?.limit) {
-      params = params.set('limit', filters.limit.toString());
-    }
-    if (filters?.q) {
-      params = params.set('q', filters.q);
-    }
+  //   if (filters?.status !== undefined) {
+  //     params = params.set('status', filters.status.toString());
+  //   }
+  //   if (filters?.page) {
+  //     params = params.set('page', filters.page.toString());
+  //   }
+  //   if (filters?.limit) {
+  //     params = params.set('limit', filters.limit.toString());
+  //   }
+  //   if (filters?.q) {
+  //     params = params.set('q', filters.q);
+  //   }
 
-    return this.http.get<Currency[]>(`${this.apiUrl}/currencies`, { params });
-  }
+  //   return this.http.get<Currency[]>(`${this.apiUrl}/currencies`, { params });
+  // }
 
   // Obtener moneda por ID
   getCurrencyById(id: number): Observable<Currency> {
