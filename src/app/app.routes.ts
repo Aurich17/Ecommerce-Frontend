@@ -15,7 +15,7 @@ import { CategoriasComponent } from './admin/mantenimiento/categorias/categorias
 import { SolicitudesComponent } from './admin/mantenimiento/solicitudes/solicitudes.component';
 import { ValoresComponent } from './admin/mantenimiento/valores/valores.component';
 import { InsigniasComponent } from './admin/mantenimiento/insignias/insignias.component';
-import { MonedasComponent } from './admin/mantenimiento/monedas/monedas.component';
+// import { MonedasComponent } from './admin/mantenimiento/monedas/monedas.component';
 import { OcupacionesComponent } from './admin/mantenimiento/ocupaciones/ocupaciones.component';
 import { ProductosComponent } from './admin/mantenimiento/productos/productos.component';
 import { PuntosComponent } from './admin/mantenimiento/puntos/puntos.component';
@@ -58,7 +58,7 @@ export const routes: Routes = [
       { path: 'landing/slider', component: SliderComponent },
       { path: 'mant/categorias', component: CategoriasComponent },
       { path: 'mant/insignias', component: InsigniasComponent },
-      { path: 'mant/monedas', component: MonedasComponent },
+      // { path: 'mant/monedas', component: MonedasComponent },
       { path: 'mant/ocupaciones', component: OcupacionesComponent },
       { path: 'mant/productos', component: ProductosComponent },
       { path: 'mant/puntos', component: PuntosComponent },
