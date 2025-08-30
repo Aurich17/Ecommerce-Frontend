@@ -121,6 +121,7 @@ export class EmpresaComponent implements OnInit {
     paraguay: 'py',
     uruguay: 'uy',
     venezuela: 've',
+    cuba: 'cu',
   };
 
   visible = false;
@@ -150,6 +151,7 @@ export class EmpresaComponent implements OnInit {
     { id: 'PE', nombre: 'Perú', iso2: 'PE' },
     { id: 'MX', nombre: 'México', iso2: 'MX' },
     { id: 'ES', nombre: 'España', iso2: 'ES' },
+    { id: 'CU', nombre: 'Cuba', iso2: 'CU' },
   ];
 
   private readonly PROVINCIAS: Provincia[] = [
@@ -159,6 +161,26 @@ export class EmpresaComponent implements OnInit {
     { id: 'MX-CMX', nombre: 'Ciudad de México', paisId: 'MX' },
     { id: 'ES-M', nombre: 'Comunidad de Madrid', paisId: 'ES' },
     { id: 'ES-CT', nombre: 'Cataluña', paisId: 'ES' },
+    { id: 'CU-PRI', nombre: 'Pinar del Río', paisId: 'CU' },
+    { id: 'CU-ART', nombre: 'Artemisa', paisId: 'CU' },
+    { id: 'CU-HAB', nombre: 'La Habana', paisId: 'CU' },
+    { id: 'CU-MAY', nombre: 'Mayabeque', paisId: 'CU' },
+    { id: 'CU-MAT', nombre: 'Matanzas', paisId: 'CU' },
+    { id: 'CU-CFG', nombre: 'Cienfuegos', paisId: 'CU' },
+    { id: 'CU-VCL', nombre: 'Villa Clara', paisId: 'CU' },
+    { id: 'CU-SSP', nombre: 'Sancti Spíritus', paisId: 'CU' },
+    { id: 'CU-CAV', nombre: 'Ciego de Ávila', paisId: 'CU' },
+    { id: 'CU-CAM', nombre: 'Camagüey', paisId: 'CU' },
+    { id: 'CU-LTU', nombre: 'Las Tunas', paisId: 'CU' },
+    { id: 'CU-HOL', nombre: 'Holguín', paisId: 'CU' },
+    { id: 'CU-GRA', nombre: 'Granma', paisId: 'CU' },
+    { id: 'CU-SCU', nombre: 'Santiago de Cuba', paisId: 'CU' },
+    { id: 'CU-GTM', nombre: 'Guantánamo', paisId: 'CU' },
+    {
+      id: 'CU-IJV',
+      nombre: 'Isla de la Juventud (Municipio Especial)',
+      paisId: 'CU',
+    },
   ];
 
   private readonly MUNICIPIOS: Municipio[] = [
@@ -170,6 +192,205 @@ export class EmpresaComponent implements OnInit {
     { id: 'MX-CMX-COY', nombre: 'Coyoacán', provId: 'MX-CMX' },
     { id: 'ES-M-MAD', nombre: 'Madrid', provId: 'ES-M' },
     { id: 'ES-CT-BCN', nombre: 'Barcelona', provId: 'ES-CT' },
+    // Pinar del Río
+    { id: 'CU-PRI-COS', nombre: 'Consolación del Sur', provId: 'CU-PRI' },
+    { id: 'CU-PRI-GUA', nombre: 'Guane', provId: 'CU-PRI' },
+    { id: 'CU-PRI-PAL', nombre: 'La Palma', provId: 'CU-PRI' },
+    { id: 'CU-PRI-LOS', nombre: 'Los Palacios', provId: 'CU-PRI' },
+    { id: 'CU-PRI-MAN', nombre: 'Mantua', provId: 'CU-PRI' },
+    { id: 'CU-PRI-MIN', nombre: 'Minas de Matahambre', provId: 'CU-PRI' },
+    { id: 'CU-PRI-PDR', nombre: 'Pinar del Río', provId: 'CU-PRI' },
+    { id: 'CU-PRI-SJM', nombre: 'San Juan y Martínez', provId: 'CU-PRI' },
+    { id: 'CU-PRI-SLU', nombre: 'San Luis', provId: 'CU-PRI' },
+    { id: 'CU-PRI-SAN', nombre: 'Sandino', provId: 'CU-PRI' },
+    { id: 'CU-PRI-VIN', nombre: 'Viñales', provId: 'CU-PRI' },
+
+    // Artemisa
+    { id: 'CU-ART-ALQ', nombre: 'Alquízar', provId: 'CU-ART' },
+    { id: 'CU-ART-ART', nombre: 'Artemisa', provId: 'CU-ART' },
+    { id: 'CU-ART-BAH', nombre: 'Bahía Honda', provId: 'CU-ART' },
+    { id: 'CU-ART-BAU', nombre: 'Bauta', provId: 'CU-ART' },
+    { id: 'CU-ART-CAI', nombre: 'Caimito', provId: 'CU-ART' },
+    { id: 'CU-ART-CAN', nombre: 'Candelaria', provId: 'CU-ART' },
+    { id: 'CU-ART-GUA', nombre: 'Guanajay', provId: 'CU-ART' },
+    { id: 'CU-ART-GUI', nombre: 'Güira de Melena', provId: 'CU-ART' },
+    { id: 'CU-ART-MAR', nombre: 'Mariel', provId: 'CU-ART' },
+    { id: 'CU-ART-SAB', nombre: 'San Antonio de los Baños', provId: 'CU-ART' },
+    { id: 'CU-ART-SCR', nombre: 'San Cristóbal', provId: 'CU-ART' },
+
+    // La Habana
+    { id: 'CU-HAB-ARR', nombre: 'Arroyo Naranjo', provId: 'CU-HAB' },
+    { id: 'CU-HAB-BOY', nombre: 'Boyeros', provId: 'CU-HAB' },
+    { id: 'CU-HAB-CH', nombre: 'Centro Habana', provId: 'CU-HAB' },
+    { id: 'CU-HAB-CER', nombre: 'Cerro', provId: 'CU-HAB' },
+    { id: 'CU-HAB-COT', nombre: 'Cotorro', provId: 'CU-HAB' },
+    { id: 'CU-HAB-10O', nombre: 'Diez de Octubre', provId: 'CU-HAB' },
+    { id: 'CU-HAB-GUA', nombre: 'Guanabacoa', provId: 'CU-HAB' },
+    { id: 'CU-HAB-EST', nombre: 'La Habana del Este', provId: 'CU-HAB' },
+    { id: 'CU-HAB-VIE', nombre: 'La Habana Vieja', provId: 'CU-HAB' },
+    { id: 'CU-HAB-LIS', nombre: 'La Lisa', provId: 'CU-HAB' },
+    { id: 'CU-HAB-MAR', nombre: 'Marianao', provId: 'CU-HAB' },
+    { id: 'CU-HAB-PLA', nombre: 'Playa', provId: 'CU-HAB' },
+    { id: 'CU-HAB-PLR', nombre: 'Plaza de la Revolución', provId: 'CU-HAB' },
+    { id: 'CU-HAB-REG', nombre: 'Regla', provId: 'CU-HAB' },
+    { id: 'CU-HAB-SMP', nombre: 'San Miguel del Padrón', provId: 'CU-HAB' },
+
+    // Mayabeque
+    { id: 'CU-MAY-BAT', nombre: 'Batabanó', provId: 'CU-MAY' },
+    { id: 'CU-MAY-BEJ', nombre: 'Bejucal', provId: 'CU-MAY' },
+    { id: 'CU-MAY-GUI', nombre: 'Güines', provId: 'CU-MAY' },
+    { id: 'CU-MAY-JAR', nombre: 'Jaruco', provId: 'CU-MAY' },
+    { id: 'CU-MAY-MAD', nombre: 'Madruga', provId: 'CU-MAY' },
+    { id: 'CU-MAY-MEL', nombre: 'Melena del Sur', provId: 'CU-MAY' },
+    { id: 'CU-MAY-NPA', nombre: 'Nueva Paz', provId: 'CU-MAY' },
+    { id: 'CU-MAY-QUI', nombre: 'Quivicán', provId: 'CU-MAY' },
+    { id: 'CU-MAY-SJL', nombre: 'San José de las Lajas', provId: 'CU-MAY' },
+    { id: 'CU-MAY-SNI', nombre: 'San Nicolás', provId: 'CU-MAY' },
+    { id: 'CU-MAY-SCN', nombre: 'Santa Cruz del Norte', provId: 'CU-MAY' },
+
+    // Matanzas
+    { id: 'CU-MAT-CAL', nombre: 'Calimete', provId: 'CU-MAT' },
+    { id: 'CU-MAT-CAR', nombre: 'Cárdenas', provId: 'CU-MAT' },
+    { id: 'CU-MAT-CZA', nombre: 'Ciénaga de Zapata', provId: 'CU-MAT' },
+    { id: 'CU-MAT-COL', nombre: 'Colón', provId: 'CU-MAT' },
+    { id: 'CU-MAT-JAG', nombre: 'Jagüey Grande', provId: 'CU-MAT' },
+    { id: 'CU-MAT-JOV', nombre: 'Jovellanos', provId: 'CU-MAT' },
+    { id: 'CU-MAT-LIM', nombre: 'Limonar', provId: 'CU-MAT' },
+    { id: 'CU-MAT-LAR', nombre: 'Los Arabos', provId: 'CU-MAT' },
+    { id: 'CU-MAT-MAR', nombre: 'Martí', provId: 'CU-MAT' },
+    { id: 'CU-MAT-MAT', nombre: 'Matanzas', provId: 'CU-MAT' },
+    { id: 'CU-MAT-PBE', nombre: 'Pedro Betancourt', provId: 'CU-MAT' },
+    { id: 'CU-MAT-PER', nombre: 'Perico', provId: 'CU-MAT' },
+    { id: 'CU-MAT-URE', nombre: 'Unión de Reyes', provId: 'CU-MAT' },
+
+    // Cienfuegos
+    { id: 'CU-CFG-ABR', nombre: 'Abreus', provId: 'CU-CFG' },
+    { id: 'CU-CFG-AGU', nombre: 'Aguada de Pasajeros', provId: 'CU-CFG' },
+    { id: 'CU-CFG-CFG', nombre: 'Cienfuegos', provId: 'CU-CFG' },
+    { id: 'CU-CFG-CRU', nombre: 'Cruces', provId: 'CU-CFG' },
+    { id: 'CU-CFG-CUM', nombre: 'Cumanayagua', provId: 'CU-CFG' },
+    { id: 'CU-CFG-LAJ', nombre: 'Lajas', provId: 'CU-CFG' },
+    { id: 'CU-CFG-PAL', nombre: 'Palmira', provId: 'CU-CFG' },
+    { id: 'CU-CFG-ROD', nombre: 'Rodas', provId: 'CU-CFG' },
+
+    // Villa Clara
+    { id: 'CU-VCL-CAI', nombre: 'Caibarién', provId: 'CU-VCL' },
+    { id: 'CU-VCL-CAM', nombre: 'Camajuaní', provId: 'CU-VCL' },
+    { id: 'CU-VCL-CIF', nombre: 'Cifuentes', provId: 'CU-VCL' },
+    { id: 'CU-VCL-COR', nombre: 'Corralillo', provId: 'CU-VCL' },
+    { id: 'CU-VCL-ENC', nombre: 'Encrucijada', provId: 'CU-VCL' },
+    { id: 'CU-VCL-MAN', nombre: 'Manicaragua', provId: 'CU-VCL' },
+    { id: 'CU-VCL-PLA', nombre: 'Placetas', provId: 'CU-VCL' },
+    { id: 'CU-VCL-QUE', nombre: 'Quemado de Güines', provId: 'CU-VCL' },
+    { id: 'CU-VCL-RAN', nombre: 'Ranchuelo', provId: 'CU-VCL' },
+    { id: 'CU-VCL-SJR', nombre: 'San Juan de los Remedios', provId: 'CU-VCL' },
+    { id: 'CU-VCL-SAG', nombre: 'Sagua la Grande', provId: 'CU-VCL' },
+    { id: 'CU-VCL-SCL', nombre: 'Santa Clara', provId: 'CU-VCL' },
+    { id: 'CU-VCL-SDO', nombre: 'Santo Domingo', provId: 'CU-VCL' },
+
+    // Sancti Spíritus
+    { id: 'CU-SSP-CAB', nombre: 'Cabaiguán', provId: 'CU-SSP' },
+    { id: 'CU-SSP-FOM', nombre: 'Fomento', provId: 'CU-SSP' },
+    { id: 'CU-SSP-JAT', nombre: 'Jatibonico', provId: 'CU-SSP' },
+    { id: 'CU-SSP-SIE', nombre: 'La Sierpe', provId: 'CU-SSP' },
+    { id: 'CU-SSP-SSP', nombre: 'Sancti Spíritus', provId: 'CU-SSP' },
+    { id: 'CU-SSP-TAG', nombre: 'Taguasco', provId: 'CU-SSP' },
+    { id: 'CU-SSP-TRI', nombre: 'Trinidad', provId: 'CU-SSP' },
+    { id: 'CU-SSP-YAG', nombre: 'Yaguajay', provId: 'CU-SSP' },
+
+    // Ciego de Ávila
+    { id: 'CU-CAV-BAR', nombre: 'Baraguá', provId: 'CU-CAV' },
+    { id: 'CU-CAV-BOL', nombre: 'Bolivia', provId: 'CU-CAV' },
+    { id: 'CU-CAV-CHA', nombre: 'Chambas', provId: 'CU-CAV' },
+    { id: 'CU-CAV-CAV', nombre: 'Ciego de Ávila', provId: 'CU-CAV' },
+    { id: 'CU-CAV-CIR', nombre: 'Ciro Redondo', provId: 'CU-CAV' },
+    { id: 'CU-CAV-FLO', nombre: 'Florencia', provId: 'CU-CAV' },
+    { id: 'CU-CAV-MAJ', nombre: 'Majagua', provId: 'CU-CAV' },
+    { id: 'CU-CAV-MOR', nombre: 'Morón', provId: 'CU-CAV' },
+    { id: 'CU-CAV-PEJ', nombre: 'Primero de Enero', provId: 'CU-CAV' },
+    { id: 'CU-CAV-VEN', nombre: 'Venezuela', provId: 'CU-CAV' },
+
+    // Camagüey
+    { id: 'CU-CAM-CAM', nombre: 'Camagüey', provId: 'CU-CAM' },
+    { id: 'CU-CAM-CES', nombre: 'Carlos M. de Céspedes', provId: 'CU-CAM' },
+    { id: 'CU-CAM-ESM', nombre: 'Esmeralda', provId: 'CU-CAM' },
+    { id: 'CU-CAM-FLO', nombre: 'Florida', provId: 'CU-CAM' },
+    { id: 'CU-CAM-GUA', nombre: 'Guáimaro', provId: 'CU-CAM' },
+    { id: 'CU-CAM-JIM', nombre: 'Jimaguayú', provId: 'CU-CAM' },
+    { id: 'CU-CAM-MIN', nombre: 'Minas', provId: 'CU-CAM' },
+    { id: 'CU-CAM-NAJ', nombre: 'Najasa', provId: 'CU-CAM' },
+    { id: 'CU-CAM-NUV', nombre: 'Nuevitas', provId: 'CU-CAM' },
+    { id: 'CU-CAM-SCS', nombre: 'Santa Cruz del Sur', provId: 'CU-CAM' },
+    { id: 'CU-CAM-SIB', nombre: 'Sibanicú', provId: 'CU-CAM' },
+    { id: 'CU-CAM-SCU', nombre: 'Sierra de Cubitas', provId: 'CU-CAM' },
+    { id: 'CU-CAM-VER', nombre: 'Vertientes', provId: 'CU-CAM' },
+
+    // Las Tunas
+    { id: 'CU-LTU-AMA', nombre: 'Amancio', provId: 'CU-LTU' },
+    { id: 'CU-LTU-COL', nombre: 'Colombia', provId: 'CU-LTU' },
+    { id: 'CU-LTU-JEM', nombre: 'Jesús Menéndez', provId: 'CU-LTU' },
+    { id: 'CU-LTU-JOB', nombre: 'Jobabo', provId: 'CU-LTU' },
+    { id: 'CU-LTU-LTU', nombre: 'Las Tunas', provId: 'CU-LTU' },
+    { id: 'CU-LTU-MAJ', nombre: 'Majibacoa', provId: 'CU-LTU' },
+    { id: 'CU-LTU-MAN', nombre: 'Manatí', provId: 'CU-LTU' },
+    { id: 'CU-LTU-PUE', nombre: 'Puerto Padre', provId: 'CU-LTU' },
+
+    // Holguín
+    { id: 'CU-HOL-ANT', nombre: 'Antilla', provId: 'CU-HOL' },
+    { id: 'CU-HOL-BAG', nombre: 'Báguanos', provId: 'CU-HOL' },
+    { id: 'CU-HOL-BAN', nombre: 'Banes', provId: 'CU-HOL' },
+    { id: 'CU-HOL-CAC', nombre: 'Cacocum', provId: 'CU-HOL' },
+    { id: 'CU-HOL-CAG', nombre: 'Calixto García', provId: 'CU-HOL' },
+    { id: 'CU-HOL-CUE', nombre: 'Cueto', provId: 'CU-HOL' },
+    { id: 'CU-HOL-FRA', nombre: 'Frank País', provId: 'CU-HOL' },
+    { id: 'CU-HOL-GIB', nombre: 'Gibara', provId: 'CU-HOL' },
+    { id: 'CU-HOL-HOL', nombre: 'Holguín', provId: 'CU-HOL' },
+    { id: 'CU-HOL-MAY', nombre: 'Mayarí', provId: 'CU-HOL' },
+    { id: 'CU-HOL-MOA', nombre: 'Moa', provId: 'CU-HOL' },
+    { id: 'CU-HOL-RAF', nombre: 'Rafael Freyre', provId: 'CU-HOL' },
+    { id: 'CU-HOL-SAG', nombre: 'Sagua de Tánamo', provId: 'CU-HOL' },
+    { id: 'CU-HOL-URN', nombre: 'Urbano Noris', provId: 'CU-HOL' },
+
+    // Granma
+    { id: 'CU-GRA-BMA', nombre: 'Bartolomé Masó', provId: 'CU-GRA' },
+    { id: 'CU-GRA-BAY', nombre: 'Bayamo', provId: 'CU-GRA' },
+    { id: 'CU-GRA-BUE', nombre: 'Buey Arriba', provId: 'CU-GRA' },
+    { id: 'CU-GRA-CAM', nombre: 'Campechuela', provId: 'CU-GRA' },
+    { id: 'CU-GRA-CAU', nombre: 'Cauto Cristo', provId: 'CU-GRA' },
+    { id: 'CU-GRA-GUI', nombre: 'Guisa', provId: 'CU-GRA' },
+    { id: 'CU-GRA-JIG', nombre: 'Jiguaní', provId: 'CU-GRA' },
+    { id: 'CU-GRA-MAN', nombre: 'Manzanillo', provId: 'CU-GRA' },
+    { id: 'CU-GRA-MLU', nombre: 'Media Luna', provId: 'CU-GRA' },
+    { id: 'CU-GRA-NIQ', nombre: 'Niquero', provId: 'CU-GRA' },
+    { id: 'CU-GRA-PIL', nombre: 'Pilón', provId: 'CU-GRA' },
+    { id: 'CU-GRA-RIO', nombre: 'Río Cauto', provId: 'CU-GRA' },
+    { id: 'CU-GRA-YAR', nombre: 'Yara', provId: 'CU-GRA' },
+
+    // Santiago de Cuba
+    { id: 'CU-SCU-CON', nombre: 'Contramaestre', provId: 'CU-SCU' },
+    { id: 'CU-SCU-GUA', nombre: 'Guamá', provId: 'CU-SCU' },
+    { id: 'CU-SCU-MEL', nombre: 'Mella', provId: 'CU-SCU' },
+    { id: 'CU-SCU-PAL', nombre: 'Palma Soriano', provId: 'CU-SCU' },
+    { id: 'CU-SCU-SLU', nombre: 'San Luis', provId: 'CU-SCU' },
+    { id: 'CU-SCU-SCU', nombre: 'Santiago de Cuba', provId: 'CU-SCU' },
+    { id: 'CU-SCU-SFR', nombre: 'Segundo Frente', provId: 'CU-SCU' },
+    { id: 'CU-SCU-SMA', nombre: 'Songo-La Maya', provId: 'CU-SCU' },
+    { id: 'CU-SCU-TFR', nombre: 'Tercer Frente', provId: 'CU-SCU' },
+
+    // Guantánamo
+    { id: 'CU-GTM-BAR', nombre: 'Baracoa', provId: 'CU-GTM' },
+    { id: 'CU-GTM-CAI', nombre: 'Caimanera', provId: 'CU-GTM' },
+    { id: 'CU-GTM-ELS', nombre: 'El Salvador', provId: 'CU-GTM' },
+    { id: 'CU-GTM-GTM', nombre: 'Guantánamo', provId: 'CU-GTM' },
+    { id: 'CU-GTM-IMI', nombre: 'Imías', provId: 'CU-GTM' },
+    { id: 'CU-GTM-MAI', nombre: 'Maisí', provId: 'CU-GTM' },
+    { id: 'CU-GTM-MTA', nombre: 'Manuel Tames', provId: 'CU-GTM' },
+    { id: 'CU-GTM-NIC', nombre: 'Niceto Pérez', provId: 'CU-GTM' },
+    { id: 'CU-GTM-SAS', nombre: 'San Antonio del Sur', provId: 'CU-GTM' },
+    { id: 'CU-GTM-YAT', nombre: 'Yateras', provId: 'CU-GTM' },
+
+    // Municipio Especial
+    { id: 'CU-IJV-ISJ', nombre: 'Isla de la Juventud', provId: 'CU-IJV' },
   ];
 
   private detectCountryFromQuery(q: string): string | null {
@@ -576,7 +797,7 @@ export class EmpresaComponent implements OnInit {
     const detectedCC = this.detectCountryFromQuery(raw); // ej. "pe"
     // 3) País desde el formulario (para sesgo por defecto)
     const paisId = (this.basicForm.get('pais')?.value as string | null) || '';
-    const fallbackCCs = 'pe,mx,es,co,ar,cl,ec,bo,py,uy,ve';
+    const fallbackCCs = 'pe,mx,es,co,ar,cl,ec,bo,py,uy,ve,cu';
 
     // 4) Limpia el query si contiene el país al final (opcional)
     const cleaned = raw.replace(
@@ -1020,7 +1241,7 @@ export class EmpresaComponent implements OnInit {
   }
 
   private mapearCodigoPais(paisId: string | null | undefined): string {
-    if (!paisId) return 'COL'; // Default Colombia
+    if (!paisId) return 'CUB'; // Default Colombia
 
     // Mapear IDs internos a códigos ISO
     const paisesMap: Record<string, string> = {
@@ -1028,6 +1249,7 @@ export class EmpresaComponent implements OnInit {
       MX: 'MEX',
       ES: 'ESP',
       CO: 'COL',
+      CU: 'CUB',
       // Agregar más según tu catálogo
     };
 

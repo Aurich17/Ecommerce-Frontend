@@ -15,6 +15,7 @@ import { moveItemInArray, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { GalleriaModule } from 'primeng/galleria';
 import { SliderDto } from '../admin/landing/slider/domain/slider.dto';
+import { SupabaseService } from '../../services/supabase.service';
 
 interface UploadItem {
   file: File;
@@ -40,6 +41,13 @@ interface UploadItem {
   styleUrl: './landing.component.css',
 })
 export class LandingComponent implements OnInit {
+  AVATAR_URL = 'https://cdn-icons-png.flaticon.com/512/12225/12225881.png';
+  testimonios: {
+    id: number;
+    mensaje: string;
+    nombre: string;
+    avatar: string;
+  }[] = [];
   slides: SliderDto[] = [];
   loadingSlides = false;
   uploads: UploadItem[] = [];
@@ -55,9 +63,11 @@ export class LandingComponent implements OnInit {
   constructor(
     private apiService: LandingService,
     private router: Router,
-    private ik: ImagekitClient
+    private ik: ImagekitClient,
+    private supa: SupabaseService
   ) {}
   ngOnInit() {
+    this.cargarTestimonios();
     this.cargarSlider();
     this.footerLanding = new FormGroup({
       correo: new FormControl(''),
@@ -109,28 +119,19 @@ export class LandingComponent implements OnInit {
       logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnUyF77H4RFWR1h0IiKmeV3IGySppR1I3zkw&s',
     },
   ];
-  testimonios = [
-    {
-      nombre: 'Frank Escobedo',
-      mensaje: 'Una plataforma de fácil uso.',
-    },
-    {
-      nombre: 'Juan Esteban',
-      mensaje: 'Productos buenos y económicos.',
-    },
-    {
-      nombre: 'Juliana Pérez',
-      mensaje: 'Pude comprar un excelente producto.',
-    },
-    {
-      nombre: 'Carla Mendoza',
-      mensaje: 'El sistema de pagos en cuotas me ayudó muchísimo.',
-    },
-    {
-      nombre: 'Pedro Álvarez',
-      mensaje: 'Rápido, confiable y muy intuitivo.',
-    },
-  ];
+  async cargarTestimonios() {
+    try {
+      const rows = await this.supa.listPublicTestimonials();
+      this.testimonios = rows.map((r) => ({
+        id: r.id,
+        mensaje: r.comment ?? '',
+        nombre: r.client_name ?? 'Usuario',
+        avatar: this.AVATAR_URL,
+      }));
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
   getEncabezado() {
     this.apiService.getLandingEncabezado().subscribe({

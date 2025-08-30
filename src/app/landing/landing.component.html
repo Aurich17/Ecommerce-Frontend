@@ -302,10 +302,12 @@
   <ng-template let-item pTemplate="item">
     <p-card class="w-full testimonial-card">
       <div class="t-row">
-        <!-- Avatar del usuario -->
-        <p-avatar class="t-avatar" shape="circle" size="large"></p-avatar>
-
-        <!-- Contenido -->
+        <p-avatar
+          class="t-avatar"
+          shape="circle"
+          size="large"
+          [image]="item.avatar"
+        ></p-avatar>
         <div class="t-content">
           <blockquote class="t-text">“{{ item.mensaje }}”</blockquote>
           <div class="t-author">{{ item.nombre }}</div>

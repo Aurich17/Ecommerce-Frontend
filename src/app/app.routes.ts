@@ -30,6 +30,7 @@ import { ForgotpasswordComponent } from './auth/login/mant-login/forgotpassword/
 import { ResetpasswordComponent } from './auth/login/mant-login/resetpassword/resetpassword.component';
 import { SolicitudCompraComponent } from './admin/pedidos/solicitud-compra/solicitud-compra.component';
 import { SliderComponent } from './admin/landing/slider/slider.component';
+import { MisComentariosComponent } from './mis-comentarios/mis-comentarios.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'landing' }, // ⬅️ cambia esto
@@ -72,6 +73,7 @@ export const routes: Routes = [
       { path: 'store-products/:storeId', component: StoreProductsComponent },
       // { path: 'store-products/:storeId', component: StoreProductsComponent },
       { path: 'pedidos/solicitud-compra', component: SolicitudCompraComponent },
+      { path: 'miscomentarios', component: MisComentariosComponent },
     ],
   },
   { path: 'forgotpassword', component: ForgotpasswordComponent },

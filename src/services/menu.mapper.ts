@@ -15,6 +15,7 @@ const routeMap: Record<string, string> = {
   Landing: '',
   Perfil: '',
   Marketplace: '/principal/marketplace',
+  'Mis comentarios': '/principal/miscomentarios',
 
   // Hijos Mantenimiento
   Productos: '/principal/mant/productos',

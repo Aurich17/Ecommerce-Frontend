@@ -1,0 +1,107 @@
+<form
+  [formGroup]="comentariosform"
+  class="block p-fluid p-formgrid p-grid gap-2 p-4"
+>
+  <div class="flex justify-content-between">
+    <div class="text-lg font-bold">Sección: Comentarios</div>
+    <div class="flex gap-2">
+      <p-button
+        icon="pi pi-plus"
+        styleClass="text-sm"
+        iconPos="left"
+        label="Agregar"
+        severity="warning"
+        (onClick)="onAddPopup()"
+      />
+    </div>
+  </div>
+  <div class="pt-3">
+    <p-table
+      [value]="comentariosTable"
+      class="w-full"
+      dataKey="id"
+      editMode="row"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <!-- <th class="text-sm">ID</th> -->
+          <th class="text-sm">Comentario</th>
+          <!-- <th class="text-sm">Habilitado</th>
+          <th class="text-sm">Cliente</th> -->
+          <th class="text-sm">Ocupación</th>
+          <th class="text-sm">Creado</th>
+          <!-- <th class="text-sm">Acciones</th> -->
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-product>
+        <tr>
+          <!-- <td>{{ product.id }}</td> -->
+          <td>{{ product.comment }}</td>
+          <!-- <td>
+            <p-tag
+              [value]="product.enabled === true ? 'Si' : 'No'"
+              [severity]="getSeverity(product.enabled)"
+            />
+          </td> -->
+          <!-- <td>{{ product.client_name }}</td> -->
+          <td>{{ product.occupation_text }}</td>
+          <td>{{ product.creacion }}</td>
+          <!-- <td>
+            <p-button
+              icon="pi pi-pencil"
+              [rounded]="true"
+              [text]="true"
+              (onClick)="onEditPoppup(product)"
+            />
+            <p-button
+              icon="pi pi-trash"
+              [rounded]="true"
+              [text]="true"
+              (onClick)="onDeleteRow(product.id)"
+            />
+          </td> -->
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</form>
+<p-dialog
+  [header]="titulomantenimiento"
+  [modal]="true"
+  [(visible)]="visible"
+  [style]="{ width: '50rem', height: '34rem' }"
+>
+  <form [formGroup]="comentariosform" class="w-full flex flex-column gap-4">
+    <div class="w-full flex gap-3">
+      <div class="flex flex-column gap-3 w-6">
+        <label class="font-bold text-sm">Cliente</label>
+        <input
+          pInputText
+          formControlName="cliente"
+          class="w-full"
+          [readonly]="true"
+        />
+      </div>
+    </div>
+    <div class="flex flex-column gap-3 w-full">
+      <label class="font-bold text-sm">Comentario</label>
+      <textarea
+        rows="5"
+        cols="30"
+        class="w-full"
+        pInputTextarea
+        formControlName="comentario"
+      >
+      </textarea>
+    </div>
+    <div class="w-full flex justify-content-end">
+      <p-button
+        [label]="labelbtn"
+        severity="warning"
+        [loading]="loading"
+        (onClick)="saveTestimonial()"
+      />
+    </div>
+  </form>
+</p-dialog>

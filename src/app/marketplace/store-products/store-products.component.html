@@ -1,5 +1,3 @@
-<!-- eslint-disable @angular-eslint/template/label-has-associated-control -->
-<!-- eslint-disable @angular-eslint/template/elements-content -->
 <!-- catalog.component.html -->
 <p-toast></p-toast>
 
@@ -14,13 +12,6 @@
       [routerLink]="'/principal/marketplace'"
       severity="warning"
     ></button>
-    <input
-      pInputText
-      class="search"
-      type="text"
-      placeholder="Buscar productos o empresas en el sistema"
-      [(ngModel)]="q"
-    />
   </div>
   <div class="actions flex align-items-center gap-3">
     <button
@@ -140,7 +131,12 @@
       <div class="cart-items">
         <div class="cart-item" *ngFor="let ci of cart">
           <div class="flex align-items-center gap-3">
-            <img [src]="ci.product.image" alt="" />
+            <img
+              [src]="ci.product.image"
+              alt="{{ ci.product.name }}"
+              (error)="ci.product.image = 'assets/prod/default.jpg'"
+            />
+
             <div class="flex flex-column w-full">
               <div class="flex justify-content-between w-full">
                 <div class="flex align-items-center text-normal font-bold">
@@ -153,27 +149,37 @@
                   (click)="delete(ci)"
                 ></button>
               </div>
-              <div>
-                <div class="sub">
-                  $ {{ ci.product.price | number : "1.2-2" }}
-                </div>
+
+              <!-- Precio unitario (con descuento aplicado) -->
+              <div class="sub">
+                Unit: $ {{ priceAfterDiscount(ci.product) | number : "1.2-2" }}
+                <ng-container *ngIf="ci.product.discount">
+                  <span class="ml-2 line-through opacity-70">
+                    $ {{ ci.product.price | number : "1.2-2" }}
+                  </span>
+                  <span class="ml-1">({{ ci.product.discount }}% OFF)</span>
+                </ng-container>
               </div>
+
+              <!-- Cantidad -->
               <div class="pt-3">
-                <div class="qty">
-                  <p-inputNumber
-                    [(ngModel)]="ci.qty"
-                    [style]="{ width: '2rem' }"
-                    [showButtons]="true"
-                    buttonLayout="horizontal"
-                    spinnerMode="horizontal"
-                    inputId="horizontal"
-                    decrementButtonClass="p-button-secondary p-button-rounded p-button-text"
-                    incrementButtonClass="p-button-secondary p-button-rounded p-button-text"
-                    incrementButtonIcon="pi pi-plus"
-                    decrementButtonIcon="pi pi-minus"
-                    [min]="0"
-                  />
-                </div>
+                <p-inputNumber
+                  [(ngModel)]="ci.qty"
+                  [min]="1"
+                  [showButtons]="true"
+                  buttonLayout="horizontal"
+                  spinnerMode="horizontal"
+                  incrementButtonIcon="pi pi-plus"
+                  decrementButtonIcon="pi pi-minus"
+                >
+                </p-inputNumber>
+              </div>
+
+              <!-- Subtotal por ítem -->
+              <div class="flex justify-content-end mt-2">
+                <strong
+                  >Subtotal: $ {{ subtotal(ci) | number : "1.2-2" }}</strong
+                >
               </div>
             </div>
           </div>

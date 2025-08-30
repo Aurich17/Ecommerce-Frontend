@@ -156,3 +156,35 @@
   padding: 2rem;
   margin: 0;
 }
+
+/* 1) Stage neutro y aislado para que el blend no ensucie otros elementos */
+.product-card .thumb {
+  position: relative;
+  height: 200px;
+  background: #edf1f5; /* un gris un poco más oscuro */
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  isolation: isolate; /* IMPORTANTE para mix-blend-mode */
+}
+
+/* 2) Quita sombras en el <img> (eran las culpables del “bloque”) */
+.product-card .thumb img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  transition: transform 0.18s ease;
+  /* Truco para "quitar" el blanco: lo mezcla con el gris de fondo */
+  mix-blend-mode: multiply; /* prueba también 'darken' si te gusta más */
+  filter: contrast(1.05) saturate(1.02);
+}
+
+/* 3) Un poco de vida en hover sin volver a marcar el rectángulo */
+.product-card .thumb img:hover {
+  transform: scale(1.03);
+}

@@ -1,4 +1,3 @@
-/* eslint-disable @angular-eslint/prefer-inject */
 // principal.component.ts
 import { Component, HostListener, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';

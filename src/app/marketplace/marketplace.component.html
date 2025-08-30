@@ -14,20 +14,6 @@
         severity="warning"
         class="hide-sm"
       ></button>
-
-      <!-- Search con ícono y full en móvil -->
-      <span class="p-input-icon-left search-wrap">
-        <i class="pi pi-search"></i>
-        <input
-          pInputText
-          class="search"
-          type="text"
-          placeholder="Buscar productos o empresas"
-          [(ngModel)]="searchTerm"
-          (input)="onSearchChange()"
-          aria-label="Buscar"
-        />
-      </span>
     </div>
 
     <div class="actions flex align-items-center gap-3">
@@ -97,7 +83,7 @@
   <!-- Cards en grilla consistente -->
   <section class="stores grid">
     <div class="col-12 md:col-6 lg:col-4" *ngFor="let s of visibleStores">
-      <p-card [styleClass]="'store-card'">
+      <p-card [styleClass]="'store-card store-card--brand'">
         <div class="store-top">
           <div class="store-left">
             <!-- Usa imagen si hay URL válida; si no, inicial -->
