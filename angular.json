@@ -25,8 +25,8 @@
               "src/assets",
               {
                 "glob": "**/*",
-                "input": "node_modules/intl-tel-input/build/js",
-                "output": "/assets/intl-tel-input/"
+                "input": "node_modules/flag-icons/flags/4x3",
+                "output": "assets/flags"
               }
             ],
             "styles": [
@@ -95,7 +95,12 @@
             "tsConfig": "tsconfig.spec.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/flag-icons/flags/4x3",
+                "output": "assets/flags"
+              }
             ],
             "styles": [
               "src/styles.css",

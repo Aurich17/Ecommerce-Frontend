@@ -23,7 +23,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { DropdownModule } from 'primeng/dropdown';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ApiService } from '../../../../services/api.services';
-import intlTelInput from 'intl-tel-input';
+// import intlTelInput from 'intl-tel-input';
 import { ToastModule } from 'primeng/toast';
 import { PanelModule } from 'primeng/panel';
 import { DividerModule } from 'primeng/divider';
@@ -36,6 +36,7 @@ import { AuthService } from '../../../../services/auth.services';
 import { SessionService } from '../../../../services/session/session.service';
 import { ImagekitClient } from '../../../../services/imagekit.service';
 import { MailService } from '../../../../services/mail/mail.service';
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 
 // Tipo normalizado para usar SIEMPRE desc/cod
 interface TipoUI {
@@ -45,7 +46,7 @@ interface TipoUI {
   parent?: string;
 }
 
-type IntlTelOptions = NonNullable<Parameters<typeof intlTelInput>[1]>;
+// type IntlTelOptions = NonNullable<Parameters<typeof intlTelInput>[1]>;
 
 @Component({
   selector: 'app-cliente',
@@ -225,13 +226,13 @@ export class ClienteComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     const input = this.phoneInput.nativeElement;
-    this.iti = intlTelInput(input, {
-      initialCountry: 'pe',
-      nationalMode: false,
-      separateDialCode: false,
-      allowDropdown: false,
-      utilsScript: '/assets/intl-tel-input/utils.js',
-    } as IntlTelOptions);
+    // this.iti = intlTelInput(input, {
+    //   initialCountry: 'pe',
+    //   nationalMode: false,
+    //   separateDialCode: false,
+    //   allowDropdown: false,
+    //   utilsScript: '/assets/intl-tel-input/utils.js',
+    // } as IntlTelOptions);
 
     const validate = () => {
       const ctrl = this.personalForm.get('telefono')!;
@@ -537,5 +538,61 @@ export class ClienteComponent implements OnInit, AfterViewInit {
         alert('Error al enviar correo');
       },
     });
+  }
+
+  //telefono
+  flagIso: string | null = null;
+  private DIAL_MAP: Record<string, string> = {
+    '51': 'pe', // Perú
+    '52': 'mx', // México
+    '34': 'es', // España
+    '54': 'ar', // Argentina
+    '56': 'cl', // Chile
+    '57': 'co', // Colombia
+
+    // === Nuevos 20 ===
+    '53': 'cu', // Cuba
+    '55': 'br', // Brasil
+    '58': 've', // Venezuela
+    '502': 'gt', // Guatemala
+    '503': 'sv', // El Salvador
+    '504': 'hn', // Honduras
+    '505': 'ni', // Nicaragua
+    '506': 'cr', // Costa Rica
+    '507': 'pa', // Panamá
+    '509': 'ht', // Haití
+    '591': 'bo', // Bolivia
+    '592': 'gy', // Guyana
+    '593': 'ec', // Ecuador
+    '595': 'py', // Paraguay
+    '598': 'uy', // Uruguay
+    '1': 'us', // Estados Unidos (ojo: también Canadá y Caribe)
+    '44': 'gb', // Reino Unido
+    '33': 'fr', // Francia
+    '49': 'de', // Alemania
+    '39': 'it', // Italia
+    '351': 'pt', // Portugal
+  };
+
+  onPhoneInput(raw: string) {
+    const v = (raw || '').trim();
+    let iso: string | null = null;
+
+    // 1) intenta parse completo
+    try {
+      const p = parsePhoneNumberFromString(v);
+      if (p?.country) iso = p.country.toLowerCase();
+    } catch {}
+
+    // 2) si aún no hay país (ej. "+51"), toma prefijo
+    if (!iso) {
+      const m = v.match(/^\+(\d{1,3})/);
+      if (m) {
+        const dial = m[1];
+        iso = this.DIAL_MAP[dial] ?? null;
+      }
+    }
+
+    this.flagIso = iso;
   }
 }

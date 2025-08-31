@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
@@ -6,13 +7,13 @@ import { FormsModule } from '@angular/forms';
 import { LandingService } from '../../../../services/landing.services';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { getLandingAudienceResponse, itemsLandingAudience } from './domain/quienes.response';
+import { itemsLandingAudience } from './domain/quienes.response';
 import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { AudienceRequest } from '../encabezado/domain/request/encabezado.request';
-import { th } from 'intl-tel-input/i18n';
+// import { th } from 'intl-tel-input/i18n';
 import { ToastModule } from 'primeng/toast';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
@@ -31,30 +32,30 @@ import autoTable from 'jspdf-autotable';
     DropdownModule,
     InputTextModule,
     InputTextareaModule,
-    ToastModule
+    ToastModule,
   ],
   templateUrl: './quienes.component.html',
   styleUrl: './quienes.component.css',
   providers: [MessageService],
 })
-export class QuienesComponent {
+export class QuienesComponent implements OnInit {
   constructor(
     private apiService: LandingService,
     private router: Router,
     private messageService: MessageService
-  ) { }
+  ) {}
   quienesTable: itemsLandingAudience[] = [];
   quienesLanding: itemsLandingAudience[] = [];
   loadingAud = false;
-  errorAud = ''
-  visible: boolean = false;
-  titulomantenimiento: string = 'Registrar Audiencia';
-  labelbtn: string = 'Guardar';
-  loading: boolean = false;
-  clonedTable: { [s: string]: any } = {};
+  errorAud = '';
+  visible = false;
+  titulomantenimiento = 'Registrar Audiencia';
+  labelbtn = 'Guardar';
+  loading = false;
+  clonedTable: Record<string, any> = {};
   listaEntidad: any[] = [];
-  currentId!: number
-  addRegister: boolean = false;
+  currentId!: number;
+  addRegister = false;
   quienesform = new FormGroup({
     icono: new FormControl(null, null),
     entidad: new FormControl(null, null),
@@ -80,25 +81,34 @@ export class QuienesComponent {
     this.currentId = 0;
   }
   exportExcel() {
-    const header = ["ID", "Ícono", "Entidad", "Descripción"];
-    const data = this.quienesTable.map(item => [
+    const header = ['ID', 'Ícono', 'Entidad', 'Descripción'];
+    const data = this.quienesTable.map((item) => [
       item.id,
       item.icon,
       item.entity,
-      item.description
+      item.description,
     ]);
     const worksheet = XLSX.utils.aoa_to_sheet([header, ...data]);
-    const workbook = { Sheets: { data: worksheet }, SheetNames: ["data"] };
-    const excelBuffer: any = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-    const blob: Blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+    const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+    const blob: Blob = new Blob([excelBuffer], {
+      type: 'application/octet-stream',
+    });
     saveAs(blob, `QuienesPuedenUsar_${new Date().getTime()}.xlsx`);
   }
   exportCsv() {
-    const rows = this.quienesTable.map(item => [item.id, item.icon, item.entity, item.description]);
-    const csvContent = [
-      ['ID', 'Ícono', 'Entidad', 'Descripción'],
-      ...rows
-    ].map(e => e.join(",")).join("\n");
+    const rows = this.quienesTable.map((item) => [
+      item.id,
+      item.icon,
+      item.entity,
+      item.description,
+    ]);
+    const csvContent = [['ID', 'Ícono', 'Entidad', 'Descripción'], ...rows]
+      .map((e) => e.join(','))
+      .join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, `QuienesPuedenUsar_${new Date().getTime()}.csv`);
@@ -107,7 +117,12 @@ export class QuienesComponent {
     const doc = new jsPDF();
     autoTable(doc, {
       head: [['ID', 'Ícono', 'Entidad', 'Descripción']],
-      body: this.quienesTable.map(item => [item.id, item.icon, item.entity, item.description]),
+      body: this.quienesTable.map((item) => [
+        item.id,
+        item.icon,
+        item.entity,
+        item.description,
+      ]),
     });
     doc.save(`QuienesPuedenUsar_${new Date().getTime()}.pdf`);
   }
@@ -139,7 +154,7 @@ export class QuienesComponent {
     });
   }
   guardarData() {
-    console.log('HACE CLICK')
+    console.log('HACE CLICK');
     this.labelbtn = 'Guardando';
     this.loading = true;
 
@@ -171,24 +186,22 @@ export class QuienesComponent {
         error: (err) => console.error('Error al crear audiencia:', err),
       });
     } else {
-      this.apiService
-        .updateLandingAudience(this.currentId, request)
-        .subscribe({
-          next: ({ data }) => {
-            this.getAudiencia();
-            this.visible = false;
-            this.loading = false;
-            this.labelbtn = 'Guardar';
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Guardado',
-              detail: 'La audiencia se actualizó correctamente.',
-              key: 'tc',
-              life: 2500,
-            });
-          },
-          error: (err) => console.error('Error al actualizar testimonial:', err),
-        });
+      this.apiService.updateLandingAudience(this.currentId, request).subscribe({
+        next: ({ data }) => {
+          this.getAudiencia();
+          this.visible = false;
+          this.loading = false;
+          this.labelbtn = 'Guardar';
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Guardado',
+            detail: 'La audiencia se actualizó correctamente.',
+            key: 'tc',
+            life: 2500,
+          });
+        },
+        error: (err) => console.error('Error al actualizar testimonial:', err),
+      });
     }
   }
 }

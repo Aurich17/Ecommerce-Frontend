@@ -2,11 +2,11 @@
 @import "primeng/resources/themes/lara-light-blue/theme.css";
 @import "primeng/resources/primeng.min.css";
 @import "primeng/resources/primeng.css";
-@import 'primeflex/primeflex.css';
+@import "primeflex/primeflex.css";
 @import "primeicons/primeicons.css";
-@import "intl-tel-input/build/css/intlTelInput.css";
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
@@ -14,6 +14,9 @@ html, body {
   height: 100%;
 }
 
-.iti { width: 100%; }
-.iti input { width: 100%; }
-
+.iti {
+  width: 100%;
+}
+.iti input {
+  width: 100%;
+}

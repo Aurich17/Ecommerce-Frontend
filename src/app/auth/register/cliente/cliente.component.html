@@ -48,16 +48,35 @@
             <input id="apellidos" pInputText formControlName="apellidos" />
           </div>
           <div class="field col-12 md:col-6">
-            <label class="font-bold" for="telefono">Telefono</label>
-            <input
-              #phoneInput
-              id="telefono"
-              type="tel"
-              dir="ltr"
-              [class.p-inputtext]="true"
-              formControlName="telefono"
-              placeholder="234 567 890"
-            />
+            <label class="font-bold" for="telefono">Teléfono</label>
+
+            <div class="p-inputgroup">
+              <span class="p-inputgroup-addon">
+                <ng-container *ngIf="flagIso; else globe">
+                  <img
+                    [src]="'assets/flags/' + flagIso + '.svg'"
+                    alt="flag"
+                    style="width: 20px; height: 15px; display: block"
+                  />
+                </ng-container>
+                <ng-template #globe><i class="pi pi-globe"></i></ng-template>
+              </span>
+
+              <input
+                #tel
+                id="telefono"
+                type="tel"
+                pInputText
+                formControlName="telefono"
+                placeholder="+51 987 654 321"
+                (input)="onPhoneInput(tel.value)"
+              />
+            </div>
+
+            <!-- (Opcional) mensaje de ayuda -->
+            <small class="text-500"
+              >Escribe con prefijo: ej. +51, +52, +34…</small
+            >
           </div>
           <div class="field col-12 md:col-6">
             <label class="font-bold" for="fechaNacimiento"
