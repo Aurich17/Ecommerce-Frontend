@@ -292,25 +292,51 @@
   [numVisible]="3"
   [numScroll]="1"
   [responsiveOptions]="[
-    { breakpoint: '1024px', numVisible: 2, numScroll: 1 },
+    { breakpoint: '1200px', numVisible: 2, numScroll: 1 },
     { breakpoint: '768px', numVisible: 1, numScroll: 1 }
   ]"
   [circular]="true"
-  [autoplayInterval]="3000"
-  class="flex-none testimonio"
+  [autoplayInterval]="4000"
+  [showNavigators]="true"
+  [showIndicators]="true"
+  class="testimonio"
 >
   <ng-template let-item pTemplate="item">
-    <p-card class="w-full testimonial-card">
+    <p-card class="t-card">
       <div class="t-row">
         <p-avatar
           class="t-avatar"
           shape="circle"
           size="large"
-          [image]="item.avatar"
+          [image]="item.avatar || null"
+          [label]="!item.avatar ? (item.nombre ? item.nombre[0] : '?') : null"
         ></p-avatar>
+
         <div class="t-content">
-          <blockquote class="t-text">“{{ item.mensaje }}”</blockquote>
-          <div class="t-author">{{ item.nombre }}</div>
+          <span class="t-quote pi pi-quote-left" aria-hidden="true"></span>
+
+          <blockquote class="t-text">
+            {{ item.mensaje }}
+          </blockquote>
+
+          <div class="t-stars" *ngIf="item.rating">
+            <i
+              class="pi pi-star"
+              *ngFor="let s of [].constructor(item.rating)"
+            ></i>
+            <i
+              class="pi pi-star"
+              *ngFor="let s of [].constructor(5 - item.rating)"
+              [class.dim]="true"
+            ></i>
+          </div>
+
+          <div class="t-author">
+            <span class="name">{{ item.nombre }}</span>
+            <span class="role" *ngIf="item.occupation_text">
+              · {{ item.occupation_text }}</span
+            >
+          </div>
         </div>
       </div>
     </p-card>
@@ -370,9 +396,9 @@
         Fiao<span style="color: #ff0066">X</span>
       </h2>
       <!--Icono-->
-      <p class="line-height-3 pt-3 flex text-center ml-8 mr-8">
+      <!-- <p class="line-height-3 pt-3 flex text-center ml-8 mr-8">
         {{ footerLanding?.data.footer_left_desc }}
-      </p>
+      </p> -->
       <div class="flex justify-content-center text-sm pt-3 gap-4">
         <a href="#" style="color: #fff"><i class="pi pi-facebook"></i></a>
         <a href="#" style="color: #fff"><i class="pi pi-twitter"></i></a>
@@ -385,14 +411,14 @@
 
     <!-- Contacto -->
     <div class="flex-1">
-      <h3 class="flex justify-content-center">
+      <!-- <h3 class="flex justify-content-center">
         {{ footerLanding?.data.footer_title }}
-      </h3>
-      <p class="flex justify-content-center">
+      </h3> -->
+      <!-- <p class="flex justify-content-center">
         {{ footerLanding?.data.footer_desc }}s
-      </p>
+      </p> -->
       <div class="flex gap-4 justify-content-center">
-        <a
+        <!-- <a
           href="mailto:support@fiaox.com"
           class="p-2"
           style="
@@ -401,9 +427,9 @@
             border: 1px solid #494848;
             border-radius: 8px;
           "
-          >{{ footerLanding?.data.contact_email }}</a
+          >{{ footerLanding?.data.contact_email }}</a -->
         ><br />
-        <a
+        <!-- <a
           href="tel:15551234567"
           class="p-2"
           style="
@@ -412,7 +438,7 @@
             border: 1px solid #494848;
             border-radius: 8px;
           "
-          >{{ footerLanding?.data.contact_phone }}</a
+          >{{ footerLanding?.data.contact_phone }}</a -->
         >
       </div>
       <div class="flex gap-4 justify-content-center">
@@ -469,6 +495,6 @@
     class="text-center pt-5 mt-4 text-xs"
     style="border-top: 1px solid #333; color: #aaa"
   >
-    {{ footerLanding?.data.footer_copy }}
+    <!-- {{ footerLanding?.data.footer_copy }} -->
   </div>
 </footer>

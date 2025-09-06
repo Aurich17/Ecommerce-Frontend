@@ -17,4 +17,18 @@ export class AuthService {
       .post<LoginResponse>(`${this.apiUrl}/auth/login`, body)
       .pipe(tap((res) => this.store.setFromLogin(res))); // guarda token/exp/rol/menu
   }
+
+  requestPasswordReset(email?: string) {
+    return this.http.post<{ ok: boolean; message?: string }>(
+      `${this.apiUrl}/auth/password/forgot`,
+      { email }
+    );
+  }
+
+  resetPassword(token: string, newPassword: string) {
+    return this.http.post<{ ok: boolean }>(
+      `${this.apiUrl}/auth/password/reset`,
+      { token, newPassword }
+    );
+  }
 }

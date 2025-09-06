@@ -161,7 +161,7 @@ export class LandingComponent implements OnInit {
   getTestimonials() {
     this.apiService.getLandingTestimonials().subscribe({
       next: (data) => {
-        console.log('data', data);
+        console.log('Comentarios', data);
         this.comentariosLanding = data.data.items.map((item) => {
           const fecha = new Date(item.created_at);
           const day = fecha.getDate().toString().padStart(2, '0');

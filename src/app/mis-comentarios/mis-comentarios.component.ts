@@ -122,6 +122,10 @@ export class MisComentariosComponent implements OnInit {
     });
   }
 
+  onDeleteRow(row: any) {
+    console.log('ELIMINA COMENTARIO');
+  }
+
   async saveTestimonial() {
     console.log('GUARDANDO');
     this.labelbtn = 'Guardando';
