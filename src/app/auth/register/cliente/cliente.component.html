@@ -303,17 +303,39 @@
                 class="w-full"
               />
             </div>
+            <!-- TELEFONO ALTERNATIVO  -->
             <div class="p-field p-col-12 flex flex-column gap-3">
-              <label>Teléfono Contacto Alternativo</label>
-              <span class="p-input-icon-left w-full">
-                <i class="pi pi-plus"></i>
+              <label class="font-bold" for="telefono"
+                >Teléfono Contacto Alternativo</label
+              >
+
+              <div class="p-inputgroup">
+                <span class="p-inputgroup-addon">
+                  <ng-container *ngIf="flagIso; else globe">
+                    <img
+                      [src]="'assets/flags/' + flagIso + '.svg'"
+                      alt="flag"
+                      style="width: 20px; height: 15px; display: block"
+                    />
+                  </ng-container>
+                  <ng-template #globe><i class="pi pi-globe"></i></ng-template>
+                </span>
+
                 <input
+                  #tel
+                  id="telefono"
+                  type="tel"
                   pInputText
-                  type="text"
                   formControlName="contactoTelefono"
-                  class="w-full"
+                  placeholder="+51 987 654 321"
+                  (input)="onPhoneInput(tel.value)"
                 />
-              </span>
+              </div>
+
+              <!-- (Opcional) mensaje de ayuda -->
+              <small class="text-500"
+                >Escribe con prefijo: ej. +51, +52, +34…</small
+              >
             </div>
           </div>
         </div>

@@ -22,6 +22,7 @@ const routeMap: Record<string, string> = {
   Solicitudes: '/principal/mant/solicitudes',
   Categorías: '/principal/mant/categorias',
   Monedas: '/principal/mant/monedas',
+  Negocios: '/principal/mant/negocios',
 
   // Hijos Accesos
   Roles: '/principal/accesos/roles',

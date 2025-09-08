@@ -31,6 +31,7 @@ import { ResetpasswordComponent } from './auth/login/mant-login/resetpassword/re
 import { SolicitudCompraComponent } from './admin/pedidos/solicitud-compra/solicitud-compra.component';
 import { SliderComponent } from './admin/landing/slider/slider.component';
 import { MisComentariosComponent } from './mis-comentarios/mis-comentarios.component';
+import { NegociosComponent } from './admin/mantenimiento/negocios/negocios.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'landing' }, // ⬅️ cambia esto
@@ -60,6 +61,7 @@ export const routes: Routes = [
       { path: 'mant/categorias', component: CategoriasComponent },
       { path: 'mant/insignias', component: InsigniasComponent },
       // { path: 'mant/monedas', component: MonedasComponent },
+      { path: 'mant/negocios', component: NegociosComponent },
       { path: 'mant/ocupaciones', component: OcupacionesComponent },
       { path: 'mant/productos', component: ProductosComponent },
       { path: 'mant/puntos', component: PuntosComponent },

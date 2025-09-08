@@ -35,9 +35,9 @@ a {
   border-color: var(--yellow-500) !important;
 }
 
-::ng-deep .testimonio .p-carousel .p-card {
-  height: 18vh;
-  gap: 0.5rem;
+::ng-deep .testimonio .p-carousel {
+  position: relative;
+  padding: 0 2.5rem; /* espacio para los botones */
 }
 
 /* En pantallas pequeñas (ej. móviles) → solo 1 columna */
@@ -346,10 +346,9 @@ a {
 
 /* ====== CONTROLES DEL CARRUSEL ====== */
 .testimonio .p-carousel-content {
-  position: relative;
-  padding: 0.25rem 2.5rem;
+  position: static;
+  padding: 0;
 }
-
 ::ng-deep .testimonio .p-carousel-prev,
 ::ng-deep .testimonio .p-carousel-next {
   position: absolute;
@@ -361,6 +360,7 @@ a {
   border: 1px solid #e5e7eb;
   background: #fff;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  z-index: 2;
 }
 ::ng-deep .testimonio .p-carousel-prev {
   left: 0.25rem;
